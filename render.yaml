@@ -47,7 +47,7 @@ services:
 
     # Run migrations + seed automatically after every deploy
     # Comment out "python -m app.db.seed" after first deploy to avoid duplicates
-    preDeployCommand: cd backend && alembic upgrade head && python -m app.db.seed
+    preDeployCommand: alembic upgrade head && python -m app.db.seed
 
   # ── PostgreSQL Database ────────────────────────────────────────────────────
 databases:
