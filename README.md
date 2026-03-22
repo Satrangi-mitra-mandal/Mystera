@@ -1,4 +1,4 @@
-# 🕵️ DetectiveOS
+# 🕵️ Mystera
 
 > *The world's first AI-powered mystery-solving platform. Interrogate suspects. Pin evidence. Solve the case.*
 
