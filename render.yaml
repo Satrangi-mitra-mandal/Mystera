@@ -45,9 +45,7 @@ services:
       - key: CORS_ORIGINS
         value: https://your-app.vercel.app   # ← REPLACE with your Vercel URL
 
-    # Run migrations + seed automatically after every deploy
-    # Comment out "python -m app.db.seed" after first deploy to avoid duplicates
-    preDeployCommand: alembic upgrade head && python -m app.db.seed
+
 
   # ── PostgreSQL Database ────────────────────────────────────────────────────
 databases:
