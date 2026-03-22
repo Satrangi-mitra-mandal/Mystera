@@ -1,0 +1,107 @@
+You are a world-class SaaS architect, game designer, and AI engineer.
+
+Your task is to design and build a complete SaaS platform called **DetectiveOS**, a gamified mystery-solving platform where users act as digital detectives and solve interactive cases inspired by detective stories like Zodiac and Knives Out.
+
+The product must function as a real startup-ready SaaS platform.
+
+Design the system with the following requirements:
+
+PRODUCT CONCEPT
+Users receive interactive case files and must solve crimes using evidence, suspect interviews, timelines, and logical deduction.
+
+CORE FEATURES
+
+1. Interactive Case Files
+
+   * background story
+   * victim profile
+   * suspect list
+   * timeline of events
+
+2. Evidence System
+
+   * photos
+   * documents
+   * phone logs
+   * CCTV clips
+   * forensic reports
+
+3. Evidence Board
+
+   * players can connect clues visually like a detective board
+
+4. Suspect Interrogation
+
+   * AI-powered suspects that respond based on stored alibis and personalities
+
+5. Theory Submission
+   players must submit:
+
+   * culprit
+   * motive
+   * method
+   * supporting evidence
+
+6. Scoring System
+   score based on:
+
+   * correct culprit
+   * reasoning
+   * time taken
+   * evidence usage
+
+7. Leaderboards and achievements
+
+8. Weekly global mystery challenges
+
+TECH STACK
+Frontend:
+Next.js + React + Tailwind
+
+Backend:
+Node.js + PostgreSQL + Prisma
+
+AI layer:
+LLM powered suspect dialogue and dynamic case generation
+
+DATABASE STRUCTURE
+Design schemas for:
+
+* Users
+* Cases
+* Suspects
+* Evidence
+* CaseProgress
+* PlayerSolutions
+* Leaderboards
+
+GAME ENGINE
+Create a logical validation system that checks if the player's solution matches the true solution and whether the reasoning references correct evidence.
+
+CASE GENERATION
+Build a structured template system for generating detective mysteries with:
+
+* suspects
+* motives
+* alibis
+* hidden contradictions
+* solution logic
+
+MONETIZATION
+Include:
+
+* free tier
+* subscription tier
+* creator marketplace where users sell custom cases
+
+DELIVER
+
+1. full product architecture
+2. database schema
+3. API structure
+4. frontend UI layout
+5. AI prompt design for suspects
+6. MVP roadmap
+7. scalability plan
+
+Make the product production-ready and startup-grade.

@@ -1,0 +1,113 @@
+{
+  "title": "The Redwood Inheritance",
+  "slug": "redwood-inheritance",
+  "difficulty": "rookie",
+  "setting": "Calloway Estate, Napa Valley, CA",
+  "is_weekly": false,
+  "background": "Socialite and heiress Isabelle Calloway was found face-down in the family's private redwood grove at dawn on September 3rd, 2026. The official cause of death was drowning — in a creek less than 8 inches deep. Her will, updated just 72 hours before her death, cuts out her three adult children entirely, leaving the $22M estate to a stranger: her personal trainer, Marco Reyes. The night before she died, Isabelle hosted a family dinner that ended in shouting. By morning, she was dead.",
+  "victim_name": "Isabelle Calloway",
+  "victim_age": 69,
+  "victim_occupation": "Retired socialite / Calloway Estate Owner",
+  "victim_profile": {
+    "net_worth": "$22M",
+    "cause_of_death": "Drowning (homicide — face held in shallow creek)",
+    "notes": "Will changed 72 hours before death; estranged from two of three children",
+    "timeline": [
+      {"time": "SEP 2 · 4:00 PM", "event": "Will Signed", "detail": "Isabelle signs updated will with her attorney Robert Finch. Marco Reyes named sole beneficiary."},
+      {"time": "SEP 2 · 7:30 PM", "event": "Family Dinner", "detail": "All three children present. Isabelle announces she is 'restructuring' the estate. Dinner ends in argument."},
+      {"time": "SEP 2 · 10:00 PM", "event": "Isabelle Retires", "detail": "Guests disperse. Housekeeper sees Isabelle walking toward the grove at approximately 10:15pm."},
+      {"time": "SEP 3 · 6:14 AM", "event": "Body Discovered", "detail": "Estate groundskeeper finds Isabelle face-down in the north creek. Emergency services unable to revive her."},
+      {"time": "SEP 3 · 9:00 AM", "event": "Will Disclosed", "detail": "Attorney Finch discloses the new will to the family. Reactions described as 'explosive'."}
+    ]
+  },
+  "true_culprit_name": "Petra Calloway",
+  "true_motive": "Petra, the eldest daughter, had secretly embezzled $800K from the family foundation she managed. Isabelle had discovered the discrepancy and was preparing to expose Petra and press charges — in addition to the disinheritance. Petra could not afford the exposure.",
+  "true_method": "Petra followed her mother to the grove after the dinner, confronted her, and when Isabelle threatened to call the police that night, Petra grabbed her from behind and held her face in the creek until she drowned. She then returned to the house, changed clothes, and went to bed.",
+  "required_evidence_ids": ["ev-ri-02", "ev-ri-03", "ev-ri-05"],
+  "suspects": [
+    {
+      "name": "Petra Calloway",
+      "occupation": "Foundation Director, Calloway Family Foundation",
+      "personality": "Imperious and controlled. Uses guilt and status as weapons. Becomes very still and overly composed when directly accused.",
+      "alibi": "Claims she went straight to her room after dinner and did not leave until morning.",
+      "relationship_to_victim": "Eldest daughter. Managed the family's charitable foundation. Had the most to lose from the new will.",
+      "is_culprit": true,
+      "avatar": "👩‍💼",
+      "motive_hint": "She managed the foundation's money — and some of it is missing.",
+      "secrets": [
+        "She embezzled $800,000 from the Calloway Foundation over 4 years",
+        "Isabelle confronted her about the discrepancy at the dinner — the shouting was about this",
+        "Her muddy boots are hidden in the back of her wardrobe",
+        "She was seen walking toward the grove by the groundskeeper's camera at 10:22pm"
+      ]
+    },
+    {
+      "name": "Marco Reyes",
+      "occupation": "Personal Trainer / Sole Heir",
+      "personality": "Warm but guarded. Genuinely upset about Isabelle's death. Over-explains his innocent intentions.",
+      "alibi": "Was at his apartment in Napa all evening — has his building's entry log and a video call with his sister.",
+      "relationship_to_victim": "Isabelle's personal trainer for 3 years. She described him as 'the son I should have had'.",
+      "is_culprit": false,
+      "avatar": "🧑‍🤝‍🧑",
+      "motive_hint": "He inherits everything — which makes him look very guilty.",
+      "secrets": [
+        "He knew about the will change because Isabelle told him — he begged her not to do it",
+        "He has letters from Isabelle explaining her estrangement from her children",
+        "He is currently being threatened by all three Calloway children"
+      ]
+    },
+    {
+      "name": "Owen Calloway",
+      "occupation": "Startup Founder (currently insolvent)",
+      "personality": "Volatile. Moves fast, speaks fast. Prone to outbursts that he immediately regrets.",
+      "alibi": "Says he drove back to San Francisco after dinner — no traffic camera confirms this until 1am.",
+      "relationship_to_victim": "Younger son. His startup failed and he borrowed $600K from Isabelle, which she had recently demanded back.",
+      "is_culprit": false,
+      "avatar": "👨",
+      "motive_hint": "He owed his mother $600K and she was calling it in.",
+      "secrets": [
+        "He did drive back toward SF but pulled over for 2 hours near the estate — he was crying",
+        "He secretly recorded the dinner argument on his phone",
+        "The recording catches Isabelle saying 'Petra you stole from us' — he hasn't realised its significance"
+      ]
+    },
+    {
+      "name": "Constance Calloway-Reid",
+      "occupation": "Art Dealer",
+      "personality": "Cool, analytical, slightly theatrical. Uses silence as a weapon. Doesn't volunteer anything.",
+      "alibi": "Says she stayed in her guest room all night. Her husband can confirm — he was with her.",
+      "relationship_to_victim": "Middle daughter. The most estranged from Isabelle. Claims she doesn't care about the inheritance.",
+      "is_culprit": false,
+      "avatar": "👩‍🎨",
+      "motive_hint": "She says she doesn't want the money — but she's deeply in debt.",
+      "secrets": [
+        "She owes $1.2M to a private art investor and is months from bankruptcy",
+        "She and her husband were actually arguing loudly in their room — neighbours heard them",
+        "She saw Petra's muddy boots in the hallway the next morning and said nothing"
+      ]
+    },
+    {
+      "name": "Robert Finch",
+      "occupation": "Estate Attorney",
+      "personality": "Meticulous, dry, deeply uncomfortable with conflict. Has a visible tremor when nervous.",
+      "alibi": "Left the estate immediately after the will signing at 4:30pm. Home by 7pm — wife confirms.",
+      "relationship_to_victim": "Isabelle's attorney for 20 years. Drafted all versions of her will.",
+      "is_culprit": false,
+      "avatar": "👨‍⚖️",
+      "motive_hint": "He knows every secret in the estate — including why the will really changed.",
+      "secrets": [
+        "Isabelle told him about the embezzlement the morning she changed her will",
+        "She asked him to prepare a separate document — a letter to law enforcement about Petra — to be sent if anything happened to her",
+        "He mailed that letter to the DA's office the morning the body was found"
+      ]
+    }
+  ],
+  "evidence": [
+    {"id": "ev-ri-01", "type": "document", "title": "Updated Will — September 1st", "description": "Isabelle's will, signed 72 hours before her death. All three children removed. Entire $22M estate left to Marco Reyes. A handwritten note at the bottom reads: 'They know what they did.'", "content": "LAST WILL AND TESTAMENT — ISABELLE M. CALLOWAY\nSigned: September 1, 2026\nWitnesses: Robert Finch, Margaret Solis (housekeeper)\n\nI revoke all prior testamentary instruments.\nI bequeath my entire estate, property, and assets to:\nMARCO ANTONIO REYES\n\nHandwritten addendum: 'They know what they did. — I.C.'", "icon": "📜", "is_hidden": false, "sort_order": 1},
+    {"id": "ev-ri-02", "type": "forensic", "title": "Muddy Boots — Wardrobe, East Guest Room", "description": "A pair of knee-high women's hiking boots found hidden at the back of the east guest room wardrobe. Mud composition matches the north creek bank exactly. Boot size: EU 38. Petra Calloway wears EU 38.", "content": "FORENSIC SOIL ANALYSIS — Item B-004\nItem: Women's hiking boots, EU size 38\nLocation found: East guest room wardrobe (Petra Calloway's room)\nMud analysis: Creek sediment, north tributary — MATCH\nFoot impression depth: Consistent with walking on creek bank\nConclusion: These boots were worn at the north creek within 12 hours of discovery", "icon": "👢", "is_hidden": false, "sort_order": 2},
+    {"id": "ev-ri-03", "type": "cctv", "title": "Estate Security Camera — Grove Path", "description": "Motion-triggered camera at the grove entrance records a figure in dark clothing walking toward the grove at 10:22pm. The figure's height, gait, and jacket match Petra Calloway. No return recorded — camera malfunctions at 10:31pm.", "content": "SECURITY CAMERA LOG — Grove Entrance Cam\n22:22:11 — Motion triggered\n22:22:14 — Figure enters frame (dark jacket, tall, female gait)\nGait analysis: 87% match — Petra Calloway\nHeight estimate: 5'9\" ± 2in (Petra: 5'10\")\nCamera malfunction: 22:31:00 — power cut to unit\nNote: Power cable found partially disconnected at junction box", "icon": "📹", "is_hidden": false, "sort_order": 3},
+    {"id": "ev-ri-04", "type": "phone_log", "title": "Owen's Dinner Recording", "description": "Owen Calloway's phone captured the final 20 minutes of the dinner argument. At 9:47pm, Isabelle is clearly heard saying: 'Petra, you stole from this family. I have the bank records. I'm calling Richard tomorrow.'", "content": "AUDIO TRANSCRIPT — Owen Calloway iPhone (recovered)\nTimestamp: 21:47:02\nIsabelle: '...I didn't raise you to be a thief, Petra.'\nPetra: 'Mother, you don't understand the pressures—'\nIsabelle: 'Petra, you stole from this family. I have the bank records. I'm calling Richard tomorrow and then I'm calling the police.'\nPetra: [sound of chair scraping] 'You wouldn't dare.'\nIsabelle: 'Go to bed. All of you. I'm done.'", "icon": "🎙️", "is_hidden": false, "sort_order": 4},
+    {"id": "ev-ri-05", "type": "document", "title": "Foundation Bank Records — $800K Discrepancy", "description": "Calloway Foundation accounts showing $800,000 in unexplained transfers to a personal account held by Petra Calloway's LLC between 2022–2026. Isabelle had handwritten 'THEFT' across the printout.", "content": "CALLOWAY FAMILY FOUNDATION — ACCOUNT AUDIT\nPrepared by: Isabelle Calloway (internal review)\nPeriod: Jan 2022 – Aug 2026\n\nAnomalous transfers identified:\n2022: $180,000 → Calloway Ventures LLC (Petra's entity)\n2023: $210,000 → Calloway Ventures LLC\n2024: $190,000 → Calloway Ventures LLC\n2025–2026: $220,000 → Calloway Ventures LLC\nTOTAL: $800,000\n\nHandwritten in red: 'THEFT — R. Finch — call police Mon AM'", "icon": "💳", "is_hidden": false, "sort_order": 5},
+    {"id": "ev-ri-06", "type": "forensic", "title": "Creek Bank Analysis — Struggle Marks", "description": "Forensic examination of the north creek bank shows two sets of shoe impressions — Isabelle's slippers and a second pair matching Petra's boots — and drag marks consistent with someone being forced face-down.", "content": "FORENSIC SCENE ANALYSIS — North Creek Bank\nSet A impressions: Size 6 slipper — matches victim's footwear\nSet B impressions: Size 38 hiking boot — matches Item B-004\nSet B depth: Deeper toward creek edge — indicates forward force applied\nDrag evidence: 40cm lateral disturbance in sediment\nConclusion: Second person present. Physical contact consistent with holding victim face-down.", "icon": "🌊", "is_hidden": true, "unlock_condition": "interrogate:marco", "sort_order": 6}
+  ]
+}

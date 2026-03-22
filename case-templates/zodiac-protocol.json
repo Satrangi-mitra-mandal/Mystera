@@ -1,0 +1,116 @@
+{
+  "title": "The Zodiac Protocol",
+  "slug": "zodiac-protocol",
+  "difficulty": "mastermind",
+  "setting": "Meridian Tech Campus, Austin, TX",
+  "is_weekly": false,
+  "background": "Dr. Asha Rao, lead AI researcher at Meridian Technologies, was found dead in her sealed lab at 11:52pm on February 14th, 2026 — Valentine's Day. Cause of death: cardiac arrest induced by a microwave-frequency pulse weapon, a classified device her own team had been developing for DARPA. The lab door was locked with biometric access. No external entry was recorded. The weapon was found wiped and replaced in its storage case. Someone on the inside killed her — and covered it up in minutes.",
+  "victim_name": "Dr. Asha Rao",
+  "victim_age": 39,
+  "victim_occupation": "Lead AI Researcher / DARPA Project Director, Meridian Technologies",
+  "victim_profile": {
+    "net_worth": "$1.8M",
+    "cause_of_death": "Cardiac arrest via directed microwave-frequency pulse (DEW — directed energy weapon)",
+    "clearance_level": "Top Secret / SCI",
+    "notes": "Asha was preparing to blow the whistle on illegal DARPA applications of her research",
+    "timeline": [
+      {"time": "FEB 14 · 8:00 PM", "event": "Team Dinner", "detail": "Asha has dinner with her research team in the campus cafeteria. Appears distracted. Leaves early at 9:15pm."},
+      {"time": "FEB 14 · 9:22 PM", "event": "Lab Access — Asha", "detail": "Biometric log shows Asha entering Lab 7 at 9:22pm. No subsequent exit recorded."},
+      {"time": "FEB 14 · 10:45 PM", "event": "Second Access Event", "detail": "A second biometric entry is logged at 10:45pm. The identity field is corrupted — shows only a partial employee ID."},
+      {"time": "FEB 14 · 11:52 PM", "event": "Emergency Alert", "detail": "Lab's environmental monitoring system triggers a thermal anomaly alert. Security finds Asha unresponsive. DEW device found in storage case — wiped."},
+      {"time": "FEB 15 · 2:00 AM", "event": "Site Lockdown", "detail": "Meridian CEO orders full campus lockdown. DARPA liaison arrives within 90 minutes — unusually fast."}
+    ]
+  },
+  "true_culprit_name": "Dr. Nathan Cole",
+  "true_motive": "Nathan Cole, Asha's deputy, had secretly sold classified research data to a foreign intelligence contractor. Asha had discovered the leak and was preparing to report it to DARPA that week. Nathan used the DEW prototype — which only he and Asha could operate — to kill her, then spoofed the biometric log entry to obscure his identity.",
+  "true_method": "Nathan bypassed the biometric system using a cloned fob he had built from his own credentials — a trick he knew from his classified systems background. He entered the lab at 10:45pm, activated the DEW at minimum duration setting (sufficient to induce fatal cardiac arrest without external marks), wiped the device, and exited. He then remotely corrupted the biometric log entry for that access event from his workstation.",
+  "required_evidence_ids": ["ev-zp-01", "ev-zp-03", "ev-zp-05", "ev-zp-06"],
+  "suspects": [
+    {
+      "name": "Dr. Nathan Cole",
+      "occupation": "Deputy Research Director, Meridian Technologies",
+      "personality": "Brilliant, methodical, and almost pathologically calm. Uses technical complexity to confuse. Shows micro-expressions of pride when discussing his own intelligence.",
+      "alibi": "Claims he was in his office all evening working. His workstation shows activity — but remote sessions can be scripted.",
+      "relationship_to_victim": "Asha's deputy for 4 years. She had recently begun excluding him from key meetings.",
+      "is_culprit": true,
+      "avatar": "👨‍🔬",
+      "motive_hint": "He was about to be exposed for something that would end his career and his freedom.",
+      "secrets": [
+        "He sold 14 classified research documents to a foreign intelligence broker over 18 months",
+        "Asha emailed him 3 days before her death: 'We need to talk about the Protocol 7 data logs. Alone.'",
+        "He built a cloned biometric fob from a template in the classified systems archive",
+        "He wrote a script to keep his workstation showing activity while he was physically in the lab"
+      ]
+    },
+    {
+      "name": "Colonel Dana Sherwood",
+      "occupation": "DARPA Liaison Officer",
+      "personality": "Military bearing, economy of words, assesses everything. Never answers a question directly. Her arrival 90 minutes after the incident is unexplained.",
+      "alibi": "Claims she was at a DoD dinner in Austin — verifiable for most of the evening. Her arrival time at the campus is suspicious.",
+      "relationship_to_victim": "Asha's DARPA oversight officer. Approved all research directions.",
+      "is_culprit": false,
+      "avatar": "🪖",
+      "motive_hint": "She arrived far too fast — either she was nearby, or she knew in advance.",
+      "secrets": [
+        "She was already in Austin that night — not at a DoD dinner in DC as initially claimed",
+        "DARPA had flagged a classified data leak from Meridian and sent her to investigate quietly",
+        "She knew Asha was preparing a whistleblower report — she had been trying to convince Asha to go through official channels instead",
+        "She arrived quickly because she'd been waiting nearby for Asha's scheduled call, which never came"
+      ]
+    },
+    {
+      "name": "Priti Menon",
+      "occupation": "Research Engineer, Meridian Technologies",
+      "personality": "Nervous, self-protective, over-rehearsed. Has clearly thought carefully about what to say.",
+      "alibi": "Left the campus at 9:30pm — badge exit log confirms. But her personal car was still in the parking lot at 11pm.",
+      "relationship_to_victim": "Asha's most trusted engineer. Worked closest with the DEW prototype.",
+      "is_culprit": false,
+      "avatar": "👩‍💻",
+      "motive_hint": "She left by badge — but her car didn't leave with her.",
+      "secrets": [
+        "She left by the side exit to avoid cameras — she was meeting someone on campus she didn't want recorded",
+        "She was meeting a journalist to leak the DARPA misuse story — Asha had approved this",
+        "She has a complete copy of the whistleblower report Asha was preparing"
+      ]
+    },
+    {
+      "name": "Victor Lam",
+      "occupation": "Head of Security, Meridian Technologies",
+      "personality": "Defensive, territorial about his department. Speaks in passive voice when uncomfortable. Hates being asked about the biometric corruption.",
+      "alibi": "On duty all night — security desk logs confirm. But the biometric system is his responsibility.",
+      "relationship_to_victim": "Managed campus security. Asha had complained about security protocol gaps 2 weeks before her death.",
+      "is_culprit": false,
+      "avatar": "💂",
+      "motive_hint": "The biometric log corruption — that's his system. How did someone break it?",
+      "secrets": [
+        "He received an anonymous tip 3 days before Asha's death about a biometric fob vulnerability",
+        "He did not report or patch the vulnerability — he was afraid of the paperwork implications",
+        "Nathan Cole had once asked him a hypothetical about cloned fob detection — Victor told him the system couldn't detect it"
+      ]
+    },
+    {
+      "name": "Dr. Juno Marsh",
+      "occupation": "Ethics & Compliance Officer, Meridian Technologies",
+      "personality": "Precise, principled, visibly angry about what happened. The only person who seems genuinely outraged.",
+      "alibi": "Working from home all evening — verified via VPN logs and video call with her partner.",
+      "relationship_to_victim": "Asha had formally filed a compliance concern with Juno 4 days before her death.",
+      "is_culprit": false,
+      "avatar": "🧑‍💼",
+      "motive_hint": "She was the one Asha trusted with the report — she may know who the target was.",
+      "secrets": [
+        "Asha's formal complaint named Nathan Cole as the source of the data leak",
+        "Juno had already escalated it to DARPA the morning of Asha's death — before the murder",
+        "She has a printed copy of the complaint locked in her home safe",
+        "Nathan knew the complaint had been filed — Juno's assistant let it slip"
+      ]
+    }
+  ],
+  "evidence": [
+    {"id": "ev-zp-01", "type": "forensic", "title": "DEW Device — Forensic Analysis", "description": "The directed energy weapon prototype was found in its storage case — wiped. However, trace epithelial cells were recovered from the grip. DNA profile generated: male, consistent with someone on the 6-person research team.", "content": "FORENSIC BIOLOGY — Item DEW-001\nItem: Directed energy weapon prototype (DARPA Project 7)\nSurface wipe: Attempted — isopropyl alcohol\nResidual DNA: Trace epithelial cells — grip surface\nProfile: Male, full STR profile generated\nTeam match pending: 6 male researchers on access list\nNote: Device was operational 2–4 hours before discovery (thermal residue)", "icon": "🔫", "is_hidden": false, "sort_order": 1},
+    {"id": "ev-zp-02", "type": "cctv", "title": "Biometric Log — Corrupted Entry (10:45 PM)", "description": "The access log for Lab 7 at 10:45pm shows a partial employee ID: 'N__-0**'. The corruption is targeted — only this single entry is affected. A digital forensics expert confirms the corruption was applied remotely, from inside the campus network, at 11:58pm.", "content": "BIOMETRIC ACCESS LOG — Lab 7\n21:22:04 — DR_RAO_A-001 — ENTRY — VALID\n22:45:17 — N__-0** [CORRUPTED] — ENTRY — VALID\nLog integrity: COMPROMISED\nCorruption applied: 23:58:11 (remotely)\nSource workstation: Internal network — IP 10.0.4.87\nWorkstation 10.0.4.87 assigned to: Dr. Nathan Cole", "icon": "🖥️", "is_hidden": false, "sort_order": 2},
+    {"id": "ev-zp-03", "type": "document", "title": "Asha's Whistleblower Report — Draft", "description": "A draft report found on Asha's personal encrypted cloud. Dated February 11th, three days before her death. It names Nathan Cole as the source of classified data leaks to a foreign broker, and includes 14 document reference numbers.", "content": "CONFIDENTIAL — DARPA COMPLIANCE REPORT\nPrepared by: Dr. Asha Rao\nDate: February 11, 2026\nSubject: Classified Data Exfiltration — Meridian Technologies\n\nI have reason to believe Dr. Nathan Cole (Deputy Director) has transferred classified research documents to an undisclosed foreign party on at least 14 occasions between August 2024 and January 2026.\n\nDocument references: [14 entries listed]\nEvidence basis: Access log analysis, anomalous export events, encrypted transfer signatures\n\nI intend to submit this to Colonel Sherwood on February 16th.", "icon": "📋", "is_hidden": false, "sort_order": 3},
+    {"id": "ev-zp-04", "type": "phone_log", "title": "Nathan's Email — 'We Need to Talk'", "description": "An email chain showing Asha sent Nathan a message on February 11th: 'We need to talk about the Protocol 7 data logs. Alone. My office, Friday.' Nathan's reply: 'Of course. I'll be there.' Friday was February 14th — the day she died.", "content": "EMAIL CHAIN — Internal Meridian System\nFEB 11 — Asha Rao to Nathan Cole:\n'Nathan — We need to talk about the Protocol 7 data logs. Alone. My office, Friday 9pm after the team leaves. Don't mention this to anyone.'\n\nFEB 11 — Nathan Cole to Asha Rao:\n'Of course. I'll be there. Is everything alright?'\n\nFEB 14 — Asha Rao to Nathan Cole (3:17pm):\n'Still on for tonight. Please come prepared to explain the August–January export logs.'", "icon": "📧", "is_hidden": false, "sort_order": 4},
+    {"id": "ev-zp-05", "type": "forensic", "title": "Cloned Biometric Fob — Component Parts", "description": "A small components kit found in Nathan Cole's desk drawer during the search. Contains a blank RFID card, a credential-cloning module, and a thermal trace — consistent with recent use within the last 48 hours.", "content": "SEARCH RESULT — Nathan Cole Desk Drawer\nItem A: Blank RFID smart card (campus-compatible format)\nItem B: HID credential cloning module (classified — should not exist on campus)\nItem C: Thermal camera residue — used within 48 hours\nItem D: Handwritten note: 'fob format: 26-bit Wiegand, site code 14'\nAssessment: Consistent with construction of a cloned access fob", "icon": "🔑", "is_hidden": false, "sort_order": 5},
+    {"id": "ev-zp-06", "type": "document", "title": "Foreign Broker — Encrypted Transfer Logs", "description": "Extracted from Asha's report evidence file: 14 encrypted file transfers from a workstation registered to Nathan Cole, routed through a VPN to a server in a jurisdiction known for intelligence brokerage. Transfer sizes match the 14 classified documents Asha referenced.", "content": "TRANSFER LOG ANALYSIS — Protocol 7 Access Events\nSource: Workstation 10.0.4.87 (Dr. Nathan Cole)\nVPN routing: Exit node — [CLASSIFIED JURISDICTION]\nTransfer events: 14 confirmed\nDate range: August 2024 – January 2026\nFile sizes: Match 14 classified Protocol 7 documents exactly\nEncryption used: PGP — recipient public key not on Meridian systems\nConclusion: Deliberate exfiltration. Technically sophisticated.", "icon": "🌐", "is_hidden": true, "unlock_condition": "interrogate:juno", "sort_order": 6}
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "title": "The Glass Garden",
+  "slug": "glass-garden",
+  "difficulty": "detective",
+  "setting": "Voss Botanical Institute, Vienna, Austria",
+  "is_weekly": false,
+  "background": "Renowned botanist and poison expert Professor Emil Voss was found dead inside his locked greenhouse at the Voss Botanical Institute on a cold Thursday morning. Cause of death: contact poisoning from a rare Amazonian plant — one he himself had cultivated and kept under strict lock and key. The only people with access to the greenhouse were his four research assistants and his wife. The greenhouse was sealed from the inside. No windows were broken. The Professor died surrounded by the most dangerous plants in Europe — and someone knew exactly which one to use.",
+  "victim_name": "Professor Emil Voss",
+  "victim_age": 71,
+  "victim_occupation": "Botanist / Director, Voss Botanical Institute",
+  "victim_profile": {
+    "net_worth": "$3.1M",
+    "cause_of_death": "Dermal absorption of Dendrocnide moroides alkaloid (concentrated extract)",
+    "notes": "Voss was on the verge of publishing research that would invalidate a $200M pharmaceutical patent",
+    "timeline": [
+      {"time": "THU 6:00 AM", "event": "Voss Enters Greenhouse", "detail": "Voss is seen on external camera entering the greenhouse alone at 6:02am — his usual morning routine."},
+      {"time": "THU 6:45 AM", "event": "Assistant Arrives", "detail": "Research assistant Klara Benz arrives at the institute and notices the greenhouse light has been on longer than usual."},
+      {"time": "THU 7:14 AM", "event": "Body Discovered", "detail": "Klara uses her key to enter. Finds Voss collapsed near the Dendrocnide specimens, his skin showing severe contact reaction. He is unresponsive."},
+      {"time": "THU 8:30 AM", "event": "Police Arrive", "detail": "Vienna police secure the scene. The greenhouse was locked from the inside — Voss's key is in his coat pocket."},
+      {"time": "THU 11:00 AM", "event": "Toxicology Preliminary", "detail": "Pathologist confirms dermal exposure to concentrated Dendrocnide alkaloid. Natural contact with the plant could not produce this concentration — it was applied deliberately."}
+    ]
+  },
+  "true_culprit_name": "Dr. Ingrid Voss",
+  "true_motive": "Ingrid, Emil's wife and co-director, had secretly entered into a consulting agreement with PharmaCorp — the company whose patent Emil's research would destroy. They paid her €800,000 to delay or suppress his findings. When Emil discovered the arrangement, he told her he was filing for divorce and reporting her to the institute's ethics board. She killed him the night before, coating his morning tea thermos handle with concentrated Dendrocnide extract.",
+  "true_method": "Ingrid used her key to enter the greenhouse the night before at 11pm (not recorded because she disabled the interior camera under the guise of 'maintenance'). She applied a concentrated Dendrocnide alkaloid extract — prepared in her private lab — to the handle of Emil's personal thermos, which he always brought to the greenhouse. She knew he never wore gloves for his morning routine. She was in her office by 6am, establishing an alibi.",
+  "required_evidence_ids": ["ev-gg-01", "ev-gg-03", "ev-gg-04"],
+  "suspects": [
+    {
+      "name": "Dr. Ingrid Voss",
+      "occupation": "Co-Director, Voss Botanical Institute / Emil's Wife",
+      "personality": "Composed grief. Performs emotion precisely when needed. Extraordinarily detail-oriented. Corrects factual errors during the interrogation even when it's not in her interest.",
+      "alibi": "Claims she was home all night, arriving at the institute at 6:15am. Institute entry log confirms 6:15am. Home security shows no external departure after 10pm.",
+      "relationship_to_victim": "Wife of 34 years. Also his professional co-director. Their marriage had reportedly 'cooled' in recent years.",
+      "is_culprit": true,
+      "avatar": "🌹",
+      "motive_hint": "She had a secret financial relationship with the company Emil was about to destroy.",
+      "secrets": [
+        "PharmaCorp paid her €800,000 into a private Austrian account to suppress Emil's research",
+        "Emil found the account 4 days before his death and confronted her",
+        "She disabled the greenhouse interior camera on Wednesday under the guise of 'scheduled maintenance'",
+        "She coated the thermos handle with extract she prepared in her private lab — wearing nitrile gloves",
+        "Her home security system has a 12-minute gap she created manually at 11pm"
+      ]
+    },
+    {
+      "name": "Klara Benz",
+      "occupation": "Senior Research Assistant",
+      "personality": "Methodical, anxious, deeply loyal to Voss's scientific legacy. Talks too much when nervous.",
+      "alibi": "Arrived at the institute at 6:45am — confirmed by external camera and entry log. Has a gym receipt for 5:30am that morning.",
+      "relationship_to_victim": "Worked with Voss for 9 years. Closest to the Dendrocnide specimens. Co-authored his suppressed paper.",
+      "is_culprit": false,
+      "avatar": "🌿",
+      "motive_hint": "She had the knowledge and access — but she also stood to gain from the research being published.",
+      "secrets": [
+        "She knew about PharmaCorp's interest in suppressing the paper — Voss had told her",
+        "She noticed the greenhouse camera had been 'off for maintenance' the previous evening",
+        "She found the thermos on the ground near Voss and moved it before police arrived — she didn't realise its significance"
+      ]
+    },
+    {
+      "name": "Dr. Franz Huber",
+      "occupation": "Research Fellow / Pharmaceutical Toxicologist",
+      "personality": "Intellectually arrogant. Believes he is the smartest person in any room. Dislikes being questioned by people he considers his inferiors.",
+      "alibi": "Was at a symposium in Salzburg — confirmed by hotel check-in and multiple witnesses.",
+      "relationship_to_victim": "Voss's former student. They had a falling out over credit on a 2019 paper. Recently reconciled.",
+      "is_culprit": false,
+      "avatar": "🧪",
+      "motive_hint": "He knows exactly how to extract and apply the compound — it's his speciality.",
+      "secrets": [
+        "He secretly consulted for PharmaCorp on a separate project — but didn't know about the suppression payment",
+        "His alibi is completely solid — he was genuinely in Salzburg",
+        "He knows the Dendrocnide extract couldn't have achieved this concentration through natural contact"
+      ]
+    },
+    {
+      "name": "Tomáš Novák",
+      "occupation": "Institute Administrator / Operations Manager",
+      "personality": "Bureaucratic, evasive, obsessed with process and paperwork. Hides behind procedure.",
+      "alibi": "Was in the building from 7am — confirmed. Claims he has no greenhouse key.",
+      "relationship_to_victim": "Managed institute finances. Recently flagged an unexplained €200K budget discrepancy to the board.",
+      "is_culprit": false,
+      "avatar": "📁",
+      "motive_hint": "He found a financial irregularity — but it led him somewhere uncomfortable.",
+      "secrets": [
+        "The €200K discrepancy traced back to Ingrid Voss's private expense account",
+        "He reported it to the board — but the board chair is a PharmaCorp investor",
+        "He was told to 'let it drop' and is frightened",
+        "He has a printout of the transactions in his desk that he hasn't shown to police yet"
+      ]
+    },
+    {
+      "name": "Sofie Radler",
+      "occupation": "Junior Research Assistant / PhD Candidate",
+      "personality": "Quiet, observant, speaks only when she has something precise to say. Misses nothing.",
+      "alibi": "Was at the university library until midnight the night before. Home by 12:30am.",
+      "relationship_to_victim": "Voss's most recent research student. He was supervising her PhD on toxic flora.",
+      "is_culprit": false,
+      "avatar": "🔬",
+      "motive_hint": "She saw something the night before that she hasn't mentioned to anyone.",
+      "secrets": [
+        "She walked past the institute at 11:05pm on her way home and saw a light on in the greenhouse",
+        "She recognised Ingrid Voss's car in the car park at that hour",
+        "She assumed it was normal and went home — she didn't connect it until after the discovery"
+      ]
+    }
+  ],
+  "evidence": [
+    {"id": "ev-gg-01", "type": "forensic", "title": "Thermos Handle — Dendrocnide Extract", "description": "Emil's personal thermos, recovered from the greenhouse floor. The handle tests positive for a highly concentrated Dendrocnide moroides alkaloid extract — 40x the concentration possible through natural plant contact. The extract was applied externally.", "content": "TOXICOLOGY — Item TH-001 (Thermos, personal — Prof. Voss)\nHandle surface: Dendrocnide moroides alkaloid — POSITIVE\nConcentration: 40x natural contact threshold\nApplication: External, deliberate — lipid-carrier medium used\nAbsorption route: Dermal — hand grip\nConclusion: Substance was prepared and applied deliberately. Not natural exposure.", "icon": "🫖", "is_hidden": false, "sort_order": 1},
+    {"id": "ev-gg-02", "type": "cctv", "title": "Interior Camera — Disabled (Wednesday 10 PM)", "description": "The greenhouse interior camera was taken offline at 10:04pm Wednesday evening — 8 hours before Voss's death. The maintenance log shows the work order was submitted and approved by Dr. Ingrid Voss.", "content": "SECURITY SYSTEM LOG — Greenhouse Interior Cam\n22:04:11 WED — Camera offline (manual disconnect)\nMaintenance work order: WO-2026-0213\nSubmitted by: Dr. Ingrid Voss\nApproved by: Dr. Ingrid Voss\nScheduled return: Thursday 8:00am\nNote: No other maintenance was performed during this window", "icon": "📹", "is_hidden": false, "sort_order": 2},
+    {"id": "ev-gg-03", "type": "document", "title": "PharmaCorp — Secret Consulting Agreement", "description": "A contract found in a private encrypted folder on Ingrid Voss's institute computer. PharmaCorp retains Dr. Ingrid Voss as a 'Scientific Advisor' for €800,000. The contract includes a confidentiality clause specifically preventing her from facilitating publication of 'adverse competitive research'.", "content": "CONSULTING AGREEMENT — CONFIDENTIAL\nParty A: PharmaCorp AG\nParty B: Dr. Ingrid Voss (private capacity)\nFee: €800,000 (paid in 4 tranches to private account)\nScope: Scientific advisory services\nConfidentiality clause 4.2: 'Advisor shall not facilitate, support, or enable the publication of research materially adverse to PharmaCorp's intellectual property position.'\nSigned: Dr. Ingrid Voss — January 14, 2026", "icon": "📑", "is_hidden": false, "sort_order": 3},
+    {"id": "ev-gg-04", "type": "forensic", "title": "Private Lab — Extract Preparation Evidence", "description": "Ingrid Voss's private laboratory (adjacent to her office) shows traces of Dendrocnide alkaloid on a mortar and pestle and on a pair of nitrile gloves found in the waste bin. The preparation was recent — within 24 hours of analysis.", "content": "FORENSIC ANALYSIS — Dr. Ingrid Voss Private Lab\nMortar/pestle surface: Dendrocnide alkaloid traces — POSITIVE\nWaste bin: Nitrile gloves (1 pair) — inner surface clean, outer surface trace alkaloid\nPreparation residue age: Less than 24 hours at time of analysis\nEquipment: Consistent with manual extraction of plant alkaloid\nConclusion: Alkaloid was prepared in this lab recently using standard botanical extraction technique", "icon": "🧫", "is_hidden": false, "sort_order": 4},
+    {"id": "ev-gg-05", "type": "cctv", "title": "External Car Park — Ingrid's Car (11 PM)", "description": "The institute's external car park camera shows Ingrid Voss's car — a blue Mercedes C-Class, plate confirmed — parked at the institute at 11:02pm Wednesday. She claimed she was home all night. Her home security log shows a 12-minute gap between 10:58pm and 11:10pm.", "content": "EXTERNAL CAMERA — Institute Car Park\n23:02:14 WED — Blue Mercedes C-Class enters car park\nPlate: W-823-IV — registered to Dr. Ingrid Voss\n23:47:33 WED — Same vehicle departs\n\nHOME SECURITY LOG (cross-reference):\nGap identified: 22:58–23:10 (12 minutes — no sensor data)\nNote: Gap is consistent with manual system override", "icon": "🚗", "is_hidden": true, "unlock_condition": "interrogate:sofie", "sort_order": 5},
+    {"id": "ev-gg-06", "type": "document", "title": "Emil's Private Journal — Final Entry", "description": "A leather journal found in Emil's desk. The final entry, dated the morning before his death, reads: 'Ingrid has betrayed everything. I confronted her last night. She did not deny it. I have instructed Robert to prepare the divorce papers and I will contact the ethics board on Friday. I am afraid.'", "content": "JOURNAL ENTRY — Prof. Emil Voss\nDate: Wednesday, February 12, 2026\n\n'Ingrid has betrayed everything. I found the PharmaCorp documents by chance — she left her laptop open. I confronted her last night. She did not deny it. She said it was 'practical'. I do not know this woman.\n\nI have instructed Robert to prepare the divorce papers and I will contact the institute ethics board on Friday morning.\n\nI am afraid of what she might do. Perhaps I am being dramatic. I have known her 34 years.'\n\n[No further entries]", "icon": "📖", "is_hidden": true, "unlock_condition": "interrogate:klara", "sort_order": 6}
+  ]
+}

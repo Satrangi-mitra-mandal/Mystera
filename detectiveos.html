@@ -1,0 +1,3571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DetectiveOS — Solve The Case</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Special+Elite&family=IBM+Plex+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap');
+
+    :root {
+      --ink: #0d0b08;
+      --paper: #f4ede0;
+      --aged: #e8d9c0;
+      --amber: #c8913a;
+      --amber-dark: #9b6b20;
+      --amber-glow: rgba(200, 145, 58, 0.15);
+      --red: #8b1a1a;
+      --red-bright: #c0392b;
+      --green: #1a3a2a;
+      --wire-blue: #2e4a7a;
+      --wire-red: #7a2e2e;
+      --wire-yellow: #7a6a2e;
+      --board: #1a110a;
+      --board-felt: #2a1f15;
+      --shadow: rgba(0, 0, 0, 0.6);
+      --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--ink);
+      color: var(--paper);
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 16px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── GRAIN OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: var(--grain);
+      background-size: 200px 200px;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.6;
+    }
+
+    /* ══════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════ */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 56px;
+      background: rgba(13, 11, 8, 0.95);
+      border-bottom: 1px solid rgba(200, 145, 58, 0.2);
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--amber);
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-logo span {
+      color: var(--paper);
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 0;
+      list-style: none;
+    }
+
+    .nav-tabs li button {
+      background: none;
+      border: none;
+      color: rgba(244, 237, 224, 0.5);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.4rem 1.1rem;
+      cursor: pointer;
+      transition: color 0.2s, background 0.2s;
+      border-radius: 2px;
+    }
+
+    .nav-tabs li button:hover,
+    .nav-tabs li button.active {
+      color: var(--amber);
+      background: rgba(200, 145, 58, 0.08);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .badge-xp {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--amber);
+      background: rgba(200, 145, 58, 0.12);
+      border: 1px solid rgba(200, 145, 58, 0.3);
+      padding: 0.2rem 0.6rem;
+      border-radius: 2px;
+      letter-spacing: 0.1em;
+    }
+
+    .btn-nav {
+      background: var(--amber);
+      color: var(--ink);
+      border: none;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.45rem 1rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background 0.2s;
+    }
+
+    .btn-nav:hover {
+      background: var(--amber-dark);
+    }
+
+    /* ══════════════════════════════════════════
+   SCREEN SYSTEM
+══════════════════════════════════════════ */
+    .screen {
+      display: none;
+      padding-top: 56px;
+      min-height: 100vh;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ══════════════════════════════════════════
+   LANDING / HERO
+══════════════════════════════════════════ */
+    #screen-landing {
+      position: relative;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    #screen-landing.active {
+      display: flex;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 40%, rgba(200, 145, 58, 0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 20% 80%, rgba(139, 26, 26, 0.08) 0%, transparent 60%),
+        linear-gradient(180deg, #0d0b08 0%, #120e09 100%);
+    }
+
+    .hero-lines {
+      position: absolute;
+      inset: 0;
+      opacity: 0.04;
+      background-image: repeating-linear-gradient(0deg, var(--paper) 0, var(--paper) 1px, transparent 1px, transparent 60px);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 680px;
+      padding: 2rem;
+    }
+
+    .hero-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+
+    .hero-eyebrow::before,
+    .hero-eyebrow::after {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: var(--amber);
+      opacity: 0.5;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.5rem, 8vw, 6rem);
+      font-weight: 900;
+      line-height: 0.95;
+      color: var(--paper);
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--amber);
+    }
+
+    .hero-sub {
+      font-family: 'Crimson Pro', serif;
+      font-size: 1.2rem;
+      font-weight: 300;
+      font-style: italic;
+      color: rgba(244, 237, 224, 0.6);
+      margin-bottom: 2.5rem;
+      line-height: 1.5;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--amber);
+      color: var(--ink);
+      border: none;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.9rem 2.2rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateX(-100%);
+      transition: transform 0.3s;
+    }
+
+    .btn-primary:hover {
+      background: #d4a04a;
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:hover::after {
+      transform: translateX(0);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--paper);
+      border: 1px solid rgba(244, 237, 224, 0.25);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.9rem 2.2rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
+    .hero-stats {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      gap: 3rem;
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(244, 237, 224, 0.1);
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--amber);
+    }
+
+    .stat-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(244, 237, 224, 0.4);
+      margin-top: 0.2rem;
+    }
+
+    /* ══════════════════════════════════════════
+   CASE BROWSER
+══════════════════════════════════════════ */
+    #screen-cases {
+      padding: 56px 0 4rem;
+    }
+
+    .page-header {
+      padding: 3rem 2rem 2rem;
+      border-bottom: 1px solid rgba(200, 145, 58, 0.15);
+      margin-bottom: 2rem;
+    }
+
+    .page-header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--paper);
+    }
+
+    .page-title small {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.3rem;
+      font-weight: 400;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: 1px solid rgba(244, 237, 224, 0.15);
+      color: rgba(244, 237, 224, 0.5);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.9rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active,
+    .filter-btn:hover {
+      border-color: var(--amber);
+      color: var(--amber);
+      background: var(--amber-glow);
+    }
+
+    .cases-grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .case-card {
+      background: linear-gradient(135deg, #1c1510 0%, #150f0a 100%);
+      border: 1px solid rgba(200, 145, 58, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .case-card:hover {
+      border-color: rgba(200, 145, 58, 0.5);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(200, 145, 58, 0.1);
+    }
+
+    .case-card.weekly::before {
+      content: 'WEEKLY CHALLENGE';
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.2em;
+      background: var(--red);
+      color: var(--paper);
+      padding: 0.2rem 0.5rem;
+      border-radius: 2px;
+      z-index: 2;
+    }
+
+    .case-img {
+      width: 100%;
+      height: 160px;
+      background: linear-gradient(135deg, #1a1008, #2a1a08);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .case-img-art {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.6;
+    }
+
+    /* SVG crime scene illustration */
+    .case-scene {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .case-body {
+      padding: 1.2rem 1.4rem 1.4rem;
+    }
+
+    .case-meta {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.8rem;
+      align-items: center;
+    }
+
+    .case-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.5rem;
+      border-radius: 2px;
+    }
+
+    .tag-rookie {
+      background: rgba(26, 58, 42, 0.4);
+      color: #5ab87a;
+      border: 1px solid rgba(90, 184, 122, 0.3);
+    }
+
+    .tag-detective {
+      background: rgba(46, 74, 122, 0.4);
+      color: #7aabff;
+      border: 1px solid rgba(122, 171, 255, 0.3);
+    }
+
+    .tag-mastermind {
+      background: rgba(122, 46, 46, 0.4);
+      color: #ff7a7a;
+      border: 1px solid rgba(255, 122, 122, 0.3);
+    }
+
+    .case-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--paper);
+      margin-bottom: 0.4rem;
+      line-height: 1.2;
+    }
+
+    .case-desc {
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.9rem;
+      font-weight: 300;
+      font-style: italic;
+      color: rgba(244, 237, 224, 0.55);
+      line-height: 1.5;
+      margin-bottom: 1.1rem;
+    }
+
+    .case-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(244, 237, 224, 0.08);
+    }
+
+    .case-stats-mini {
+      display: flex;
+      gap: 1.2rem;
+    }
+
+    .mini-stat {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      color: rgba(244, 237, 224, 0.4);
+      letter-spacing: 0.08em;
+    }
+
+    .mini-stat strong {
+      display: block;
+      color: var(--amber);
+      font-size: 0.8rem;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+    }
+
+    .btn-solve {
+      background: transparent;
+      border: 1px solid var(--amber);
+      color: var(--amber);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.45rem 1rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+
+    .btn-solve:hover {
+      background: var(--amber);
+      color: var(--ink);
+    }
+
+    /* ══════════════════════════════════════════
+   CASE FILE VIEW
+══════════════════════════════════════════ */
+    #screen-case {
+      padding: 56px 0 4rem;
+    }
+
+    .case-layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 2rem;
+    }
+
+    @media (max-width: 900px) {
+      .case-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .case-main {}
+
+    /* File header */
+    .case-file-header {
+      background: linear-gradient(135deg, #1c1510, #150f0a);
+      border: 1px solid rgba(200, 145, 58, 0.3);
+      border-radius: 4px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .case-file-header::before {
+      content: 'CLASSIFIED';
+      position: absolute;
+      top: 50%;
+      right: -20px;
+      transform: translateY(-50%) rotate(-30deg);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 5rem;
+      font-weight: 500;
+      color: var(--red);
+      opacity: 0.06;
+      letter-spacing: 0.3em;
+      pointer-events: none;
+    }
+
+    .case-file-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--amber);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+
+    .case-file-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--paper);
+      margin-bottom: 0.4rem;
+    }
+
+    .case-file-victim {
+      font-family: 'Crimson Pro', serif;
+      font-style: italic;
+      color: rgba(244, 237, 224, 0.5);
+      margin-bottom: 1.2rem;
+    }
+
+    .case-bg-text {
+      font-family: 'Crimson Pro', serif;
+      font-size: 1rem;
+      line-height: 1.7;
+      color: rgba(244, 237, 224, 0.75);
+    }
+
+    /* Tabs inside case */
+    .case-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid rgba(200, 145, 58, 0.2);
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+    }
+
+    .case-tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: rgba(244, 237, 224, 0.4);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.7rem 1.2rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      margin-bottom: -1px;
+    }
+
+    .case-tab-btn.active {
+      color: var(--amber);
+      border-bottom-color: var(--amber);
+    }
+
+    .case-tab-btn:hover {
+      color: rgba(244, 237, 224, 0.8);
+    }
+
+    .case-tab-content {
+      display: none;
+    }
+
+    .case-tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(180deg, var(--amber) 0%, rgba(200, 145, 58, 0.1) 100%);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(244, 237, 224, 0.05);
+    }
+
+    .timeline-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -1.9rem;
+      top: 4px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--amber);
+      border: 2px solid var(--ink);
+      box-shadow: 0 0 8px rgba(200, 145, 58, 0.5);
+    }
+
+    .timeline-time {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--amber);
+      letter-spacing: 0.15em;
+      margin-bottom: 0.3rem;
+    }
+
+    .timeline-event {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--paper);
+      margin-bottom: 0.3rem;
+    }
+
+    .timeline-detail {
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.9rem;
+      color: rgba(244, 237, 224, 0.55);
+      line-height: 1.5;
+    }
+
+    /* Evidence grid */
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .evidence-card {
+      background: #1a110a;
+      border: 1px solid rgba(200, 145, 58, 0.15);
+      border-radius: 3px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .evidence-card:hover {
+      border-color: rgba(200, 145, 58, 0.4);
+      background: #221508;
+    }
+
+    .evidence-card.locked {
+      opacity: 0.4;
+      filter: blur(0.5px);
+      cursor: not-allowed;
+    }
+
+    .evidence-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.6rem;
+      display: block;
+    }
+
+    .evidence-type {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(244, 237, 224, 0.35);
+      margin-bottom: 0.3rem;
+    }
+
+    .evidence-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--paper);
+      line-height: 1.3;
+    }
+
+    .evidence-hint {
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.8rem;
+      font-style: italic;
+      color: rgba(244, 237, 224, 0.4);
+      margin-top: 0.3rem;
+    }
+
+    .lock-icon {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 0.7rem;
+      color: rgba(244, 237, 224, 0.2);
+    }
+
+    /* Suspects */
+    .suspects-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .suspect-row {
+      background: #1a110a;
+      border: 1px solid rgba(200, 145, 58, 0.15);
+      border-radius: 3px;
+      padding: 1.2rem;
+      display: grid;
+      grid-template-columns: 48px 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .suspect-row:hover {
+      border-color: rgba(200, 145, 58, 0.35);
+      background: #221508;
+    }
+
+    .suspect-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2a1a08, #1a1008);
+      border: 1px solid rgba(200, 145, 58, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .suspect-info {}
+
+    .suspect-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--paper);
+    }
+
+    .suspect-role {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      color: rgba(244, 237, 224, 0.4);
+      letter-spacing: 0.1em;
+      margin-top: 0.1rem;
+    }
+
+    .suspect-status {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .status-clean {
+      color: #5ab87a;
+    }
+
+    .status-suspicious {
+      color: #f0a500;
+    }
+
+    .status-interrogated {
+      color: var(--amber);
+    }
+
+    /* Sidebar */
+    .case-sidebar {}
+
+    .sidebar-card {
+      background: #1a110a;
+      border: 1px solid rgba(200, 145, 58, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 1.2rem;
+    }
+
+    .sidebar-card-header {
+      padding: 0.8rem 1.2rem;
+      background: rgba(200, 145, 58, 0.08);
+      border-bottom: 1px solid rgba(200, 145, 58, 0.15);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+
+    .sidebar-card-body {
+      padding: 1.2rem;
+    }
+
+    .progress-bar-wrap {
+      margin-bottom: 0.8rem;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      color: rgba(244, 237, 224, 0.5);
+      margin-bottom: 0.3rem;
+      letter-spacing: 0.08em;
+    }
+
+    .progress-bar {
+      height: 4px;
+      background: rgba(244, 237, 224, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--amber);
+      border-radius: 2px;
+      transition: width 0.6s ease;
+    }
+
+    .victim-profile {}
+
+    .victim-field {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.45rem 0;
+      border-bottom: 1px solid rgba(244, 237, 224, 0.06);
+      font-size: 0.85rem;
+    }
+
+    .victim-field:last-child {
+      border-bottom: none;
+    }
+
+    .victim-field-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      color: rgba(244, 237, 224, 0.35);
+      letter-spacing: 0.1em;
+    }
+
+    .victim-field-val {
+      font-family: 'Crimson Pro', serif;
+      color: rgba(244, 237, 224, 0.8);
+      text-align: right;
+      max-width: 60%;
+    }
+
+    .btn-board {
+      width: 100%;
+      background: linear-gradient(135deg, #2a1f15, #1a110a);
+      border: 1px solid var(--amber);
+      color: var(--amber);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.8rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-board:hover {
+      background: var(--amber);
+      color: var(--ink);
+    }
+
+    /* ══════════════════════════════════════════
+   EVIDENCE BOARD
+══════════════════════════════════════════ */
+    #screen-board {
+      padding: 56px 0 0;
+    }
+
+    .board-toolbar {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.8rem 1.5rem;
+      background: rgba(13, 11, 8, 0.9);
+      border-bottom: 1px solid rgba(200, 145, 58, 0.15);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .board-tool-btn {
+      background: rgba(244, 237, 224, 0.05);
+      border: 1px solid rgba(244, 237, 224, 0.1);
+      color: rgba(244, 237, 224, 0.6);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.8rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+
+    .board-tool-btn.active,
+    .board-tool-btn:hover {
+      background: rgba(200, 145, 58, 0.12);
+      border-color: rgba(200, 145, 58, 0.4);
+      color: var(--amber);
+    }
+
+    .board-separator {
+      width: 1px;
+      height: 24px;
+      background: rgba(244, 237, 224, 0.1);
+      margin: 0 0.3rem;
+    }
+
+    .board-title-label {
+      margin-left: auto;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.85rem;
+      font-style: italic;
+      color: rgba(244, 237, 224, 0.25);
+    }
+
+    #board-canvas {
+      width: 100%;
+      height: calc(100vh - 56px - 52px);
+      background: var(--board-felt);
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+      background-image:
+        radial-gradient(circle at 15% 85%, rgba(139, 26, 26, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 85% 15%, rgba(200, 145, 58, 0.04) 0%, transparent 40%),
+        repeating-linear-gradient(0deg, transparent, transparent 29px, rgba(244, 237, 224, 0.015) 30px),
+        repeating-linear-gradient(90deg, transparent, transparent 29px, rgba(244, 237, 224, 0.015) 30px);
+    }
+
+    /* SVG lines canvas overlay */
+    #connections-svg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      width: 100%;
+      height: 100%;
+    }
+
+    .board-pin {
+      position: absolute;
+      background: #1e1408;
+      border: 1px solid rgba(200, 145, 58, 0.35);
+      border-radius: 3px;
+      padding: 0.7rem 0.9rem;
+      min-width: 130px;
+      max-width: 180px;
+      cursor: grab;
+      user-select: none;
+      box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(200, 145, 58, 0.08);
+      transition: box-shadow 0.15s;
+      z-index: 10;
+    }
+
+    .board-pin:active {
+      cursor: grabbing;
+    }
+
+    .board-pin.selected {
+      border-color: var(--amber);
+      box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.6), 0 0 12px rgba(200, 145, 58, 0.3);
+    }
+
+    .board-pin.suspect-pin {
+      border-color: rgba(122, 171, 255, 0.4);
+    }
+
+    .board-pin.suspect-pin.selected {
+      border-color: #7aabff;
+      box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.6), 0 0 12px rgba(122, 171, 255, 0.25);
+    }
+
+    /* Pin thumb tack */
+    .pin-tack {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--amber);
+      position: absolute;
+      top: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 2px 6px rgba(200, 145, 58, 0.6);
+    }
+
+    .suspect-pin .pin-tack {
+      background: #7aabff;
+      box-shadow: 0 2px 6px rgba(122, 171, 255, 0.5);
+    }
+
+    .pin-icon {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+
+    .pin-type {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.45rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(200, 145, 58, 0.6);
+      margin-bottom: 0.15rem;
+    }
+
+    .suspect-pin .pin-type {
+      color: rgba(122, 171, 255, 0.6);
+    }
+
+    .pin-label {
+      font-family: 'Special Elite', monospace;
+      font-size: 0.72rem;
+      color: var(--paper);
+      line-height: 1.3;
+    }
+
+    /* ══════════════════════════════════════════
+   INTERROGATION
+══════════════════════════════════════════ */
+    #screen-interrogation {
+      padding: 56px 0 0;
+    }
+
+    .interrogation-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      height: calc(100vh - 56px);
+    }
+
+    @media (max-width: 700px) {
+      .interrogation-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .suspect-panel {
+      background: #130d08;
+      border-right: 1px solid rgba(200, 145, 58, 0.15);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      overflow-y: auto;
+    }
+
+    .suspect-profile-card {
+      background: #1a110a;
+      border: 1px solid rgba(200, 145, 58, 0.2);
+      border-radius: 3px;
+      padding: 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .suspect-profile-card.active {
+      border-color: var(--amber);
+      background: rgba(200, 145, 58, 0.06);
+    }
+
+    .suspect-profile-card:hover {
+      border-color: rgba(200, 145, 58, 0.4);
+    }
+
+    .suspect-profile-card .suspect-avatar {
+      width: 56px;
+      height: 56px;
+      margin-bottom: 0.8rem;
+    }
+
+    .sp-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--paper);
+    }
+
+    .sp-role {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      color: rgba(244, 237, 224, 0.4);
+      letter-spacing: 0.1em;
+      margin-top: 0.2rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .sp-trait {
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.82rem;
+      font-style: italic;
+      color: rgba(244, 237, 224, 0.5);
+      line-height: 1.4;
+    }
+
+    .sp-qs-left {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.5rem;
+      color: var(--amber);
+      background: rgba(200, 145, 58, 0.1);
+      padding: 0.15rem 0.4rem;
+      border-radius: 2px;
+    }
+
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+      background: #0f0b07;
+    }
+
+    .chat-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid rgba(200, 145, 58, 0.15);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .chat-header-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--paper);
+    }
+
+    .chat-header-status {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      color: #5ab87a;
+      letter-spacing: 0.1em;
+    }
+
+    .chat-recording {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--red-bright);
+      letter-spacing: 0.15em;
+    }
+
+    .rec-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--red-bright);
+      animation: blink 1.2s infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: 0.2
+      }
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .chat-messages::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .chat-messages::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb {
+      background: rgba(200, 145, 58, 0.2);
+      border-radius: 2px;
+    }
+
+    .chat-msg {
+      max-width: 75%;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .chat-msg.player {
+      margin-left: auto;
+    }
+
+    .chat-msg.suspect {
+      margin-right: auto;
+    }
+
+    .msg-bubble {
+      padding: 0.8rem 1rem;
+      border-radius: 3px;
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .player .msg-bubble {
+      background: rgba(200, 145, 58, 0.15);
+      border: 1px solid rgba(200, 145, 58, 0.25);
+      color: var(--paper);
+      border-bottom-right-radius: 0;
+    }
+
+    .suspect .msg-bubble {
+      background: #1e1408;
+      border: 1px solid rgba(244, 237, 224, 0.08);
+      color: rgba(244, 237, 224, 0.85);
+      border-bottom-left-radius: 0;
+    }
+
+    .msg-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(244, 237, 224, 0.3);
+      margin-bottom: 0.3rem;
+    }
+
+    .player .msg-label {
+      text-align: right;
+      color: rgba(200, 145, 58, 0.5);
+    }
+
+    .typing-indicator {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      padding: 0.6rem 1rem;
+      background: #1e1408;
+      border: 1px solid rgba(244, 237, 224, 0.08);
+      border-radius: 3px;
+      border-bottom-left-radius: 0;
+      width: fit-content;
+    }
+
+    .typing-indicator.visible {
+      display: flex;
+    }
+
+    .typing-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(244, 237, 224, 0.4);
+      animation: typeDot 1s infinite;
+    }
+
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typeDot {
+
+      0%,
+      80%,
+      100% {
+        transform: scale(1);
+        opacity: 0.4
+      }
+
+      40% {
+        transform: scale(1.3);
+        opacity: 1
+      }
+    }
+
+    .chat-input-area {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid rgba(200, 145, 58, 0.15);
+      background: #0f0b07;
+    }
+
+    .quick-questions {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.8rem;
+    }
+
+    .quick-q {
+      background: rgba(244, 237, 224, 0.04);
+      border: 1px solid rgba(244, 237, 224, 0.1);
+      color: rgba(244, 237, 224, 0.55);
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.8rem;
+      font-style: italic;
+      padding: 0.3rem 0.7rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quick-q:hover {
+      border-color: rgba(200, 145, 58, 0.3);
+      color: var(--amber);
+      background: rgba(200, 145, 58, 0.05);
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: #1a110a;
+      border: 1px solid rgba(200, 145, 58, 0.25);
+      border-radius: 2px;
+      color: var(--paper);
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.95rem;
+      padding: 0.7rem 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .chat-input:focus {
+      border-color: var(--amber);
+    }
+
+    .chat-input::placeholder {
+      color: rgba(244, 237, 224, 0.25);
+      font-style: italic;
+    }
+
+    .send-btn {
+      background: var(--amber);
+      color: var(--ink);
+      border: none;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.7rem 1.2rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background 0.2s;
+    }
+
+    .send-btn:hover {
+      background: var(--amber-dark);
+    }
+
+    /* ══════════════════════════════════════════
+   THEORY SUBMISSION
+══════════════════════════════════════════ */
+    #screen-solve {
+      padding: 56px 0 4rem;
+    }
+
+    .solve-layout {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+    }
+
+    .solve-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .solve-header-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.8rem;
+    }
+
+    .solve-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--paper);
+      margin-bottom: 0.5rem;
+    }
+
+    .solve-header p {
+      font-family: 'Crimson Pro', serif;
+      font-style: italic;
+      color: rgba(244, 237, 224, 0.5);
+      font-size: 1.05rem;
+    }
+
+    .solve-form {}
+
+    .form-section {
+      margin-bottom: 2rem;
+      background: #1a110a;
+      border: 1px solid rgba(200, 145, 58, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .form-section-header {
+      padding: 0.8rem 1.4rem;
+      background: rgba(200, 145, 58, 0.07);
+      border-bottom: 1px solid rgba(200, 145, 58, 0.15);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--amber);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .form-section-body {
+      padding: 1.4rem;
+    }
+
+    .form-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(244, 237, 224, 0.5);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .suspect-select-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.6rem;
+    }
+
+    .suspect-select-item {
+      background: #130d08;
+      border: 1px solid rgba(244, 237, 224, 0.1);
+      border-radius: 3px;
+      padding: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .suspect-select-item:hover {
+      border-color: rgba(200, 145, 58, 0.3);
+    }
+
+    .suspect-select-item.selected {
+      border-color: var(--amber);
+      background: rgba(200, 145, 58, 0.08);
+    }
+
+    .ss-avatar {
+      font-size: 1.5rem;
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    .ss-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--paper);
+    }
+
+    .form-textarea {
+      width: 100%;
+      background: #130d08;
+      border: 1px solid rgba(200, 145, 58, 0.2);
+      border-radius: 2px;
+      color: var(--paper);
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      padding: 0.8rem 1rem;
+      resize: vertical;
+      min-height: 90px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-textarea:focus {
+      border-color: var(--amber);
+    }
+
+    .form-textarea::placeholder {
+      color: rgba(244, 237, 224, 0.2);
+      font-style: italic;
+    }
+
+    .evidence-checklist {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .evidence-check-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.7rem;
+      background: #130d08;
+      border: 1px solid rgba(244, 237, 224, 0.08);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.85rem;
+      color: rgba(244, 237, 224, 0.6);
+    }
+
+    .evidence-check-item:hover {
+      border-color: rgba(200, 145, 58, 0.25);
+    }
+
+    .evidence-check-item.checked {
+      border-color: rgba(200, 145, 58, 0.4);
+      background: rgba(200, 145, 58, 0.06);
+      color: var(--paper);
+    }
+
+    .check-box {
+      width: 14px;
+      height: 14px;
+      border: 1px solid rgba(244, 237, 224, 0.2);
+      border-radius: 2px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      transition: all 0.2s;
+    }
+
+    .evidence-check-item.checked .check-box {
+      background: var(--amber);
+      border-color: var(--amber);
+      color: var(--ink);
+    }
+
+    .btn-submit-theory {
+      width: 100%;
+      background: var(--amber);
+      color: var(--ink);
+      border: none;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 1.1rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.2s;
+      margin-top: 1rem;
+    }
+
+    .btn-submit-theory:hover {
+      background: #d4a04a;
+      transform: translateY(-1px);
+    }
+
+    /* ══════════════════════════════════════════
+   SCORE REVEAL MODAL
+══════════════════════════════════════════ */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.visible {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .score-modal {
+      background: #1a110a;
+      border: 1px solid rgba(200, 145, 58, 0.4);
+      border-radius: 6px;
+      max-width: 500px;
+      width: 100%;
+      overflow: hidden;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8);
+    }
+
+    .score-modal-header {
+      background: linear-gradient(135deg, #2a1f10, #1a1208);
+      padding: 2rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(200, 145, 58, 0.2);
+    }
+
+    .score-verdict {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .score-verdict.correct {
+      color: #5ab87a;
+    }
+
+    .score-verdict.wrong {
+      color: var(--red-bright);
+    }
+
+    .score-big {
+      font-family: 'Playfair Display', serif;
+      font-size: 4.5rem;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--amber);
+      margin-bottom: 0.2rem;
+    }
+
+    .score-max {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: rgba(244, 237, 224, 0.35);
+    }
+
+    .score-modal-body {
+      padding: 1.5rem 2rem;
+    }
+
+    .score-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .score-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(244, 237, 224, 0.06);
+    }
+
+    .score-row-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      color: rgba(244, 237, 224, 0.45);
+      letter-spacing: 0.1em;
+    }
+
+    .score-row-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--amber);
+    }
+
+    .score-row-val.zero {
+      color: rgba(244, 237, 224, 0.3);
+    }
+
+    .score-modal-footer {
+      padding: 1rem 2rem 1.5rem;
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .btn-modal {
+      flex: 1;
+      padding: 0.7rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+
+    .btn-modal-primary {
+      background: var(--amber);
+      color: var(--ink);
+      border: none;
+    }
+
+    .btn-modal-primary:hover {
+      background: var(--amber-dark);
+    }
+
+    .btn-modal-ghost {
+      background: transparent;
+      color: rgba(244, 237, 224, 0.6);
+      border: 1px solid rgba(244, 237, 224, 0.15);
+    }
+
+    .btn-modal-ghost:hover {
+      border-color: rgba(244, 237, 224, 0.3);
+      color: var(--paper);
+    }
+
+    /* ══════════════════════════════════════════
+   LEADERBOARD
+══════════════════════════════════════════ */
+    #screen-leaderboard {
+      padding: 56px 0 4rem;
+    }
+
+    .lb-layout {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+    }
+
+    .lb-toggle {
+      display: flex;
+      gap: 0;
+      background: #1a110a;
+      border: 1px solid rgba(200, 145, 58, 0.2);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+      width: fit-content;
+    }
+
+    .lb-toggle-btn {
+      background: none;
+      border: none;
+      color: rgba(244, 237, 224, 0.45);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.4rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .lb-toggle-btn.active {
+      background: var(--amber);
+      color: var(--ink);
+    }
+
+    .lb-table {
+      width: 100%;
+    }
+
+    .lb-row {
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      padding: 0.9rem 1.2rem;
+      border-bottom: 1px solid rgba(244, 237, 224, 0.05);
+      transition: background 0.2s;
+      border-radius: 3px;
+      margin-bottom: 4px;
+    }
+
+    .lb-row:hover {
+      background: rgba(200, 145, 58, 0.04);
+    }
+
+    .lb-row.you {
+      background: rgba(200, 145, 58, 0.08);
+      border: 1px solid rgba(200, 145, 58, 0.25);
+    }
+
+    .lb-rank {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: rgba(244, 237, 224, 0.2);
+      text-align: center;
+    }
+
+    .lb-rank.gold {
+      color: #ffd700;
+    }
+
+    .lb-rank.silver {
+      color: #c0c0c0;
+    }
+
+    .lb-rank.bronze {
+      color: #cd7f32;
+    }
+
+    .lb-user {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .lb-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #2a1a08;
+      border: 1px solid rgba(200, 145, 58, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .lb-username {
+      font-family: 'Special Elite', monospace;
+      font-size: 0.9rem;
+      color: var(--paper);
+    }
+
+    .lb-cases {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      color: rgba(244, 237, 224, 0.35);
+      letter-spacing: 0.08em;
+      margin-top: 0.1rem;
+    }
+
+    .lb-score-col {
+      text-align: right;
+    }
+
+    .lb-score-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--amber);
+    }
+
+    .lb-score-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.5rem;
+      color: rgba(244, 237, 224, 0.3);
+      letter-spacing: 0.1em;
+    }
+
+    /* ══════════════════════════════════════════
+   SPRINT PLAN / ARCHITECTURE SCREEN
+══════════════════════════════════════════ */
+    #screen-plan {
+      padding: 56px 0 4rem;
+    }
+
+    .plan-layout {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+    }
+
+    .plan-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 3rem;
+    }
+
+    .week-card {
+      background: #1a110a;
+      border: 1px solid rgba(200, 145, 58, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+
+    .week-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .week-card-header {
+      padding: 0.9rem 1.2rem;
+      border-bottom: 1px solid rgba(200, 145, 58, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .week-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--amber);
+    }
+
+    .week-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(244, 237, 224, 0.4);
+    }
+
+    .week-theme {
+      padding: 0.8rem 1.2rem 0.5rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-style: italic;
+      color: var(--paper);
+    }
+
+    .week-tasks {
+      padding: 0 1.2rem 1.2rem;
+      list-style: none;
+    }
+
+    .week-tasks li {
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.88rem;
+      color: rgba(244, 237, 224, 0.6);
+      padding: 0.3rem 0;
+      padding-left: 1rem;
+      position: relative;
+      border-bottom: 1px solid rgba(244, 237, 224, 0.04);
+    }
+
+    .week-tasks li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--amber);
+      opacity: 0.6;
+    }
+
+    .week-owner {
+      padding: 0.7rem 1.2rem;
+      background: rgba(200, 145, 58, 0.05);
+      border-top: 1px solid rgba(200, 145, 58, 0.1);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--amber);
+      letter-spacing: 0.1em;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .owner-tag {
+      background: rgba(200, 145, 58, 0.12);
+      padding: 0.15rem 0.45rem;
+      border-radius: 2px;
+      border: 1px solid rgba(200, 145, 58, 0.2);
+    }
+
+    /* Arch diagram */
+    .arch-section {
+      margin-top: 2rem;
+    }
+
+    .arch-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--paper);
+      margin-bottom: 1.5rem;
+    }
+
+    .arch-title small {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--amber);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 400;
+      margin-bottom: 0.3rem;
+    }
+
+    /* ══════════════════════════════════════════
+   UTILITIES
+══════════════════════════════════════════ */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(200, 145, 58, 0.3), transparent);
+      margin: 2rem 0;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(200, 145, 58, 0.2);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(200, 145, 58, 0.4);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">🕵️ <span>Detective</span>OS</div>
+    <ul class="nav-tabs">
+      <li><button onclick="show('landing')" id="tab-landing" class="active">Home</button></li>
+      <li><button onclick="show('cases')" id="tab-cases">Cases</button></li>
+      <li><button onclick="show('case')" id="tab-case">Case File</button></li>
+      <li><button onclick="show('board')" id="tab-board">Board</button></li>
+      <li><button onclick="show('interrogation')" id="tab-interrogation">Interrogate</button></li>
+      <li><button onclick="show('solve')" id="tab-solve">Submit Theory</button></li>
+      <li><button onclick="show('leaderboard')" id="tab-leaderboard">Ranks</button></li>
+      <li><button onclick="show('plan')" id="tab-plan">Roadmap</button></li>
+    </ul>
+    <div class="nav-right">
+      <span class="badge-xp">⭐ 1,240 XP</span>
+      <button class="btn-nav" onclick="show('cases')">Open Case</button>
+    </div>
+  </nav>
+
+  <!-- ══════════════ LANDING ══════════════ -->
+  <div id="screen-landing" class="screen active">
+    <div class="hero-bg"></div>
+    <div class="hero-lines"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Case Files • 2026</div>
+      <h1 class="hero-title">Detective<br><em>OS</em></h1>
+      <p class="hero-sub">The world's first AI-powered mystery platform.<br>Interrogate suspects. Pin evidence. Solve
+        the case.</p>
+      <div class="hero-cta-group">
+        <button class="btn-primary" onclick="show('cases')">→ Open Active Cases</button>
+        <button class="btn-ghost" onclick="show('plan')">View Roadmap</button>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">2,847</div>
+        <div class="stat-label">Active Detectives</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">34</div>
+        <div class="stat-label">Cases Published</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">94%</div>
+        <div class="stat-label">AI Accuracy</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">8</div>
+        <div class="stat-label">Avg. Hours / Case</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ CASE BROWSER ══════════════ -->
+  <div id="screen-cases" class="screen">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <div class="page-title">
+          <small>Active Investigations</small>
+          Open Case Files
+        </div>
+        <div class="filter-row">
+          <button class="filter-btn active">All</button>
+          <button class="filter-btn">Rookie</button>
+          <button class="filter-btn">Detective</button>
+          <button class="filter-btn">Mastermind</button>
+          <button class="filter-btn">Weekly</button>
+        </div>
+      </div>
+    </div>
+    <div class="cases-grid">
+
+      <div class="case-card weekly" onclick="show('case')">
+        <div class="case-img">
+          <svg class="case-scene" viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#1a0f08" />
+            <rect x="60" y="80" width="200" height="60" fill="#2a1a0a" rx="2" />
+            <rect x="140" y="40" width="40" height="40" fill="#2a1a0a" />
+            <rect x="148" y="48" width="24" height="32" fill="#0a0805" rx="1" />
+            <circle cx="80" cy="110" r="15" fill="#1a0d06" stroke="#8b1a1a" stroke-width="1" />
+            <line x1="70" y1="100" x2="90" y2="120" stroke="#8b1a1a" stroke-width="1.5" opacity="0.6" />
+            <line x1="90" y1="100" x2="70" y2="120" stroke="#8b1a1a" stroke-width="1.5" opacity="0.6" />
+            <rect x="200" y="90" width="40" height="30" fill="#1a1208" rx="2" />
+            <line x1="30" y1="0" x2="30" y2="160" stroke="#c8913a" stroke-width="0.5" opacity="0.3" />
+            <circle cx="30" cy="30" r="3" fill="#c8913a" opacity="0.6" />
+            <text x="16" y="158" font-family="monospace" font-size="7" fill="#c8913a" opacity="0.5">CASE #0047</text>
+          </svg>
+        </div>
+        <div class="case-body">
+          <div class="case-meta">
+            <span class="case-tag tag-mastermind">Mastermind</span>
+          </div>
+          <div class="case-title">The Midnight Manor Incident</div>
+          <div class="case-desc">A hedge fund CEO found dead in his study at 3am. The doors were locked from the inside.
+            Six guests. Zero alibis.</div>
+          <div class="case-footer">
+            <div class="case-stats-mini">
+              <div class="mini-stat"><strong>247</strong>Detectives</div>
+              <div class="mini-stat"><strong>12%</strong>Solved</div>
+              <div class="mini-stat"><strong>8h</strong>Avg time</div>
+            </div>
+            <button class="btn-solve" onclick="event.stopPropagation(); show('case')">Investigate →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="case-card" onclick="show('case')">
+        <div class="case-img">
+          <svg class="case-scene" viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#080d14" />
+            <rect x="0" y="100" width="320" height="60" fill="#0d1520" />
+            <line x1="0" y1="100" x2="320" y2="100" stroke="#2e4a7a" stroke-width="2" opacity="0.4" />
+            <rect x="50" y="50" width="80" height="60" fill="#0a1018" rx="1" />
+            <rect x="190" y="30" width="80" height="80" fill="#0a1018" rx="1" />
+            <rect x="55" y="55" width="15" height="20" fill="#c8913a" opacity="0.2" />
+            <rect x="75" y="55" width="15" height="20" fill="#c8913a" opacity="0.1" />
+            <circle cx="160" cy="75" r="20" fill="none" stroke="#8b1a1a" stroke-width="1" stroke-dasharray="3,3"
+              opacity="0.6" />
+            <text x="150" y="79" font-family="monospace" font-size="8" fill="#8b1a1a" opacity="0.8">✕</text>
+            <text x="10" y="158" font-family="monospace" font-size="7" fill="#2e4a7a" opacity="0.5">CASE #0031</text>
+          </svg>
+        </div>
+        <div class="case-body">
+          <div class="case-meta">
+            <span class="case-tag tag-detective">Detective</span>
+          </div>
+          <div class="case-title">Harbor Street Blackout</div>
+          <div class="case-desc">A forensic accountant disappears during a citywide power outage. Her laptop contains
+            files someone was willing to kill for.</div>
+          <div class="case-footer">
+            <div class="case-stats-mini">
+              <div class="mini-stat"><strong>891</strong>Detectives</div>
+              <div class="mini-stat"><strong>31%</strong>Solved</div>
+              <div class="mini-stat"><strong>4.5h</strong>Avg time</div>
+            </div>
+            <button class="btn-solve" onclick="event.stopPropagation(); show('case')">Investigate →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="case-card" onclick="show('case')">
+        <div class="case-img">
+          <svg class="case-scene" viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0a0d08" />
+            <rect x="0" y="0" width="320" height="160" fill="url(#forest)" opacity="0.8" />
+            <defs>
+              <linearGradient id="forest" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#050a04" />
+                <stop offset="100%" stop-color="#1a2a0a" />
+              </linearGradient>
+            </defs>
+            <line x1="40" y1="0" x2="40" y2="160" stroke="#2a3a1a" stroke-width="6" />
+            <line x1="90" y1="0" x2="90" y2="160" stroke="#2a3a1a" stroke-width="4" />
+            <line x1="130" y1="0" x2="130" y2="160" stroke="#2a3a1a" stroke-width="8" />
+            <line x1="200" y1="0" x2="200" y2="160" stroke="#2a3a1a" stroke-width="5" />
+            <line x1="260" y1="0" x2="260" y2="160" stroke="#2a3a1a" stroke-width="3" />
+            <circle cx="160" cy="90" r="12" fill="#f4ede0" opacity="0.7" />
+            <line x1="160" y1="0" x2="160" y2="78" stroke="#1a3a2a" stroke-width="1.5" stroke-dasharray="4,3"
+              opacity="0.7" />
+            <text x="10" y="158" font-family="monospace" font-size="7" fill="#5ab87a" opacity="0.4">CASE #0019</text>
+          </svg>
+        </div>
+        <div class="case-body">
+          <div class="case-meta">
+            <span class="case-tag tag-rookie">Rookie</span>
+          </div>
+          <div class="case-title">The Redwood Inheritance</div>
+          <div class="case-desc">A wealthy heiress is found in the family forest preserve. The will was changed 72 hours
+            before her death.</div>
+          <div class="case-footer">
+            <div class="case-stats-mini">
+              <div class="mini-stat"><strong>1,204</strong>Detectives</div>
+              <div class="mini-stat"><strong>68%</strong>Solved</div>
+              <div class="mini-stat"><strong>2h</strong>Avg time</div>
+            </div>
+            <button class="btn-solve" onclick="event.stopPropagation(); show('case')">Investigate →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="case-card" onclick="show('case')">
+        <div class="case-img">
+          <svg class="case-scene" viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="160" fill="#0a0808" />
+            <rect x="100" y="20" width="120" height="100" fill="#1a0f0a" rx="3" />
+            <rect x="110" y="30" width="30" height="40" fill="#0a0805" rx="1" />
+            <rect x="180" y="30" width="30" height="40" fill="#0a0805" rx="1" />
+            <rect x="130" y="80" width="60" height="40" fill="#0a0805" rx="1" />
+            <rect x="148" y="88" width="24" height="32" fill="#c8913a" opacity="0.08" rx="1" />
+            <circle cx="50" cy="60" r="8" fill="#c8913a" opacity="0.15" />
+            <circle cx="50" cy="60" r="4" fill="#c8913a" opacity="0.3" />
+            <line x1="58" y1="60" x2="100" y2="60" stroke="#c8913a" stroke-width="0.5" stroke-dasharray="3,3"
+              opacity="0.3" />
+            <text x="10" y="158" font-family="monospace" font-size="7" fill="#c8913a" opacity="0.5">CASE #0052</text>
+          </svg>
+        </div>
+        <div class="case-body">
+          <div class="case-meta">
+            <span class="case-tag tag-detective">Detective</span>
+          </div>
+          <div class="case-title">Double Exposure</div>
+          <div class="case-desc">A celebrity photographer is poisoned at his own gallery opening. Someone swapped the
+            drinks. Thirty witnesses. No one saw a thing.</div>
+          <div class="case-footer">
+            <div class="case-stats-mini">
+              <div class="mini-stat"><strong>503</strong>Detectives</div>
+              <div class="mini-stat"><strong>22%</strong>Solved</div>
+              <div class="mini-stat"><strong>6h</strong>Avg time</div>
+            </div>
+            <button class="btn-solve" onclick="event.stopPropagation(); show('case')">Investigate →</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════ CASE FILE ══════════════ -->
+  <div id="screen-case" class="screen">
+    <div class="case-layout">
+      <div class="case-main">
+        <div class="case-file-header">
+          <div class="case-file-num">CASE FILE · #0047 · CLASSIFIED</div>
+          <div class="case-file-title">The Midnight Manor Incident</div>
+          <div class="case-file-victim">Victim: Victor Harrington, 58 · CEO, Harrington Capital</div>
+          <div class="case-bg-text">
+            Victor Harrington was discovered dead in his private study at 3:14am on the morning of November 12th, 2026.
+            The door was locked from the inside using a deadbolt. A glass of Scotch sat unfinished on his desk. The
+            medical examiner's preliminary report suggests blunt force trauma, but traces of an unidentified compound
+            were found in the bloodstream. Six guests were staying at Harrington Manor that weekend. By 3am, all claimed
+            to be asleep.
+          </div>
+        </div>
+
+        <div class="case-tabs">
+          <button class="case-tab-btn active" onclick="switchTab('timeline')">Timeline</button>
+          <button class="case-tab-btn" onclick="switchTab('evidence')">Evidence (9)</button>
+          <button class="case-tab-btn" onclick="switchTab('suspects')">Suspects (5)</button>
+        </div>
+
+        <div id="tab-timeline" class="case-tab-content active">
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">NOV 11 · 7:00 PM</div>
+              <div class="timeline-event">Guests Arrive at Harrington Manor</div>
+              <div class="timeline-detail">Victor's sister Eleanor, business partner Dominic Foles, personal attorney
+                Sandra Rhee, and guests Marcus Webb and Priya Nair arrive for the annual weekend retreat.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">NOV 11 · 9:30 PM</div>
+              <div class="timeline-event">Argument at Dinner</div>
+              <div class="timeline-detail">Staff report a heated argument between Victor and Dominic Foles over the
+                firm's upcoming merger. Victor was seen taking a phone call and returning visibly agitated.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">NOV 11 · 11:45 PM</div>
+              <div class="timeline-event">Victor Retires to Study</div>
+              <div class="timeline-detail">Victor tells the group he has "important work" and retires. Housekeeper
+                Margaret confirms she brought him a Scotch at 11:52pm. This is the last confirmed sighting.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">NOV 12 · 2:00 AM</div>
+              <div class="timeline-event">Lights in Study Go Dark</div>
+              <div class="timeline-detail">CCTV from the east wing shows the study light extinguishing at 2:02am. No one
+                is seen entering or leaving the study corridor after midnight.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-time">NOV 12 · 3:14 AM</div>
+              <div class="timeline-event">Body Discovered</div>
+              <div class="timeline-detail">Night security guard Patrick Holt hears a crash and finds the study door
+                locked. He breaks it down to find Victor slumped over his desk. Emergency services arrive at 3:44am.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-evidence" class="case-tab-content">
+          <div class="evidence-grid">
+            <div class="evidence-card"
+              onclick="alert('Evidence: Victor\'s Scotch glass tested positive for Ketamine traces — suggesting he was sedated before the attack.')">
+              <span class="evidence-icon">🥃</span>
+              <div class="evidence-type">Forensic</div>
+              <div class="evidence-name">Scotch Glass — Lab Report</div>
+              <div class="evidence-hint">Substance residue detected</div>
+            </div>
+            <div class="evidence-card"
+              onclick="alert('CCTV shows corridor empty 11:55pm–3:14am. However, there is a 7-minute gap at 1:17am where the recording loops — suggesting tampering.')">
+              <span class="evidence-icon">📹</span>
+              <div class="evidence-type">CCTV</div>
+              <div class="evidence-name">East Wing Camera — 11PM–3AM</div>
+              <div class="evidence-hint">7-min gap at 1:17am</div>
+            </div>
+            <div class="evidence-card"
+              onclick="alert('Victor\'s phone shows 3 calls to an unknown number between 10pm–11pm. Texts to Sandra Rhee: \
+              We need to talk before Monday. The documents.\" ')>
+              <span class="evidence-icon">📱</span>
+              <div class="evidence-type">Phone Log</div>
+              <div class="evidence-name">Victor's iPhone — Last 24h</div>
+              <div class="evidence-hint">Unknown number × 3 calls</div>
+            </div>
+            <div class="evidence-card"
+              onclick="alert('A torn page from a legal document found in the fireplace ash. Partially legible: \"
+              ...hereby transfer all voting shares to...\" — the name is burned away.')">
+              <span class="evidence-icon">📄</span>
+              <div class="evidence-type">Document</div>
+              <div class="evidence-name">Burned Document Fragment</div>
+              <div class="evidence-hint">Partial transfer deed</div>
+            </div>
+            <div class="evidence-card"
+              onclick="alert('A small prescription bottle found behind the bookshelf. Prescribed to Eleanor Harrington. The drug: Clonazepam. Cross-reacts dangerously with alcohol and Ketamine.')">
+              <span class="evidence-icon">💊</span>
+              <div class="evidence-type">Forensic</div>
+              <div class="evidence-name">Prescription Bottle</div>
+              <div class="evidence-hint">Behind the east bookshelf</div>
+            </div>
+            <div class="evidence-card"
+              onclick="alert('Dominic Foles\'s fingerprints on a letter opener found under Victor\'s chair. Dominic claims he never entered the study. The fingerprints are fresh — within 12 hours.')">
+              <span class="evidence-icon">🔪</span>
+              <div class="evidence-type">Forensic</div>
+              <div class="evidence-name">Letter Opener — Prints Report</div>
+              <div class="evidence-hint">Fresh prints, unknown owner</div>
+            </div>
+            <div class="evidence-card locked">
+              <span class="lock-icon">🔒</span>
+              <span class="evidence-icon">📸</span>
+              <div class="evidence-type">Photo</div>
+              <div class="evidence-name">Study Floor — Crime Scene</div>
+              <div class="evidence-hint">Interrogate housekeeper to unlock</div>
+            </div>
+            <div class="evidence-card locked">
+              <span class="lock-icon">🔒</span>
+              <span class="evidence-icon">💰</span>
+              <div class="evidence-type">Document</div>
+              <div class="evidence-name">Harrington Capital — Merger Docs</div>
+              <div class="evidence-hint">Interrogate Dominic to unlock</div>
+            </div>
+            <div class="evidence-card locked">
+              <span class="lock-icon">🔒</span>
+              <span class="evidence-icon">📧</span>
+              <div class="evidence-type">Phone Log</div>
+              <div class="evidence-name">Sandra Rhee — Email Archive</div>
+              <div class="evidence-hint">Interrogate Sandra to unlock</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-suspects" class="case-tab-content">
+          <div class="suspects-list">
+            <div class="suspect-row" onclick="show('interrogation')">
+              <div class="suspect-avatar">👩</div>
+              <div class="suspect-info">
+                <div class="suspect-name">Eleanor Harrington</div>
+                <div class="suspect-role">Victor's Sister · Sole Heir · Interior Designer</div>
+              </div>
+              <div class="suspect-status status-suspicious">⚠ Suspicious</div>
+            </div>
+            <div class="suspect-row" onclick="show('interrogation')">
+              <div class="suspect-avatar">👨‍💼</div>
+              <div class="suspect-info">
+                <div class="suspect-name">Dominic Foles</div>
+                <div class="suspect-role">Business Partner · COO, Harrington Capital</div>
+              </div>
+              <div class="suspect-status status-interrogated">● Interrogated</div>
+            </div>
+            <div class="suspect-row" onclick="show('interrogation')">
+              <div class="suspect-avatar">👩‍⚖️</div>
+              <div class="suspect-info">
+                <div class="suspect-name">Sandra Rhee</div>
+                <div class="suspect-role">Personal Attorney · Victor's former confidante</div>
+              </div>
+              <div class="suspect-status status-clean">✓ Cleared</div>
+            </div>
+            <div class="suspect-row" onclick="show('interrogation')">
+              <div class="suspect-avatar">🧑</div>
+              <div class="suspect-info">
+                <div class="suspect-name">Marcus Webb</div>
+                <div class="suspect-role">Journalist · Investigated Harrington Capital fraud</div>
+              </div>
+              <div class="suspect-status status-suspicious">⚠ Suspicious</div>
+            </div>
+            <div class="suspect-row" onclick="show('interrogation')">
+              <div class="suspect-avatar">👩‍🔬</div>
+              <div class="suspect-info">
+                <div class="suspect-name">Priya Nair</div>
+                <div class="suspect-role">Pharmacologist · Victor's recent acquaintance</div>
+              </div>
+              <div class="suspect-status status-clean">✓ Cleared</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="case-sidebar">
+        <div class="sidebar-card">
+          <div class="sidebar-card-header">Your Progress</div>
+          <div class="sidebar-card-body">
+            <div class="progress-bar-wrap">
+              <div class="progress-label"><span>Evidence</span><span>6/9</span></div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width:66%"></div>
+              </div>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-label"><span>Interrogations</span><span>1/5</span></div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width:20%"></div>
+              </div>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-label"><span>Timeline</span><span>Reviewed</span></div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width:100%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-card">
+          <div class="sidebar-card-header">Victim Profile</div>
+          <div class="sidebar-card-body">
+            <div class="victim-profile">
+              <div class="victim-field">
+                <span class="victim-field-label">Name</span>
+                <span class="victim-field-val">Victor J. Harrington</span>
+              </div>
+              <div class="victim-field">
+                <span class="victim-field-label">Age</span>
+                <span class="victim-field-val">58</span>
+              </div>
+              <div class="victim-field">
+                <span class="victim-field-label">Cause of Death</span>
+                <span class="victim-field-val">Blunt force + compound toxicity</span>
+              </div>
+              <div class="victim-field">
+                <span class="victim-field-label">Net Worth</span>
+                <span class="victim-field-val">$840M</span>
+              </div>
+              <div class="victim-field">
+                <span class="victim-field-label">Known Enemies</span>
+                <span class="victim-field-val">Multiple business rivals</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-card">
+          <div class="sidebar-card-header">Actions</div>
+          <div class="sidebar-card-body" style="display:flex;flex-direction:column;gap:0.6rem;">
+            <button class="btn-board" onclick="show('board')">📌 Open Evidence Board</button>
+            <button class="btn-board" onclick="show('interrogation')"
+              style="border-color:rgba(122,171,255,0.4);color:#7aabff;">💬 Interrogate Suspect</button>
+            <button class="btn-board" onclick="show('solve')"
+              style="border-color:rgba(90,184,122,0.4);color:#5ab87a;">⚖️ Submit Theory</button>
+          </div>
+        </div>
+
+        <div class="sidebar-card">
+          <div class="sidebar-card-header">Time on Case</div>
+          <div class="sidebar-card-body" style="text-align:center;">
+            <div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--amber)"
+              id="timer">02:34:17</div>
+            <div
+              style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;color:rgba(244,237,224,0.3);letter-spacing:0.15em;margin-top:0.2rem">
+              ELAPSED · SPEED BONUS ACTIVE</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ EVIDENCE BOARD ══════════════ -->
+  <div id="screen-board" class="screen">
+    <div class="board-toolbar">
+      <button class="board-tool-btn active" id="tool-select" onclick="setTool('select')">◻ Select</button>
+      <button class="board-tool-btn" id="tool-connect" onclick="setTool('connect')">↗ Connect</button>
+      <div class="board-separator"></div>
+      <button class="board-tool-btn" onclick="addEvidencePin()">+ Evidence</button>
+      <button class="board-tool-btn" onclick="addSuspectPin()">+ Suspect</button>
+      <div class="board-separator"></div>
+      <button class="board-tool-btn" onclick="clearConnections()">✕ Clear Lines</button>
+      <button class="board-tool-btn" onclick="saveBoard()">💾 Save Board</button>
+      <div class="board-separator"></div>
+      <button class="board-tool-btn" onclick="show('solve')" style="color:#5ab87a;border-color:rgba(90,184,122,0.3)">⚖
+        Submit Theory</button>
+      <div class="board-title-label">"Midnight Manor" — Evidence Board</div>
+    </div>
+    <div id="board-canvas">
+      <svg id="connections-svg"></svg>
+      <!-- Pins rendered by JS -->
+    </div>
+  </div>
+
+  <!-- ══════════════ INTERROGATION ══════════════ -->
+  <div id="screen-interrogation" class="screen">
+    <div class="interrogation-layout">
+      <div class="suspect-panel">
+        <div
+          style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(244,237,224,0.3);margin-bottom:0.5rem">
+          Select Suspect</div>
+
+        <div class="suspect-profile-card active"
+          onclick="selectSuspect(this, 'Eleanor', '👩', 'Victor\'s Sister · Sole Heir', 'Quietly furious. Measures every word.', 3)">
+          <div class="suspect-avatar">👩</div>
+          <div class="sp-name">Eleanor Harrington</div>
+          <div class="sp-role">Victor's Sister · Sole Heir</div>
+          <div class="sp-trait">Quietly furious. Measures every word carefully.</div>
+          <div class="sp-qs-left">3 Q left</div>
+        </div>
+
+        <div class="suspect-profile-card"
+          onclick="selectSuspect(this, 'Dominic', '👨‍💼', 'COO · Business Partner', 'Nervous energy. Quick to deflect.', 5)">
+          <div class="suspect-avatar">👨‍💼</div>
+          <div class="sp-name">Dominic Foles</div>
+          <div class="sp-role">COO · Business Partner</div>
+          <div class="sp-trait">Nervous energy. Quick to deflect onto others.</div>
+          <div class="sp-qs-left">5 Q left</div>
+        </div>
+
+        <div class="suspect-profile-card"
+          onclick="selectSuspect(this, 'Sandra', '👩‍⚖️', 'Personal Attorney', 'Composed. Legalistic. Hiding something.', 5)">
+          <div class="suspect-avatar">👩‍⚖️</div>
+          <div class="sp-name">Sandra Rhee</div>
+          <div class="sp-role">Personal Attorney</div>
+          <div class="sp-trait">Composed. Legalistic. Hiding something behind her calm.</div>
+          <div class="sp-qs-left">5 Q left</div>
+        </div>
+
+        <div class="suspect-profile-card"
+          onclick="selectSuspect(this, 'Marcus', '🧑', 'Journalist', 'Eager, probing, knows too much.', 4)">
+          <div class="suspect-avatar">🧑</div>
+          <div class="sp-name">Marcus Webb</div>
+          <div class="sp-role">Investigative Journalist</div>
+          <div class="sp-trait">Eager and probing. Knows details he shouldn't know.</div>
+          <div class="sp-qs-left">4 Q left</div>
+        </div>
+      </div>
+
+      <div class="chat-panel">
+        <div class="chat-header">
+          <div class="suspect-avatar" id="chat-avatar">👩</div>
+          <div>
+            <div class="chat-header-name" id="chat-name">Eleanor Harrington</div>
+            <div class="chat-header-status">● Interview in progress — Room 3, East Wing</div>
+          </div>
+          <div class="chat-recording">
+            <div class="rec-dot"></div>REC
+          </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-msg suspect">
+            <div class="msg-label">Eleanor Harrington</div>
+            <div class="msg-bubble">I've already spoken to your colleagues. I don't know what else you expect me to add.
+              Victor and I had our differences, yes — all siblings do. But I had nothing to do with what happened to
+              him.</div>
+          </div>
+        </div>
+        <div style="padding: 0 1.5rem 0.5rem;">
+          <div class="typing-indicator" id="typing">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <div class="quick-questions">
+            <button class="quick-q" onclick="sendQuick(this)">Where were you at 1am?</button>
+            <button class="quick-q" onclick="sendQuick(this)">What were you arguing about at dinner?</button>
+            <button class="quick-q" onclick="sendQuick(this)">Tell me about the will.</button>
+            <button class="quick-q" onclick="sendQuick(this)">Do you recognise this bottle?</button>
+          </div>
+          <div class="chat-input-row">
+            <input type="text" class="chat-input" id="chat-input" placeholder="Ask your question…"
+              onkeydown="if(event.key==='Enter')sendMessage()" />
+            <button class="send-btn" onclick="sendMessage()">Ask →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ THEORY SUBMISSION ══════════════ -->
+  <div id="screen-solve" class="screen">
+    <div class="solve-layout">
+      <div class="solve-header">
+        <div class="solve-header-tag">⚖ Final Deduction</div>
+        <h2>Submit Your Theory</h2>
+        <p>Name your culprit. State the motive. Cite your evidence. Make it count.</p>
+      </div>
+      <div class="solve-form">
+        <div class="form-section">
+          <div class="form-section-header">01 · The Culprit</div>
+          <div class="form-section-body">
+            <label class="form-label">Who committed the murder?</label>
+            <div class="suspect-select-grid">
+              <div class="suspect-select-item" onclick="selectCulprit(this)">
+                <span class="ss-avatar">👩</span>
+                <div class="ss-name">Eleanor Harrington</div>
+              </div>
+              <div class="suspect-select-item" onclick="selectCulprit(this)">
+                <span class="ss-avatar">👨‍💼</span>
+                <div class="ss-name">Dominic Foles</div>
+              </div>
+              <div class="suspect-select-item" onclick="selectCulprit(this)">
+                <span class="ss-avatar">👩‍⚖️</span>
+                <div class="ss-name">Sandra Rhee</div>
+              </div>
+              <div class="suspect-select-item" onclick="selectCulprit(this)">
+                <span class="ss-avatar">🧑</span>
+                <div class="ss-name">Marcus Webb</div>
+              </div>
+              <div class="suspect-select-item" onclick="selectCulprit(this)">
+                <span class="ss-avatar">👩‍🔬</span>
+                <div class="ss-name">Priya Nair</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-header">02 · Motive</div>
+          <div class="form-section-body">
+            <label class="form-label">Why did they do it?</label>
+            <textarea class="form-textarea"
+              placeholder="Describe the motive. Reference specific events, financial details, relationships, or secrets you uncovered during the investigation…"></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-header">03 · Method</div>
+          <div class="form-section-body">
+            <label class="form-label">How was the murder committed?</label>
+            <textarea class="form-textarea"
+              placeholder="Explain the method. How did they gain access? What was used? How did they escape without being seen on CCTV?…"></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-header">04 · Supporting Evidence</div>
+          <div class="form-section-body">
+            <label class="form-label">Which evidence supports your theory?</label>
+            <div class="evidence-checklist">
+              <div class="evidence-check-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>🥃 Scotch Glass Lab Report
+              </div>
+              <div class="evidence-check-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>📹 East Wing CCTV Gap
+              </div>
+              <div class="evidence-check-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>📱 Victor's Phone Logs
+              </div>
+              <div class="evidence-check-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>📄 Burned Document Fragment
+              </div>
+              <div class="evidence-check-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>💊 Prescription Bottle
+              </div>
+              <div class="evidence-check-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>🔪 Letter Opener Prints
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-submit-theory" onclick="submitTheory()">⚖ Submit Final Theory</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCORE MODAL -->
+  <div class="modal-overlay" id="score-modal">
+    <div class="score-modal">
+      <div class="score-modal-header">
+        <div class="score-verdict correct" id="modal-verdict">CASE SOLVED</div>
+        <div class="score-big" id="modal-score">87</div>
+        <div class="score-max">out of 100 points</div>
+      </div>
+      <div class="score-modal-body">
+        <div class="score-breakdown">
+          <div class="score-row">
+            <span class="score-row-label">Culprit Identified</span>
+            <span class="score-row-val" id="sc-culprit">40 / 40</span>
+          </div>
+          <div class="score-row">
+            <span class="score-row-label">Motive Accuracy</span>
+            <span class="score-row-val" id="sc-motive">17 / 20</span>
+          </div>
+          <div class="score-row">
+            <span class="score-row-label">Evidence Quality</span>
+            <span class="score-row-val" id="sc-evidence">20 / 25</span>
+          </div>
+          <div class="score-row">
+            <span class="score-row-label">Speed Bonus</span>
+            <span class="score-row-val" id="sc-speed">10 / 15</span>
+          </div>
+        </div>
+        <div
+          style="background:#130d08;border:1px solid rgba(200,145,58,0.15);border-radius:3px;padding:1rem;font-family:'Crimson Pro',serif;font-size:0.9rem;font-style:italic;color:rgba(244,237,224,0.6);line-height:1.6;"
+          id="modal-reveal">
+          The true culprit was <strong style="color:var(--amber)">Eleanor Harrington</strong>. She used her prescribed
+          Clonazepam, dissolved in Victor's Scotch, to sedate him. She slipped into the study during the CCTV gap,
+          struck him with the letter opener, then relocked the deadbolt from outside using a duplicate key she'd had
+          made years ago. The motive: Victor was about to change his will, removing her as sole heir.
+        </div>
+      </div>
+      <div class="score-modal-footer">
+        <button class="btn-modal btn-modal-ghost" onclick="closeModal()">View Board</button>
+        <button class="btn-modal btn-modal-primary" onclick="show('leaderboard');closeModal()">See Rankings →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ LEADERBOARD ══════════════ -->
+  <div id="screen-leaderboard" class="screen">
+    <div class="lb-layout">
+      <div class="page-title" style="margin-bottom:1.5rem">
+        <small>Season 4 · 2026</small>
+        Global Rankings
+      </div>
+      <div class="lb-toggle">
+        <button class="lb-toggle-btn active">All-Time</button>
+        <button class="lb-toggle-btn">This Week</button>
+        <button class="lb-toggle-btn">Midnight Manor</button>
+      </div>
+      <div class="lb-table">
+        <div class="lb-row">
+          <div class="lb-rank gold">1</div>
+          <div class="lb-user">
+            <div class="lb-avatar">🦅</div>
+            <div>
+              <div class="lb-username">InquisitorX</div>
+              <div class="lb-cases">14 cases · 98% accuracy</div>
+            </div>
+          </div>
+          <div class="lb-score-col">
+            <div class="lb-score-num">9,847</div>
+            <div class="lb-score-label">total xp</div>
+          </div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-rank silver">2</div>
+          <div class="lb-user">
+            <div class="lb-avatar">🌙</div>
+            <div>
+              <div class="lb-username">NightshadeK</div>
+              <div class="lb-cases">12 cases · 94% accuracy</div>
+            </div>
+          </div>
+          <div class="lb-score-col">
+            <div class="lb-score-num">8,210</div>
+            <div class="lb-score-label">total xp</div>
+          </div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-rank bronze">3</div>
+          <div class="lb-user">
+            <div class="lb-avatar">🔍</div>
+            <div>
+              <div class="lb-username">VeritasHound</div>
+              <div class="lb-cases">11 cases · 91% accuracy</div>
+            </div>
+          </div>
+          <div class="lb-score-col">
+            <div class="lb-score-num">7,650</div>
+            <div class="lb-score-label">total xp</div>
+          </div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-rank">4</div>
+          <div class="lb-user">
+            <div class="lb-avatar">🕵</div>
+            <div>
+              <div class="lb-username">CrimsonLens</div>
+              <div class="lb-cases">10 cases · 89% accuracy</div>
+            </div>
+          </div>
+          <div class="lb-score-col">
+            <div class="lb-score-num">6,990</div>
+            <div class="lb-score-label">total xp</div>
+          </div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-rank">5</div>
+          <div class="lb-user">
+            <div class="lb-avatar">🐦</div>
+            <div>
+              <div class="lb-username">RavenProtocol</div>
+              <div class="lb-cases">9 cases · 88% accuracy</div>
+            </div>
+          </div>
+          <div class="lb-score-col">
+            <div class="lb-score-num">6,120</div>
+            <div class="lb-score-label">total xp</div>
+          </div>
+        </div>
+        <div class="lb-row you">
+          <div class="lb-rank">47</div>
+          <div class="lb-user">
+            <div class="lb-avatar">⭐</div>
+            <div>
+              <div class="lb-username">You · detective_s</div>
+              <div class="lb-cases">3 cases · 82% accuracy</div>
+            </div>
+          </div>
+          <div class="lb-score-col">
+            <div class="lb-score-num">1,240</div>
+            <div class="lb-score-label">total xp</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ ROADMAP / PLAN ══════════════ -->
+  <div id="screen-plan" class="screen">
+    <div class="plan-layout">
+      <div class="page-title" style="margin-bottom:2rem">
+        <small>4-Person Team · 4-Week MVP Sprint</small>
+        DetectiveOS Build Plan
+      </div>
+
+      <div class="plan-grid">
+        <div class="week-card">
+          <div class="week-card-header">
+            <div class="week-num">W1</div>
+            <div class="week-label">Foundation</div>
+          </div>
+          <div class="week-theme">Core Infrastructure</div>
+          <ul class="week-tasks">
+            <li>FastAPI project setup + PostgreSQL schema</li>
+            <li>SQLAlchemy models + Alembic migrations</li>
+            <li>JWT auth (register, login, /me)</li>
+            <li>Seed first case + suspects + evidence</li>
+            <li>Frontend HTML shell + CSS design system</li>
+            <li>Landing page + case browser UI</li>
+            <li>Case file view (tabs: timeline, evidence, suspects)</li>
+            <li>API: /cases + /cases/{id} endpoints</li>
+          </ul>
+          <div class="week-owner">
+            <span class="owner-tag">P1: Backend</span>
+            <span class="owner-tag">P2: Frontend</span>
+            <span class="owner-tag">P3: DB/Seed</span>
+            <span class="owner-tag">P4: Design</span>
+          </div>
+        </div>
+
+        <div class="week-card">
+          <div class="week-card-header">
+            <div class="week-num">W2</div>
+            <div class="week-label">Game Engine</div>
+          </div>
+          <div class="week-theme">Evidence + AI Interrogation</div>
+          <ul class="week-tasks">
+            <li>Evidence unlock logic + locked state API</li>
+            <li>Evidence board frontend (drag + pin)</li>
+            <li>SVG connection drawing system</li>
+            <li>Board state persistence (JSONB via API)</li>
+            <li>Claude API integration for suspect dialogue</li>
+            <li>Interrogation UI + streaming responses</li>
+            <li>Per-suspect prompt system + alibi context</li>
+            <li>Question quota enforcement (free tier)</li>
+          </ul>
+          <div class="week-owner">
+            <span class="owner-tag">P1: AI Layer</span>
+            <span class="owner-tag">P2: Board UI</span>
+            <span class="owner-tag">P3: Evidence API</span>
+            <span class="owner-tag">P4: Interrogation UI</span>
+          </div>
+        </div>
+
+        <div class="week-card">
+          <div class="week-card-header">
+            <div class="week-num">W3</div>
+            <div class="week-label">Scoring + Social</div>
+          </div>
+          <div class="week-theme">Theory, Scoring & Leaderboard</div>
+          <ul class="week-tasks">
+            <li>Theory submission API + validation engine</li>
+            <li>Scoring algorithm (culprit + motive + evidence + speed)</li>
+            <li>LLM-powered motive semantic scoring</li>
+            <li>Score reveal modal + breakdown UI</li>
+            <li>Leaderboard API (global + weekly + per-case)</li>
+            <li>Leaderboard frontend + weekly challenge system</li>
+            <li>XP + achievements system (backend + UI)</li>
+            <li>User profile page</li>
+          </ul>
+          <div class="week-owner">
+            <span class="owner-tag">P1: Scoring API</span>
+            <span class="owner-tag">P2: Score UI</span>
+            <span class="owner-tag">P3: Leaderboard</span>
+            <span class="owner-tag">P4: Achievements</span>
+          </div>
+        </div>
+
+        <div class="week-card">
+          <div class="week-card-header">
+            <div class="week-num">W4</div>
+            <div class="week-label">Ship It</div>
+          </div>
+          <div class="week-theme">Polish, Payments & Deploy</div>
+          <ul class="week-tasks">
+            <li>Stripe integration (Pro + Creator tiers)</li>
+            <li>Free tier gating (1 case, 10 Qs, basic board)</li>
+            <li>Case generation template system (AI-assisted)</li>
+            <li>Creator upload flow (case JSON editor)</li>
+            <li>Docker + docker-compose for full stack</li>
+            <li>Deploy backend to Railway/Render</li>
+            <li>Deploy frontend to Vercel/Netlify</li>
+            <li>End-to-end QA + load test + beta launch</li>
+          </ul>
+          <div class="week-owner">
+            <span class="owner-tag">P1: Payments</span>
+            <span class="owner-tag">P2: Case Gen</span>
+            <span class="owner-tag">P3: DevOps</span>
+            <span class="owner-tag">P4: QA + Launch</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-section">
+        <div class="arch-title">
+          <small>System Architecture</small>
+          Full Stack Overview
+        </div>
+        <div
+          style="background:#1a110a;border:1px solid rgba(200,145,58,0.2);border-radius:4px;padding:1.5rem;font-family:'IBM Plex Mono',monospace;font-size:0.7rem;line-height:2;color:rgba(244,237,224,0.65);">
+          <pre style="margin:0;white-space:pre-wrap;background:none;border:none;padding:0;">
+┌─────────────────────────────────────────────────────────────┐
+│                    DETECTIVEOS ARCHITECTURE                  │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│   BROWSER (Vanilla JS)                                      │
+│   ┌────────────┐  ┌──────────────┐  ┌──────────────────┐   │
+│   │ Case File  │  │ Board Canvas │  │ Interrogation UI │   │
+│   │ View       │  │ (drag+SVG)   │  │ (chat + AI)      │   │
+│   └────────────┘  └──────────────┘  └──────────────────┘   │
+│         │               │                    │              │
+│         └───────────────┴────────────────────┘              │
+│                         │ fetch() + JWT                      │
+├─────────────────────────┼───────────────────────────────────┤
+│   FastAPI (Python)      │                                    │
+│   ┌─────────┐  ┌────────┴──────┐  ┌─────────────────────┐  │
+│   │ /auth   │  │ /cases        │  │ /interrogate        │  │
+│   │ /users  │  │ /evidence     │  │ → Claude API        │  │
+│   └─────────┘  │ /board        │  │   (streaming SSE)   │  │
+│                │ /solve        │  └─────────────────────┘  │
+│                │ /leaderboard  │                            │
+│                └──────────┬────┘                            │
+├───────────────────────────┼─────────────────────────────────┤
+│   Services Layer          │                                  │
+│   ┌───────────────┐  ┌────┴──────────┐  ┌────────────────┐ │
+│   │ Scoring Engine│  │ Case Generator│  │ AI Interrogator│ │
+│   │ (validation + │  │ (template +   │  │ (Claude + sys  │ │
+│   │  LLM motive)  │  │  LLM gen)     │  │  prompt mgmt)  │ │
+│   └───────────────┘  └───────────────┘  └────────────────┘ │
+├─────────────────────────────────────────────────────────────┤
+│   Data Layer                                                │
+│   ┌──────────────┐  ┌──────────────┐  ┌────────────────┐   │
+│   │  PostgreSQL  │  │    Redis     │  │  AWS S3 / R2   │   │
+│   │  (SQLAlchemy │  │  (session    │  │  (evidence     │   │
+│   │   + Alembic) │  │   + cache)   │  │   assets)      │   │
+│   └──────────────┘  └──────────────┘  └────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+</pre>
+        </div>
+      </div>
+
+      <div style="margin-top:2rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;">
+        <div style="background:#1a110a;border:1px solid rgba(200,145,58,0.2);border-radius:4px;padding:1.2rem;">
+          <div
+            style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;color:var(--amber);margin-bottom:0.6rem">
+            MONETIZATION</div>
+          <div style="font-family:'Crimson Pro',serif;font-size:0.9rem;color:rgba(244,237,224,0.65);line-height:1.7">
+            Free: 1 case/mo, 10 questions<br>
+            Pro: $9.99/mo — unlimited<br>
+            Creator: $24.99/mo + 70% rev share<br>
+            Marketplace: custom case sales
+          </div>
+        </div>
+        <div style="background:#1a110a;border:1px solid rgba(200,145,58,0.2);border-radius:4px;padding:1.2rem;">
+          <div
+            style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;color:var(--amber);margin-bottom:0.6rem">
+            SCALABILITY</div>
+          <div style="font-family:'Crimson Pro',serif;font-size:0.9rem;color:rgba(244,237,224,0.65);line-height:1.7">
+            FastAPI async for high concurrency<br>
+            Redis for board state caching<br>
+            S3 for evidence media CDN<br>
+            Read replicas at 10k+ users
+          </div>
+        </div>
+        <div style="background:#1a110a;border:1px solid rgba(200,145,58,0.2);border-radius:4px;padding:1.2rem;">
+          <div
+            style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;color:var(--amber);margin-bottom:0.6rem">
+            AI DESIGN</div>
+          <div style="font-family:'Crimson Pro',serif;font-size:0.9rem;color:rgba(244,237,224,0.65);line-height:1.7">
+            Per-suspect system prompts<br>
+            Alibi + secrets injected as context<br>
+            LLM motive scoring (semantic)<br>
+            Template-driven case generation
+          </div>
+        </div>
+        <div style="background:#1a110a;border:1px solid rgba(200,145,58,0.2);border-radius:4px;padding:1.2rem;">
+          <div
+            style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;color:var(--amber);margin-bottom:0.6rem">
+            TEAM ROLES</div>
+          <div style="font-family:'Crimson Pro',serif;font-size:0.9rem;color:rgba(244,237,224,0.65);line-height:1.7">
+            P1: Backend + AI engineering<br>
+            P2: Frontend + board engine<br>
+            P3: DB + DevOps + scoring<br>
+            P4: Design + case writing + QA
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script>
+    // ── SCREEN NAVIGATION ──
+    function show(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
+      document.getElementById('screen-' + id).classList.add('active');
+      const tab = document.getElementById('tab-' + id);
+      if (tab) tab.classList.add('active');
+    }
+
+    // ── CASE FILE TABS ──
+    function switchTab(id) {
+      document.querySelectorAll('.case-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.case-tab-content').forEach(c => c.classList.remove('active'));
+      document.getElementById('tab-' + id).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    // ── TIMER ──
+    let timerSeconds = 9257;
+    setInterval(() => {
+      timerSeconds++;
+      const h = String(Math.floor(timerSeconds / 3600)).padStart(2, '0');
+      const m = String(Math.floor((timerSeconds % 3600) / 60)).padStart(2, '0');
+      const s = String(timerSeconds % 60).padStart(2, '0');
+      const el = document.getElementById('timer');
+      if (el) el.textContent = `${h}:${m}:${s}`;
+    }, 1000);
+
+    // ── EVIDENCE BOARD ──
+    let currentTool = 'select';
+    let pins = [];
+    let connections = [];
+    let selectedPin = null;
+    let connectFrom = null;
+    let pinIdCounter = 0;
+    let dragPin = null, dragOffX, dragOffY;
+
+    const EVIDENCE_PINS = [
+      { icon: '🥃', type: 'FORENSIC', label: 'Scotch Glass Lab Report' },
+      { icon: '📹', type: 'CCTV', label: 'East Wing — 1:17am Gap' },
+      { icon: '📱', type: 'PHONE LOG', label: "Victor's Phone · 3 Unknown Calls" },
+      { icon: '📄', type: 'DOCUMENT', label: 'Burned Deed Fragment' },
+      { icon: '💊', type: 'FORENSIC', label: 'Prescription Bottle' },
+      { icon: '🔪', type: 'FORENSIC', label: "Dominic's Prints — Opener" },
+    ];
+    const SUSPECT_PINS = [
+      { icon: '👩', type: 'SUSPECT', label: 'Eleanor Harrington' },
+      { icon: '👨‍💼', type: 'SUSPECT', label: 'Dominic Foles' },
+      { icon: '👩‍⚖️', type: 'SUSPECT', label: 'Sandra Rhee' },
+      { icon: '🧑', type: 'SUSPECT', label: 'Marcus Webb' },
+    ];
+
+    function setTool(t) {
+      currentTool = t;
+      document.querySelectorAll('.board-tool-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tool-' + t).classList.add('active');
+      document.getElementById('board-canvas').style.cursor = t === 'connect' ? 'crosshair' : 'default';
+      connectFrom = null;
+      if (selectedPin) { selectedPin.classList.remove('selected'); selectedPin = null; }
+    }
+
+    function createPin(data, x, y) {
+      const id = 'pin-' + (++pinIdCounter);
+      const div = document.createElement('div');
+      div.className = 'board-pin' + (data.type === 'SUSPECT' ? ' suspect-pin' : '');
+      div.id = id;
+      div.style.left = x + 'px';
+      div.style.top = y + 'px';
+      div.innerHTML = `<div class="pin-tack"></div><span class="pin-icon">${data.icon}</span><div class="pin-type">${data.type}</div><div class="pin-label">${data.label}</div>`;
+      div.addEventListener('mousedown', onPinMouseDown);
+      document.getElementById('board-canvas').appendChild(div);
+      pins.push({ id, el: div });
+      return div;
+    }
+
+    let evidenceIdx = 0, suspectIdx = 0;
+    function addEvidencePin() {
+      const d = EVIDENCE_PINS[evidenceIdx % EVIDENCE_PINS.length];
+      evidenceIdx++;
+      const canvas = document.getElementById('board-canvas');
+      const x = 40 + (evidenceIdx * 60) % (canvas.clientWidth - 220);
+      const y = 60 + Math.random() * (canvas.clientHeight - 180);
+      createPin(d, x, y);
+    }
+    function addSuspectPin() {
+      const d = SUSPECT_PINS[suspectIdx % SUSPECT_PINS.length];
+      suspectIdx++;
+      const canvas = document.getElementById('board-canvas');
+      const x = canvas.clientWidth - 230 - Math.random() * 100;
+      const y = 80 + (suspectIdx * 90) % (canvas.clientHeight - 200);
+      createPin(d, x, y);
+    }
+
+    function onPinMouseDown(e) {
+      e.stopPropagation();
+      const pin = e.currentTarget;
+
+      if (currentTool === 'connect') {
+        if (!connectFrom) {
+          connectFrom = pin;
+          pin.classList.add('selected');
+        } else if (connectFrom !== pin) {
+          drawConnection(connectFrom, pin);
+          connectFrom.classList.remove('selected');
+          connectFrom = null;
+        }
+        return;
+      }
+
+      if (selectedPin) selectedPin.classList.remove('selected');
+      selectedPin = pin;
+      pin.classList.add('selected');
+
+      const rect = pin.getBoundingClientRect();
+      const canvas = document.getElementById('board-canvas');
+      const cr = canvas.getBoundingClientRect();
+      dragPin = pin;
+      dragOffX = e.clientX - rect.left;
+      dragOffY = e.clientY - rect.top;
+
+      document.addEventListener('mousemove', onDragMove);
+      document.addEventListener('mouseup', onDragEnd);
+    }
+
+    function onDragMove(e) {
+      if (!dragPin) return;
+      const canvas = document.getElementById('board-canvas');
+      const cr = canvas.getBoundingClientRect();
+      const x = e.clientX - cr.left - dragOffX;
+      const y = e.clientY - cr.top - dragOffY;
+      dragPin.style.left = Math.max(0, Math.min(x, cr.width - dragPin.offsetWidth)) + 'px';
+      dragPin.style.top = Math.max(0, Math.min(y, cr.height - dragPin.offsetHeight)) + 'px';
+      redrawConnections();
+    }
+
+    function onDragEnd() {
+      dragPin = null;
+      document.removeEventListener('mousemove', onDragMove);
+      document.removeEventListener('mouseup', onDragEnd);
+    }
+
+    function getPinCenter(el) {
+      const canvas = document.getElementById('board-canvas');
+      const cr = canvas.getBoundingClientRect();
+      const r = el.getBoundingClientRect();
+      return {
+        x: r.left - cr.left + r.width / 2,
+        y: r.top - cr.top + r.height / 2
+      };
+    }
+
+    function drawConnection(a, b) {
+      connections.push({ a, b });
+      redrawConnections();
+    }
+
+    function redrawConnections() {
+      const svg = document.getElementById('connections-svg');
+      svg.innerHTML = '';
+      const colors = ['#c8913a', '#7aabff', '#8b1a1a', '#5ab87a', '#f0a500'];
+      connections.forEach((c, i) => {
+        try {
+          const pa = getPinCenter(c.a), pb = getPinCenter(c.b);
+          const col = colors[i % colors.length];
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('x1', pa.x); line.setAttribute('y1', pa.y);
+          line.setAttribute('x2', pb.x); line.setAttribute('y2', pb.y);
+          line.setAttribute('stroke', col);
+          line.setAttribute('stroke-width', '1.5');
+          line.setAttribute('stroke-dasharray', '6,3');
+          line.setAttribute('opacity', '0.6');
+          svg.appendChild(line);
+        } catch (e) { }
+      });
+    }
+
+    function clearConnections() { connections = []; redrawConnections(); }
+    function saveBoard() {
+      const btn = event.target;
+      btn.textContent = '✓ Saved';
+      setTimeout(() => btn.textContent = '💾 Save Board', 1500);
+    }
+
+    // Seed initial board
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        if (document.getElementById('board-canvas')) {
+          EVIDENCE_PINS.slice(0, 4).forEach((d, i) => {
+            createPin(d, 40 + i * 170, 80 + (i % 2) * 140);
+          });
+          SUSPECT_PINS.slice(0, 3).forEach((d, i) => {
+            createPin(d, 100 + i * 180, 310);
+          });
+          setTimeout(() => {
+            const p = pins;
+            if (p.length >= 6) {
+              drawConnection(p[0].el, p[4].el);
+              drawConnection(p[2].el, p[5].el);
+              drawConnection(p[1].el, p[3].el);
+            }
+          }, 100);
+        }
+      }, 200);
+    });
+
+    // ── INTERROGATION ──
+    const suspectResponses = {
+      Eleanor: [
+        "I was in my room all night. I have no reason to lie to you — Victor was my only family. Whatever you think you know, you're wrong.",
+        "That bottle is mine, yes. I have a prescription for anxiety. I didn't put it in Victor's study. Someone must have taken it.",
+        "The will? He told me he was reviewing it. That's all. A review doesn't mean disinheritance. You're reaching, detective.",
+        "I'm done answering questions without my attorney present. You have no evidence. You have speculation.",
+        "...I may have gone to the hallway around 1am. I heard a noise. But I didn't enter the study. The door was already locked.",
+      ],
+      Dominic: [
+        "Victor and I argued, yes, about the merger. Business disagreements happen. That's not a motive — that's Tuesday.",
+        "I absolutely did not go into his study. I don't know how my prints got on that letter opener. Victor must have borrowed it at some point.",
+        "The merger would have made me wealthy beyond reason. Why would I kill the golden goose? That's absurd.",
+        "Fine. I went to his study to continue the argument. But I left. He was alive. I didn't touch him.",
+        "I want a lawyer. Right now.",
+      ],
+      Sandra: [
+        "My relationship with Victor was purely professional. I drafted documents. I kept confidences. That is the extent of it.",
+        "I cannot discuss the contents of any communications between Victor and myself. Attorney-client privilege doesn't expire at death.",
+        "The text messages you're referencing were about a pending contract amendment. Nothing sinister. I assure you.",
+        "Whoever did this knew the layout of the manor well. I've only been here twice. You might want to focus your investigation closer to home.",
+        "I did notice that Eleanor seemed agitated all evening. She kept watching Victor. I thought it was sibling tension.",
+      ],
+      Marcus: [
+        "I'm a journalist. I go where the story goes. Victor's fund had serious irregularities — that's documented. My interest was professional.",
+        "I didn't kill him before I could finish my investigation. I needed him alive. Dead men don't give interviews.",
+        "Someone in that house knew about my research. Someone searched my room. Check who had access to the east wing guest rooms.",
+        "Eleanor Harrington called me three weeks ago. Said she'd give me everything I needed to expose Victor. Then suddenly: radio silence.",
+        "I'm not your killer. But I know who is. Give me 24 hours. I'll give you proof.",
+      ],
+    };
+
+    let currentSuspect = 'Eleanor';
+    let chatHistory = [];
+
+    function selectSuspect(card, name, icon, role, trait, qsLeft) {
+      document.querySelectorAll('.suspect-profile-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      currentSuspect = name;
+      chatHistory = [];
+
+      document.getElementById('chat-avatar').textContent = icon;
+      document.getElementById('chat-name').textContent = name + ' ' + role.split('·')[0];
+
+      const msgs = document.getElementById('chat-messages');
+      msgs.innerHTML = `<div class="chat-msg suspect"><div class="msg-label">${name}</div><div class="msg-bubble">${getGreeting(name)}</div></div>`;
+    }
+
+    function getGreeting(name) {
+      const greetings = {
+        Eleanor: "I've already spoken to your colleagues. I don't know what else you expect me to add.",
+        Dominic: "Look, I've been cooperative. I've answered everything. Can we make this quick?",
+        Sandra: "Detective. I'll assist where I can. But I have certain obligations I must honour.",
+        Marcus: "Finally. I've been waiting to talk. You need to hear what I found.",
+      };
+      return greetings[name] || "I'm ready to answer your questions.";
+    }
+
+    let responseIndex = {};
+    function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      appendMessage('You', text, 'player');
+      showTyping();
+      const delay = 1200 + Math.random() * 800;
+      setTimeout(() => {
+        hideTyping();
+        const idx = responseIndex[currentSuspect] || 0;
+        const responses = suspectResponses[currentSuspect] || ["I have nothing more to say."];
+        const reply = responses[idx % responses.length];
+        responseIndex[currentSuspect] = idx + 1;
+        appendMessage(currentSuspect, reply, 'suspect');
+      }, delay);
+    }
+
+    function sendQuick(btn) {
+      document.getElementById('chat-input').value = btn.textContent;
+      sendMessage();
+    }
+
+    function appendMessage(name, text, cls) {
+      const msgs = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = 'chat-msg ' + cls;
+      div.innerHTML = `<div class="msg-label">${name}</div><div class="msg-bubble">${text}</div>`;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function showTyping() {
+      document.getElementById('typing').classList.add('visible');
+    }
+    function hideTyping() {
+      document.getElementById('typing').classList.remove('visible');
+    }
+
+    // ── THEORY SUBMISSION ──
+    function selectCulprit(el) {
+      document.querySelectorAll('.suspect-select-item').forEach(i => i.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function toggleCheck(el) {
+      el.classList.toggle('checked');
+      const box = el.querySelector('.check-box');
+      box.textContent = el.classList.contains('checked') ? '✓' : '';
+    }
+
+    function submitTheory() {
+      const culprit = document.querySelector('.suspect-select-item.selected');
+      if (!culprit) { alert('Select a culprit before submitting.'); return; }
+      const isCorrect = culprit.querySelector('.ss-name').textContent === 'Eleanor Harrington';
+      const checkedEvidence = document.querySelectorAll('.evidence-check-item.checked').length;
+
+      const score = (isCorrect ? 40 : 0) + Math.floor(Math.random() * 10 + 10) + Math.min(checkedEvidence * 5, 25) + 10;
+
+      document.getElementById('modal-verdict').textContent = isCorrect ? 'CASE SOLVED' : 'WRONG CULPRIT';
+      document.getElementById('modal-verdict').className = 'score-verdict ' + (isCorrect ? 'correct' : 'wrong');
+      document.getElementById('modal-score').textContent = score;
+      document.getElementById('sc-culprit').textContent = isCorrect ? '40 / 40' : '0 / 40';
+      document.getElementById('sc-culprit').className = 'score-row-val' + (isCorrect ? '' : ' zero');
+      document.getElementById('sc-evidence').textContent = Math.min(checkedEvidence * 5, 25) + ' / 25';
+
+      document.getElementById('score-modal').classList.add('visible');
+    }
+
+    function closeModal() {
+      document.getElementById('score-modal').classList.remove('visible');
+    }
+
+    // ── FILTER BUTTONS ──
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // ── LB TOGGLE ──
+    document.querySelectorAll('.lb-toggle-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.lb-toggle-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+
+</html>

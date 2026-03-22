@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mystera — Global Rankings</title>
+<link rel="stylesheet" href="css/global.css">
+<style>
+nav { position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;background:rgba(13,11,8,0.95);border-bottom:1px solid var(--amber-border);backdrop-filter:blur(10px); }
+.nav-logo { font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;color:var(--amber);text-decoration:none; }
+.nav-logo span { color:var(--paper); }
+.lb-layout { max-width:820px;margin:0 auto;padding:calc(var(--nav-h) + 2.5rem) 2rem 4rem; }
+.lb-toggle { display:flex;background:var(--ink-mid);border:1px solid var(--amber-border);border-radius:var(--radius);overflow:hidden;margin-bottom:2rem;width:fit-content; }
+.lb-toggle-btn { background:none;border:none;color:var(--paper-muted);font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;padding:0.6rem 1.4rem;cursor:pointer;transition:all var(--transition); }
+.lb-toggle-btn.active { background:var(--amber);color:var(--ink); }
+.lb-row { display:grid;grid-template-columns:44px 1fr auto;gap:1rem;align-items:center;padding:0.9rem 1.1rem;border-bottom:1px solid var(--paper-ghost);border-radius:var(--radius);margin-bottom:3px;transition:background var(--transition); }
+.lb-row:hover { background:var(--amber-glow); }
+.lb-row.you { background:var(--amber-glow);border:1px solid var(--amber-border); }
+.lb-row.separator-row { opacity:0.6;border-top:2px dashed var(--amber-border); }
+.lb-rank { font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:var(--paper-muted);text-align:center; }
+.lb-rank.g { color:#ffd700; } .lb-rank.s { color:#c0c0c0; } .lb-rank.b { color:#cd7f32; }
+.lb-user { display:flex;align-items:center;gap:0.8rem; }
+.lb-av { width:34px;height:34px;border-radius:50%;background:var(--ink-light);border:1px solid var(--amber-border);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0; }
+.lb-uname { font-family:'Special Elite',monospace;font-size:0.92rem;color:var(--paper); }
+.lb-cases { font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:var(--paper-muted);letter-spacing:0.06em;margin-top:0.08rem; }
+.lb-score { text-align:right; }
+.lb-score-num { font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--amber); }
+.lb-score-lbl { font-family:'IBM Plex Mono',monospace;font-size:0.48rem;color:var(--paper-muted);letter-spacing:0.1em; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">🕵️ <span>Mystera</span></a>
+  <a href="cases.html" class="btn btn-primary btn-sm">Open Cases</a>
+</nav>
+
+<div class="lb-layout">
+  <h1 class="page-title" style="font-size:2.2rem;color:var(--paper);margin-bottom:1.5rem">
+    <small style="display:block;font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--amber);font-weight:400;margin-bottom:0.3rem">Season 2026</small>
+    Global Rankings
+  </h1>
+
+  <div class="lb-toggle">
+    <button class="lb-toggle-btn active" onclick="loadTab('global',this)">All-Time</button>
+    <button class="lb-toggle-btn" onclick="loadTab('weekly',this)">This Week</button>
+  </div>
+
+  <div id="lb-table"><div class="skeleton" style="height:400px;border-radius:3px"></div></div>
+</div>
+
+<div id="toast-container"></div>
+
+<script type="module">
+import { api, auth, toast } from './js/api.js';
+
+function rankClass(i) { return i===0?'g':i===1?'s':i===2?'b':''; }
+
+function renderTable(entries) {
+  if (!entries.length) return '<div class="empty-state">No rankings yet. Solve a case to appear here.</div>';
+  return entries.map((e,i)=>`
+    <div class="lb-row ${e.is_you?'you':''} ${e.separator?'separator-row':''}">
+      <div class="lb-rank ${rankClass(e.separator?99:i)}">${e.rank}</div>
+      <div class="lb-user">
+        <div class="lb-av">${e.avatar}</div>
+        <div>
+          <div class="lb-uname">${e.username}${e.is_you?' (you)':''}</div>
+          <div class="lb-cases">${e.cases_solved||0} cases solved${e.time_minutes?` · ${e.time_minutes}m`:''}</div>
+        </div>
+      </div>
+      <div class="lb-score">
+        <div class="lb-score-num">${e.score.toLocaleString()}</div>
+        <div class="lb-score-lbl">${e.xp?e.xp.toLocaleString()+' XP':'points'}</div>
+      </div>
+    </div>`).join('');
+}
+
+window.loadTab = async (tab, btn) => {
+  document.querySelectorAll('.lb-toggle-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('lb-table').innerHTML = '<div class="skeleton" style="height:400px;border-radius:3px"></div>';
+  try {
+    const data = tab==='global' ? await api.getGlobalLeaderboard() : await api.getWeeklyLeaderboard();
+    document.getElementById('lb-table').innerHTML = renderTable(data.entries||[]);
+  } catch(e) {
+    document.getElementById('lb-table').innerHTML = `<div style="text-align:center;padding:4rem;color:var(--paper-muted);font-family:Crimson Pro,serif;font-style:italic">Could not load rankings.<br><small>${e.message}</small></div>`;
+  }
+};
+
+loadTab('global', document.querySelector('.lb-toggle-btn'));
+</script>
+</body>
+</html>

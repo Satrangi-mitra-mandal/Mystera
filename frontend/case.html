@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mystera — Case File</title>
+<link rel="stylesheet" href="css/global.css">
+<style>
+/* ── Nav ─────────────────────────────────── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:500; height:var(--nav-h);
+  display:flex; align-items:center; justify-content:space-between; padding:0 1.8rem;
+  background:rgba(13,11,8,0.96); border-bottom:1px solid var(--amber-border);
+  backdrop-filter:blur(10px);
+}
+.nav-logo { font-family:'Playfair Display',serif; font-size:1rem; font-weight:900; color:var(--amber); text-decoration:none; }
+.nav-logo span { color:var(--paper); }
+.nav-tabs { display:flex; list-style:none; gap:0; }
+.nav-tab-btn {
+  background:none; border:none; border-bottom:2px solid transparent;
+  color:var(--paper-muted); font-family:'IBM Plex Mono',monospace;
+  font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase;
+  padding:0.5rem 1rem; cursor:pointer; transition:all var(--transition);
+}
+.nav-tab-btn:hover { color:var(--paper); }
+.nav-tab-btn.active { color:var(--amber); border-bottom-color:var(--amber); }
+.nav-timer { font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:var(--amber); letter-spacing:0.1em; }
+
+/* ── Screens ─────────────────────────────── */
+.screen { display:none; min-height:calc(100vh - var(--nav-h)); padding-top:var(--nav-h); }
+.screen.active { display:block; animation: fadeIn 0.3s ease; }
+
+/* ══ CASE FILE ══════════════════════════════ */
+.case-layout {
+  display:grid; grid-template-columns:1fr 320px; gap:1.8rem;
+  max-width:1140px; margin:0 auto; padding:2rem 2rem 4rem;
+}
+@media(max-width:880px){.case-layout{grid-template-columns:1fr}}
+
+.file-header {
+  background:linear-gradient(135deg,#1e1510,#150f0a); border:1px solid var(--amber-border);
+  border-radius:var(--radius); padding:2rem; margin-bottom:1.5rem; position:relative; overflow:hidden;
+}
+.file-header::before {
+  content:'CLASSIFIED'; position:absolute; top:50%; right:-15px;
+  transform:translateY(-50%) rotate(-28deg);
+  font-family:'IBM Plex Mono',monospace; font-size:5rem; font-weight:500;
+  color:var(--red); opacity:0.04; letter-spacing:0.3em; pointer-events:none;
+}
+.file-num { font-family:'IBM Plex Mono',monospace; font-size:0.56rem; color:var(--amber); letter-spacing:0.3em; text-transform:uppercase; margin-bottom:0.5rem; }
+.file-title { font-size:2rem; color:var(--paper); margin-bottom:0.3rem; }
+.file-victim { font-family:'Crimson Pro',serif; font-style:italic; color:var(--paper-muted); margin-bottom:1.2rem; }
+.file-bg { font-family:'Crimson Pro',serif; font-size:1rem; line-height:1.75; color:var(--paper-dim); }
+
+.case-tabs { display:flex; gap:0; border-bottom:1px solid var(--amber-border); margin-bottom:1.5rem; overflow-x:auto; }
+.case-tab {
+  background:none; border:none; border-bottom:2px solid transparent; margin-bottom:-1px;
+  color:var(--paper-muted); font-family:'IBM Plex Mono',monospace; font-size:0.6rem;
+  letter-spacing:0.14em; text-transform:uppercase; padding:0.65rem 1.1rem;
+  cursor:pointer; white-space:nowrap; transition:all var(--transition);
+}
+.case-tab.active { color:var(--amber); border-bottom-color:var(--amber); }
+.tab-content { display:none; } .tab-content.active { display:block; animation:fadeIn 0.25s ease; }
+
+/* Timeline */
+.timeline { position:relative; padding-left:2rem; }
+.timeline::before { content:''; position:absolute; left:5px; top:0; bottom:0; width:1px; background:linear-gradient(180deg,var(--amber) 0%,rgba(200,145,58,0.08) 100%); }
+.tl-item { position:relative; margin-bottom:1.6rem; padding-bottom:1.5rem; border-bottom:1px solid var(--paper-ghost); }
+.tl-item:last-child { border-bottom:none; margin-bottom:0; }
+.tl-dot { position:absolute; left:-1.85rem; top:4px; width:10px; height:10px; border-radius:50%; background:var(--amber); border:2px solid var(--ink); box-shadow:0 0 8px rgba(200,145,58,0.5); }
+.tl-time { font-family:'IBM Plex Mono',monospace; font-size:0.56rem; color:var(--amber); letter-spacing:0.14em; margin-bottom:0.25rem; }
+.tl-event { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--paper); margin-bottom:0.25rem; }
+.tl-detail { font-family:'Crimson Pro',serif; font-size:0.9rem; color:var(--paper-muted); line-height:1.55; }
+
+/* Evidence grid */
+.ev-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(175px,1fr)); gap:0.9rem; }
+.ev-card {
+  background:var(--ink); border:1px solid rgba(200,145,58,0.12); border-radius:var(--radius);
+  padding:1rem; cursor:pointer; transition:all var(--transition); position:relative;
+}
+.ev-card:hover { border-color:var(--amber-border); background:var(--ink-mid); }
+.ev-card.locked { opacity:0.4; cursor:not-allowed; filter:blur(0.3px); }
+.ev-icon { font-size:1.5rem; display:block; margin-bottom:0.5rem; }
+.ev-type { font-family:'IBM Plex Mono',monospace; font-size:0.48rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--paper-muted); margin-bottom:0.25rem; }
+.ev-name { font-family:'Playfair Display',serif; font-size:0.85rem; font-weight:700; color:var(--paper); line-height:1.3; }
+.ev-hint { font-family:'Crimson Pro',serif; font-size:0.78rem; font-style:italic; color:var(--paper-muted); margin-top:0.25rem; }
+.lock-icon { position:absolute; top:8px; right:8px; font-size:0.65rem; color:var(--paper-muted); opacity:0.5; }
+
+/* Evidence modal */
+.ev-modal-content { padding:1.5rem; font-family:'IBM Plex Mono',monospace; font-size:0.68rem; line-height:1.9; color:var(--paper-dim); white-space:pre-wrap; border:1px solid var(--paper-ghost); border-radius:var(--radius); background:var(--ink); }
+
+/* Suspects */
+.suspect-list { display:flex; flex-direction:column; gap:0.9rem; }
+.suspect-row {
+  background:var(--ink); border:1px solid rgba(200,145,58,0.12); border-radius:var(--radius);
+  padding:1.1rem; display:grid; grid-template-columns:48px 1fr auto; gap:1rem;
+  align-items:center; cursor:pointer; transition:all var(--transition);
+}
+.suspect-row:hover { border-color:var(--amber-border); background:var(--ink-mid); }
+.s-avatar { width:48px; height:48px; border-radius:50%; background:var(--ink-mid); border:1px solid var(--amber-border); display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0; }
+.s-name { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--paper); }
+.s-role { font-family:'IBM Plex Mono',monospace; font-size:0.55rem; color:var(--paper-muted); letter-spacing:0.08em; margin-top:0.1rem; }
+.s-status { font-family:'IBM Plex Mono',monospace; font-size:0.52rem; letter-spacing:0.1em; text-transform:uppercase; }
+.st-clean   { color:var(--green-bright); }
+.st-suspect { color:#f0a500; }
+.st-done    { color:var(--amber); }
+
+/* Sidebar */
+.sidebar { display:flex; flex-direction:column; gap:1.1rem; }
+.victim-row { display:flex; justify-content:space-between; padding:0.42rem 0; border-bottom:1px solid var(--paper-ghost); font-size:0.88rem; }
+.victim-row:last-child { border-bottom:none; }
+.victim-lbl { font-family:'IBM Plex Mono',monospace; font-size:0.56rem; color:var(--paper-muted); letter-spacing:0.08em; }
+.victim-val { font-family:'Crimson Pro',serif; color:var(--paper-dim); text-align:right; max-width:60%; }
+
+/* ══ BOARD ═══════════════════════════════════ */
+#screen-board { padding:0; }
+.board-toolbar {
+  height:50px; display:flex; align-items:center; gap:0.45rem; padding:0 1.2rem;
+  background:rgba(13,11,8,0.96); border-bottom:1px solid var(--amber-border);
+  position:sticky; top:var(--nav-h); z-index:10; flex-wrap:nowrap; overflow-x:auto;
+  margin-top:var(--nav-h);
+}
+.board-tool {
+  background:rgba(244,237,224,0.04); border:1px solid var(--paper-ghost); color:var(--paper-muted);
+  font-family:'IBM Plex Mono',monospace; font-size:0.56rem; letter-spacing:0.1em; text-transform:uppercase;
+  padding:0.35rem 0.75rem; cursor:pointer; border-radius:2px; transition:all var(--transition); white-space:nowrap;
+}
+.board-tool.active,.board-tool:hover { background:var(--amber-glow); border-color:var(--amber-border); color:var(--amber); }
+.board-sep { width:1px; height:24px; background:var(--paper-ghost); margin:0 0.3rem; flex-shrink:0; }
+.board-label { margin-left:auto; font-family:'Playfair Display',serif; font-size:0.8rem; font-style:italic; color:rgba(244,237,224,0.18); white-space:nowrap; }
+
+#board-canvas {
+  width:100%; height:calc(100vh - var(--nav-h) - 50px);
+  background:#1c150e; position:relative; overflow:hidden; cursor:default;
+  background-image:
+    radial-gradient(circle at 12% 88%, rgba(139,26,26,0.04) 0%, transparent 45%),
+    radial-gradient(circle at 88% 12%, rgba(200,145,58,0.03) 0%, transparent 40%),
+    repeating-linear-gradient(0deg, transparent, transparent 29px, rgba(244,237,224,0.012) 30px),
+    repeating-linear-gradient(90deg, transparent, transparent 29px, rgba(244,237,224,0.012) 30px);
+}
+#conn-svg { position:absolute; inset:0; pointer-events:none; width:100%; height:100%; }
+
+.board-pin {
+  position:absolute; background:#1e1408; border:1px solid var(--amber-border);
+  border-radius:3px; padding:0.65rem 0.85rem; min-width:128px; max-width:175px;
+  cursor:grab; user-select:none; box-shadow:4px 4px 14px rgba(0,0,0,0.6);
+  transition:box-shadow 0.15s; z-index:10;
+}
+.board-pin:active { cursor:grabbing; }
+.board-pin.selected { border-color:var(--amber); box-shadow:4px 4px 14px rgba(0,0,0,0.6),0 0 14px rgba(200,145,58,0.3); }
+.board-pin.suspect-pin { border-color:rgba(122,171,255,0.35); }
+.board-pin.suspect-pin.selected { border-color:var(--blue-bright); box-shadow:4px 4px 14px rgba(0,0,0,0.6),0 0 14px rgba(122,171,255,0.25); }
+.pin-tack { width:10px; height:10px; border-radius:50%; background:var(--amber); position:absolute; top:-5px; left:50%; transform:translateX(-50%); box-shadow:0 2px 6px rgba(200,145,58,0.6); }
+.suspect-pin .pin-tack { background:var(--blue-bright); box-shadow:0 2px 6px rgba(122,171,255,0.5); }
+.pin-icon { font-size:1rem; display:block; margin-bottom:0.2rem; }
+.pin-type { font-family:'IBM Plex Mono',monospace; font-size:0.44rem; letter-spacing:0.16em; text-transform:uppercase; color:rgba(200,145,58,0.6); }
+.suspect-pin .pin-type { color:rgba(122,171,255,0.6); }
+.pin-label { font-family:'Special Elite',monospace; font-size:0.7rem; color:var(--paper); line-height:1.3; margin-top:0.1rem; }
+
+/* ══ INTERROGATION ═══════════════════════════ */
+#screen-interrogate { padding:var(--nav-h) 0 0; }
+.interro-layout { display:grid; grid-template-columns:260px 1fr; height:calc(100vh - var(--nav-h)); }
+@media(max-width:700px){.interro-layout{grid-template-columns:1fr}}
+.suspect-panel { background:#110c08; border-right:1px solid var(--amber-border); padding:1.2rem; overflow-y:auto; display:flex; flex-direction:column; gap:0.8rem; }
+.sp-card { background:var(--ink-mid); border:1px solid var(--amber-border); border-radius:var(--radius); padding:1rem; cursor:pointer; transition:all var(--transition); position:relative; }
+.sp-card:hover { border-color:rgba(200,145,58,0.45); }
+.sp-card.active { border-color:var(--amber); background:var(--amber-glow); }
+.sp-avatar { font-size:1.5rem; margin-bottom:0.5rem; display:block; }
+.sp-name { font-family:'Playfair Display',serif; font-size:0.95rem; font-weight:700; color:var(--paper); }
+.sp-role { font-family:'IBM Plex Mono',monospace; font-size:0.52rem; color:var(--paper-muted); letter-spacing:0.08em; margin:0.15rem 0 0.4rem; }
+.sp-trait { font-family:'Crimson Pro',serif; font-size:0.82rem; font-style:italic; color:var(--paper-muted); line-height:1.4; }
+.sp-qs { position:absolute; top:8px; right:8px; font-family:'IBM Plex Mono',monospace; font-size:0.48rem; color:var(--amber); background:var(--amber-glow); border:1px solid var(--amber-border); padding:0.12rem 0.4rem; border-radius:2px; }
+
+.chat-panel { display:flex; flex-direction:column; background:#0e0a06; }
+.chat-header { padding:1rem 1.4rem; border-bottom:1px solid var(--amber-border); display:flex; align-items:center; gap:0.9rem; flex-shrink:0; }
+.chat-hname { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:var(--paper); }
+.chat-hstatus { font-family:'IBM Plex Mono',monospace; font-size:0.5rem; color:var(--green-bright); letter-spacing:0.1em; }
+.chat-rec { margin-left:auto; display:flex; align-items:center; gap:0.35rem; font-family:'IBM Plex Mono',monospace; font-size:0.5rem; color:var(--red-bright); letter-spacing:0.15em; }
+.rec-dot { width:6px; height:6px; border-radius:50%; background:var(--red-bright); animation:blink 1.2s infinite; }
+
+.chat-msgs { flex:1; overflow-y:auto; padding:1.2rem; display:flex; flex-direction:column; gap:0.9rem; }
+.chat-msg { max-width:78%; animation:fadeIn 0.3s ease; }
+.chat-msg.player { margin-left:auto; }
+.chat-msg.suspect { margin-right:auto; }
+.msg-label { font-family:'IBM Plex Mono',monospace; font-size:0.48rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--paper-muted); margin-bottom:0.25rem; }
+.player .msg-label { text-align:right; color:rgba(200,145,58,0.55); }
+.msg-bubble { padding:0.75rem 0.95rem; border-radius:3px; font-family:'Crimson Pro',serif; font-size:0.95rem; line-height:1.6; }
+.player .msg-bubble { background:rgba(200,145,58,0.12); border:1px solid rgba(200,145,58,0.2); color:var(--paper); border-bottom-right-radius:0; }
+.suspect .msg-bubble { background:var(--ink-mid); border:1px solid var(--paper-ghost); color:var(--paper-dim); border-bottom-left-radius:0; }
+.typing { display:none; align-items:center; gap:3px; padding:0.55rem 0.85rem; background:var(--ink-mid); border:1px solid var(--paper-ghost); border-radius:3px; border-bottom-left-radius:0; width:fit-content; }
+.typing.show { display:flex; }
+.typing-dot { width:5px; height:5px; border-radius:50%; background:var(--paper-muted); animation:typeDot 1s infinite; }
+.typing-dot:nth-child(2){animation-delay:0.2s}.typing-dot:nth-child(3){animation-delay:0.4s}
+@keyframes typeDot{0%,80%,100%{transform:scale(1);opacity:0.4}40%{transform:scale(1.3);opacity:1}}
+
+.chat-input-area { padding:0.9rem 1.2rem; border-top:1px solid var(--amber-border); background:#0e0a06; flex-shrink:0; }
+.quick-qs { display:flex; gap:0.35rem; flex-wrap:wrap; margin-bottom:0.65rem; }
+.quick-q { background:rgba(244,237,224,0.03); border:1px solid var(--paper-ghost); color:var(--paper-muted); font-family:'Crimson Pro',serif; font-size:0.78rem; font-style:italic; padding:0.28rem 0.65rem; border-radius:12px; cursor:pointer; transition:all var(--transition); }
+.quick-q:hover { border-color:var(--amber-border); color:var(--amber); background:var(--amber-glow); }
+.chat-row { display:flex; gap:0.5rem; }
+.chat-in { flex:1; background:var(--ink-mid); border:1px solid var(--amber-border); border-radius:2px; color:var(--paper); font-family:'Crimson Pro',serif; font-size:0.95rem; padding:0.65rem 0.9rem; outline:none; transition:border-color var(--transition); }
+.chat-in:focus { border-color:var(--amber); }
+.chat-in::placeholder { color:var(--paper-muted); font-style:italic; }
+
+/* ══ SOLVE ════════════════════════════════════ */
+#screen-solve { padding:var(--nav-h) 0 4rem; }
+.solve-inner { max-width:740px; margin:0 auto; padding:2.5rem 2rem; }
+.solve-hdr { text-align:center; margin-bottom:2.5rem; }
+.solve-hdr-tag { font-family:'IBM Plex Mono',monospace; font-size:0.58rem; letter-spacing:0.28em; text-transform:uppercase; color:var(--amber); margin-bottom:0.7rem; }
+.solve-hdr h2 { font-size:2.5rem; color:var(--paper); margin-bottom:0.5rem; }
+.solve-hdr p { font-family:'Crimson Pro',serif; font-style:italic; color:var(--paper-muted); font-size:1.05rem; }
+.form-section { margin-bottom:1.6rem; }
+.culprit-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(135px,1fr)); gap:0.55rem; }
+.culprit-opt { background:var(--ink); border:1px solid var(--paper-ghost); border-radius:var(--radius); padding:0.8rem; cursor:pointer; transition:all var(--transition); text-align:center; }
+.culprit-opt:hover { border-color:var(--amber-border); }
+.culprit-opt.selected { border-color:var(--amber); background:var(--amber-glow); }
+.co-avatar { font-size:1.5rem; display:block; margin-bottom:0.3rem; }
+.co-name { font-family:'Playfair Display',serif; font-size:0.8rem; font-weight:700; color:var(--paper); }
+.ev-check-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(185px,1fr)); gap:0.45rem; }
+.ev-check { display:flex; align-items:center; gap:0.5rem; padding:0.48rem 0.7rem; background:var(--ink); border:1px solid var(--paper-ghost); border-radius:2px; cursor:pointer; font-family:'Crimson Pro',serif; font-size:0.85rem; color:var(--paper-muted); transition:all var(--transition); }
+.ev-check:hover { border-color:var(--amber-border); }
+.ev-check.checked { border-color:var(--amber-border); background:var(--amber-glow); color:var(--paper); }
+.check-box { width:14px; height:14px; border:1px solid var(--paper-muted); border-radius:2px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:0.55rem; transition:all var(--transition); }
+.ev-check.checked .check-box { background:var(--amber); border-color:var(--amber); color:var(--ink); font-weight:700; }
+
+/* ══ SCORE MODAL ══════════════════════════════ */
+.score-modal-header { background:linear-gradient(135deg,#2a1f10,#1a1208); padding:2rem; text-align:center; border-bottom:1px solid var(--amber-border); }
+.score-verdict { font-family:'IBM Plex Mono',monospace; font-size:0.6rem; letter-spacing:0.3em; text-transform:uppercase; margin-bottom:0.5rem; }
+.score-verdict.ok { color:var(--green-bright); } .score-verdict.fail { color:var(--red-bright); }
+.score-big { font-family:'Playfair Display',serif; font-size:4.5rem; font-weight:900; color:var(--amber); line-height:1; }
+.score-row { display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid var(--paper-ghost); }
+.score-row-lbl { font-family:'IBM Plex Mono',monospace; font-size:0.58rem; color:var(--paper-muted); letter-spacing:0.1em; }
+.score-row-val { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--amber); }
+.score-row-val.zero { color:var(--paper-muted); }
+.reveal-box { background:var(--ink); border:1px solid var(--amber-border); border-radius:var(--radius); padding:1rem; font-family:'Crimson Pro',serif; font-size:0.9rem; font-style:italic; color:var(--paper-muted); line-height:1.7; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="cases.html" class="nav-logo">🕵️ <span>DOS</span></a>
+  <ul class="nav-tabs" id="nav-tabs">
+    <li><button class="nav-tab-btn active" onclick="switchScreen('case')">Case File</button></li>
+    <li><button class="nav-tab-btn" onclick="switchScreen('board')">Board</button></li>
+    <li><button class="nav-tab-btn" onclick="switchScreen('interrogate')">Interrogate</button></li>
+    <li><button class="nav-tab-btn" onclick="switchScreen('solve')">Submit Theory</button></li>
+  </ul>
+  <div class="nav-timer" id="nav-timer">00:00:00</div>
+</nav>
+
+<!-- ══ CASE FILE ══════════════════════════════ -->
+<div id="screen-case" class="screen active">
+  <div class="case-layout">
+    <div id="case-main">
+      <div class="file-header" id="file-header">
+        <div class="file-num" id="file-num">Loading…</div>
+        <h1 class="file-title" id="file-title"></h1>
+        <div class="file-victim" id="file-victim"></div>
+        <div class="file-bg" id="file-bg"></div>
+      </div>
+      <div class="case-tabs">
+        <button class="case-tab active" onclick="switchTab('timeline',this)">Timeline</button>
+        <button class="case-tab" onclick="switchTab('evidence',this)">Evidence</button>
+        <button class="case-tab" onclick="switchTab('suspects',this)">Suspects</button>
+      </div>
+      <div id="tab-timeline" class="tab-content active"><div class="timeline" id="timeline-list"></div></div>
+      <div id="tab-evidence" class="tab-content"><div class="ev-grid" id="ev-grid"></div></div>
+      <div id="tab-suspects" class="tab-content"><div class="suspect-list" id="suspect-list"></div></div>
+    </div>
+
+    <div class="sidebar">
+      <div class="card">
+        <div class="card-header">Progress</div>
+        <div class="card-body">
+          <div class="progress-wrap"><div class="progress-meta"><span>Evidence</span><span id="ev-prog-lbl">0/0</span></div><div class="progress-track"><div class="progress-fill" id="ev-prog" style="width:0%"></div></div></div>
+          <div class="progress-wrap"><div class="progress-meta"><span>Interrogations</span><span id="int-prog-lbl">0/0</span></div><div class="progress-track"><div class="progress-fill" id="int-prog" style="width:0%"></div></div></div>
+        </div>
+      </div>
+      <div class="card" id="victim-card">
+        <div class="card-header">Victim Profile</div>
+        <div class="card-body" id="victim-profile"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">Actions</div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:0.6rem;">
+          <button class="btn btn-outline-amber btn-md" onclick="switchScreen('board')">📌 Evidence Board</button>
+          <button class="btn btn-ghost btn-md" onclick="switchScreen('interrogate')" style="color:var(--blue-bright);border-color:rgba(122,171,255,0.3)">💬 Interrogate</button>
+          <button class="btn btn-ghost btn-md" onclick="switchScreen('solve')" style="color:var(--green-bright);border-color:rgba(90,184,122,0.3)">⚖️ Submit Theory</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">Timer</div>
+        <div class="card-body" style="text-align:center">
+          <div id="sidebar-timer" style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--amber)">00:00:00</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:var(--paper-muted);letter-spacing:0.15em;margin-top:0.2rem">ELAPSED · SPEED BONUS ACTIVE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BOARD ═════════════════════════════════ -->
+<div id="screen-board" class="screen">
+  <div class="board-toolbar">
+    <button class="board-tool active" id="tool-select" onclick="board.setTool('select');setActiveTool('select')">◻ Select</button>
+    <button class="board-tool" id="tool-connect" onclick="board.setTool('connect');setActiveTool('connect')">↗ Connect</button>
+    <div class="board-sep"></div>
+    <button class="board-tool" onclick="addEvPin()">+ Evidence</button>
+    <button class="board-tool" onclick="addSpPin()">+ Suspect</button>
+    <div class="board-sep"></div>
+    <button class="board-tool" onclick="board.clearConnections()">✕ Wires</button>
+    <button class="board-tool" onclick="saveBoard()">💾 Save</button>
+    <div class="board-sep"></div>
+    <button class="board-tool" onclick="switchScreen('solve')" style="color:var(--green-bright);border-color:rgba(90,184,122,0.2)">⚖ Submit</button>
+    <div class="board-label" id="board-case-label">Evidence Board</div>
+  </div>
+  <div id="board-canvas">
+    <svg id="conn-svg"></svg>
+  </div>
+</div>
+
+<!-- ══ INTERROGATION ══════════════════════════ -->
+<div id="screen-interrogate" class="screen">
+  <div class="interro-layout">
+    <div class="suspect-panel" id="suspect-panel">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--paper-muted);margin-bottom:0.3rem">Select Suspect</div>
+    </div>
+    <div class="chat-panel">
+      <div class="chat-header">
+        <div class="s-avatar" id="chat-avatar" style="width:40px;height:40px;border-radius:50%;background:var(--ink-mid);border:1px solid var(--amber-border);display:flex;align-items:center;justify-content:center;font-size:1.2rem">👤</div>
+        <div>
+          <div class="chat-hname" id="chat-name">Select a suspect</div>
+          <div class="chat-hstatus">● Interview room — East Wing</div>
+        </div>
+        <div class="chat-rec"><div class="rec-dot"></div>REC</div>
+      </div>
+      <div class="chat-msgs" id="chat-msgs">
+        <div style="text-align:center;padding:3rem;font-family:'Crimson Pro',serif;font-style:italic;color:var(--paper-muted)">Select a suspect to begin interrogation.</div>
+      </div>
+      <div style="padding:0 1.2rem 0.5rem"><div class="typing" id="typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>
+      <div class="chat-input-area">
+        <div class="quick-qs" id="quick-qs"></div>
+        <div class="chat-row">
+          <input class="chat-in" id="chat-in" placeholder="Ask your question…" onkeydown="if(event.key==='Enter')sendMsg()">
+          <button class="btn btn-primary btn-md" onclick="sendMsg()">Ask →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SOLVE ══════════════════════════════════ -->
+<div id="screen-solve" class="screen">
+  <div class="solve-inner">
+    <div class="solve-hdr">
+      <div class="solve-hdr-tag">⚖ Final Deduction</div>
+      <h2>Submit Your Theory</h2>
+      <p>Name the culprit. State the motive. Cite your evidence.</p>
+    </div>
+
+    <div class="form-section card">
+      <div class="card-header">01 · The Culprit</div>
+      <div class="card-body">
+        <div class="form-label" style="margin-bottom:0.7rem">Who committed the crime?</div>
+        <div class="culprit-grid" id="culprit-grid"></div>
+      </div>
+    </div>
+
+    <div class="form-section card">
+      <div class="card-header">02 · Motive</div>
+      <div class="card-body">
+        <label class="form-label">Why did they do it?</label>
+        <textarea class="textarea" id="sol-motive" placeholder="Describe the motive in detail. Reference relationships, financial details, secrets uncovered during interrogation…"></textarea>
+      </div>
+    </div>
+
+    <div class="form-section card">
+      <div class="card-header">03 · Method</div>
+      <div class="card-body">
+        <label class="form-label">How was it done?</label>
+        <textarea class="textarea" id="sol-method" placeholder="Explain how the crime was committed. How did they gain access? What was used? How did they avoid detection?"></textarea>
+      </div>
+    </div>
+
+    <div class="form-section card">
+      <div class="card-header">04 · Supporting Evidence</div>
+      <div class="card-body">
+        <label class="form-label" style="margin-bottom:0.7rem">Which evidence supports your theory?</label>
+        <div class="ev-check-grid" id="ev-check-grid"></div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-xl w-full" onclick="submitSolution()" id="submit-btn">⚖ Submit Final Theory</button>
+  </div>
+</div>
+
+<!-- Evidence Modal -->
+<div class="modal-overlay" id="ev-modal">
+  <div class="modal modal-md">
+    <div class="card-header" id="ev-modal-title" style="font-size:0.8rem;font-family:'Playfair Display',serif;font-weight:700;color:var(--paper)">Evidence</div>
+    <div style="padding:1.5rem">
+      <div id="ev-modal-desc" style="font-family:'Crimson Pro',serif;font-style:italic;color:var(--paper-muted);margin-bottom:1rem;line-height:1.6"></div>
+      <div class="ev-modal-content" id="ev-modal-content"></div>
+    </div>
+    <div style="padding:1rem 1.5rem;border-top:1px solid var(--paper-ghost);display:flex;gap:0.8rem">
+      <button class="btn btn-ghost btn-md" onclick="closeModal('ev-modal')">Close</button>
+      <button class="btn btn-outline-amber btn-md" id="ev-pin-btn">📌 Add to Board</button>
+    </div>
+  </div>
+</div>
+
+<!-- Score Modal -->
+<div class="modal-overlay" id="score-modal">
+  <div class="modal modal-md">
+    <div class="score-modal-header">
+      <div class="score-verdict" id="score-verdict">…</div>
+      <div class="score-big" id="score-num">0</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:var(--paper-muted)">out of 100</div>
+    </div>
+    <div style="padding:1.5rem 2rem">
+      <div style="display:flex;flex-direction:column;gap:0;margin-bottom:1.5rem">
+        <div class="score-row"><span class="score-row-lbl">Culprit Identified</span><span class="score-row-val" id="sc-culprit">—</span></div>
+        <div class="score-row"><span class="score-row-lbl">Motive Accuracy</span><span class="score-row-val" id="sc-motive">—</span></div>
+        <div class="score-row"><span class="score-row-lbl">Evidence Quality</span><span class="score-row-val" id="sc-evidence">—</span></div>
+        <div class="score-row"><span class="score-row-lbl">Speed Bonus</span><span class="score-row-val" id="sc-speed">—</span></div>
+      </div>
+      <div class="reveal-box" id="score-reveal"></div>
+      <div style="margin-top:0.8rem;font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--amber);letter-spacing:0.1em" id="score-xp"></div>
+    </div>
+    <div style="padding:1rem 2rem 1.5rem;display:flex;gap:0.8rem;border-top:1px solid var(--paper-ghost)">
+      <button class="btn btn-ghost btn-md" onclick="closeModal('score-modal')">Close</button>
+      <a href="leaderboard.html" class="btn btn-primary btn-md">See Rankings →</a>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script type="module">
+import { api, auth, toast, getParam } from './js/api.js';
+import { EvidenceBoard } from './js/board.js';
+
+if (!auth.loggedIn) { window.location.href = 'login.html'; }
+
+const slug = getParam('slug');
+if (!slug) { window.location.href = 'cases.html'; }
+
+let caseData = null;
+let progress = null;
+let currentSuspect = null;
+let chatHistory = {};
+let selectedCulprit = null;
+let checkedEvidence = new Set();
+let startTime = Date.now();
+let board = null;
+let evPinIdx = 0, spPinIdx = 0;
+
+/* ── Timer ──────────────────────────────────── */
+function formatTime(s) {
+  const h = String(Math.floor(s/3600)).padStart(2,'0');
+  const m = String(Math.floor((s%3600)/60)).padStart(2,'0');
+  const sec = String(s%60).padStart(2,'0');
+  return `${h}:${m}:${sec}`;
+}
+setInterval(() => {
+  const elapsed = Math.floor((Date.now()-startTime)/1000);
+  const t = formatTime(elapsed);
+  document.getElementById('nav-timer').textContent = t;
+  document.getElementById('sidebar-timer').textContent = t;
+}, 1000);
+
+/* ── Screens ────────────────────────────────── */
+window.switchScreen = (id) => {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
+  const tabMap = {case:0,board:1,interrogate:2,solve:3};
+  document.querySelectorAll('.nav-tab-btn')[tabMap[id]]?.classList.add('active');
+  if (id==='board') board._redrawConns();
+};
+
+/* ── Tabs ───────────────────────────────────── */
+window.switchTab = (id, btn) => {
+  document.querySelectorAll('.case-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+};
+
+/* ── Load case ──────────────────────────────── */
+async function loadCase() {
+  try {
+    caseData = await api.getCase(slug);
+    progress = await api.startCase(slug).catch(()=>null);
+    if (progress && progress.started_at) {
+      startTime = new Date(progress.started_at).getTime();
+    }
+    renderCase();
+    initBoard();
+    renderInterrogation();
+    renderSolve();
+  } catch(e) {
+    toast('Failed to load case: '+e.message, 'error');
+  }
+}
+
+function renderCase() {
+  const c = caseData;
+  document.title = `DetectiveOS — ${c.title}`;
+  document.getElementById('file-num').textContent = `CASE FILE · ${c.slug.toUpperCase()} · ${c.difficulty.toUpperCase()}`;
+  document.getElementById('file-title').textContent = c.title;
+  document.getElementById('file-victim').textContent = `Victim: ${c.victim_name}${c.victim_age?', '+c.victim_age:''}${c.victim_occupation?' · '+c.victim_occupation:''}`;
+  document.getElementById('file-bg').textContent = c.background;
+  document.getElementById('board-case-label').textContent = `"${c.title}" — Evidence Board`;
+
+  // Timeline
+  const tl = c.timeline || c.victim_profile?.timeline || [];
+  document.getElementById('timeline-list').innerHTML = tl.map(t=>`
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-time">${t.time}</div>
+      <div class="tl-event">${t.event}</div>
+      <div class="tl-detail">${t.detail}</div>
+    </div>`).join('') || '<p style="color:var(--paper-muted);font-style:italic">Timeline not available.</p>';
+
+  // Evidence
+  const unlocked = progress?.unlocked_evidence || [];
+  document.getElementById('ev-grid').innerHTML = c.evidence.map(e=>{
+    const locked = e.is_hidden;
+    return `<div class="ev-card ${locked?'locked':''}" onclick="${locked?'void 0':'showEvidence(\''+e.id+'\')'}">
+      ${locked?'<span class="lock-icon">🔒</span>':''}
+      <span class="ev-icon">${e.icon}</span>
+      <div class="ev-type">${e.type.replace('_',' ')}</div>
+      <div class="ev-name">${e.title}</div>
+      ${e.unlock_condition?`<div class="ev-hint">🔒 ${e.unlock_condition.replace('interrogate:','Interrogate ')}</div>`:''}
+    </div>`;
+  }).join('');
+
+  // Suspects
+  const interrogated = progress?.interrogated_suspects || [];
+  document.getElementById('suspect-list').innerHTML = c.suspects.map(s=>{
+    const done = interrogated.includes(s.id);
+    return `<div class="suspect-row" onclick="switchScreen('interrogate');selectSuspect('${s.id}')">
+      <div class="s-avatar">${s.avatar}</div>
+      <div><div class="s-name">${s.name}</div><div class="s-role">${s.occupation}</div></div>
+      <div class="s-status ${done?'st-done':'st-suspect'}">${done?'● Interrogated':'⚠ Pending'}</div>
+    </div>`;
+  }).join('');
+
+  // Victim profile
+  const vp = c.victim_profile || {};
+  const vpRows = Object.entries(vp).filter(([k])=>!['timeline'].includes(k)).map(([k,v])=>`
+    <div class="victim-row">
+      <span class="victim-lbl">${k.replace(/_/g,' ')}</span>
+      <span class="victim-val">${typeof v==='object'?JSON.stringify(v):v}</span>
+    </div>`).join('');
+  document.getElementById('victim-profile').innerHTML = vpRows || '<p style="color:var(--paper-muted);font-style:italic;font-family:Crimson Pro,serif">No additional profile data.</p>';
+
+  // Progress bars
+  const visEv = c.evidence.filter(e=>!e.is_hidden).length;
+  const totEv = c.evidence.length;
+  document.getElementById('ev-prog-lbl').textContent = `${visEv}/${totEv}`;
+  document.getElementById('ev-prog').style.width = totEv?`${(visEv/totEv)*100}%`:'0%';
+  const intd = (progress?.interrogated_suspects||[]).length;
+  const totS = c.suspects.length;
+  document.getElementById('int-prog-lbl').textContent = `${intd}/${totS}`;
+  document.getElementById('int-prog').style.width = totS?`${(intd/totS)*100}%`:'0%';
+}
+
+/* ── Evidence modal ─────────────────────────── */
+let currentEv = null;
+window.showEvidence = (evId) => {
+  currentEv = caseData.evidence.find(e=>e.id===evId);
+  if (!currentEv) return;
+  document.getElementById('ev-modal-title').textContent = `${currentEv.icon} ${currentEv.title}`;
+  document.getElementById('ev-modal-desc').textContent = currentEv.description;
+  document.getElementById('ev-modal-content').textContent = currentEv.content || 'No additional content.';
+  document.getElementById('ev-pin-btn').onclick = () => { addEvToBoard(currentEv); closeModal('ev-modal'); toast('Added to board','info'); };
+  openModal('ev-modal');
+};
+
+function addEvToBoard(ev) {
+  board.addPin({ kind:'evidence', icon:ev.icon, type:ev.type.replace('_',' ').toUpperCase(), label:ev.title, evId:ev.id }, 60+(evPinIdx*170)%700, 80+(evPinIdx%3)*140);
+  evPinIdx++;
+}
+
+/* ── Board ──────────────────────────────────── */
+function initBoard() {
+  board = new EvidenceBoard('board-canvas','conn-svg', async (state) => {
+    try { await api.saveBoard(slug, state); toast('Board saved','info',1500); } catch(e){}
+  });
+  if (progress?.board_state?.pins?.length) board.loadState(progress.board_state);
+}
+
+window.addEvPin = () => {
+  const visible = caseData?.evidence.filter(e=>!e.is_hidden);
+  if (!visible?.length) return;
+  const ev = visible[evPinIdx % visible.length]; evPinIdx++;
+  addEvToBoard(ev);
+};
+
+window.addSpPin = () => {
+  const suspects = caseData?.suspects;
+  if (!suspects?.length) return;
+  const s = suspects[spPinIdx % suspects.length]; spPinIdx++;
+  board.addPin({ kind:'suspect', icon:s.avatar, type:'SUSPECT', label:s.name }, 400+(spPinIdx*40)%200, 200+(spPinIdx*80)%300);
+};
+
+window.setActiveTool = (t) => {
+  document.querySelectorAll('.board-tool').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tool-'+t).classList.add('active');
+};
+
+window.saveBoard = async () => {
+  try {
+    await api.saveBoard(slug, board.getState());
+    toast('Board saved ✓','success',2000);
+  } catch(e) { toast('Save failed: '+e.message,'error'); }
+};
+
+/* ── Interrogation ──────────────────────────── */
+function renderInterrogation() {
+  const panel = document.getElementById('suspect-panel');
+  const existing = panel.querySelector('[data-suspects]');
+  if (existing) existing.remove();
+  const div = document.createElement('div');
+  div.setAttribute('data-suspects','');
+  div.innerHTML = (caseData.suspects||[]).map(s=>`
+    <div class="sp-card" id="sp-${s.id}" onclick="selectSuspect('${s.id}')">
+      <span class="sp-qs" id="qs-${s.id}">∞</span>
+      <span class="sp-avatar">${s.avatar}</span>
+      <div class="sp-name">${s.name}</div>
+      <div class="sp-role">${s.occupation}</div>
+      <div class="sp-trait">${s.personality?.split('.')[0]}.</div>
+    </div>`).join('');
+  panel.appendChild(div);
+}
+
+window.selectSuspect = (sid) => {
+  if (!caseData) return;
+  const s = caseData.suspects.find(x=>x.id===sid);
+  if (!s) return;
+  currentSuspect = s;
+  document.querySelectorAll('.sp-card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('sp-'+sid)?.classList.add('active');
+  document.getElementById('chat-avatar').textContent = s.avatar;
+  document.getElementById('chat-name').textContent = s.name;
+  const msgs = document.getElementById('chat-msgs');
+  msgs.innerHTML = `<div class="chat-msg suspect"><div class="msg-label">${s.name}</div><div class="msg-bubble">${getOpener(s)}</div></div>`;
+  // Quick questions
+  const QUICK = ['Where were you that night?','What was your relationship with the victim?','Do you have anything to hide?','Walk me through the timeline.'];
+  document.getElementById('quick-qs').innerHTML = QUICK.map(q=>`<button class="quick-q" onclick="sendQuick('${q.replace(/'/g,"&#39;")}')">${q}</button>`).join('');
+};
+
+function getOpener(s) {
+  if (s.is_culprit) return "I've already spoken with your colleagues. I don't see what more I can add.";
+  return `I'm willing to cooperate. Ask what you need.`;
+}
+
+window.sendQuick = (q) => { document.getElementById('chat-in').value = q; sendMsg(); };
+
+window.sendMsg = async () => {
+  if (!currentSuspect) { toast('Select a suspect first','info'); return; }
+  const input = document.getElementById('chat-in');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  appendMsg('You', msg, 'player');
+  document.getElementById('typing').classList.add('show');
+  try {
+    const hist = chatHistory[currentSuspect.id] || [];
+    const res = await api.interrogate(currentSuspect.id, msg, hist);
+    chatHistory[currentSuspect.id] = [...hist, {role:'user',content:msg},{role:'assistant',content:res.reply}];
+    document.getElementById('typing').classList.remove('show');
+    appendMsg(currentSuspect.name, res.reply, 'suspect');
+    if (res.questions_remaining < 999) {
+      document.getElementById('qs-'+currentSuspect.id).textContent = `${res.questions_remaining} left`;
+    }
+    // refresh progress
+    const intd = new Set(Object.keys(chatHistory).filter(k=>chatHistory[k].length>0));
+    const tot = caseData.suspects.length;
+    document.getElementById('int-prog-lbl').textContent = `${intd.size}/${tot}`;
+    document.getElementById('int-prog').style.width = `${(intd.size/tot)*100}%`;
+  } catch(e) {
+    document.getElementById('typing').classList.remove('show');
+    appendMsg('System', e.message, 'suspect');
+  }
+};
+
+function appendMsg(name, text, cls) {
+  const msgs = document.getElementById('chat-msgs');
+  const div = document.createElement('div');
+  div.className = `chat-msg ${cls}`;
+  div.innerHTML = `<div class="msg-label">${name}</div><div class="msg-bubble">${text}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+/* ── Solve ──────────────────────────────────── */
+function renderSolve() {
+  document.getElementById('culprit-grid').innerHTML = (caseData.suspects||[]).map(s=>`
+    <div class="culprit-opt" onclick="selectCulprit(this,'${s.name}')">
+      <span class="co-avatar">${s.avatar}</span>
+      <div class="co-name">${s.name}</div>
+    </div>`).join('');
+
+  document.getElementById('ev-check-grid').innerHTML = caseData.evidence.filter(e=>!e.is_hidden).map(e=>`
+    <div class="ev-check" onclick="toggleEvCheck(this,'${e.id}')">
+      <div class="check-box"></div>${e.icon} ${e.title}
+    </div>`).join('');
+}
+
+window.selectCulprit = (el, name) => {
+  document.querySelectorAll('.culprit-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedCulprit = name;
+};
+
+window.toggleEvCheck = (el, id) => {
+  el.classList.toggle('checked');
+  el.querySelector('.check-box').textContent = el.classList.contains('checked') ? '✓' : '';
+  if (el.classList.contains('checked')) checkedEvidence.add(id);
+  else checkedEvidence.delete(id);
+};
+
+window.submitSolution = async () => {
+  if (!selectedCulprit) { toast('Select a culprit first','info'); return; }
+  const motive = document.getElementById('sol-motive').value.trim();
+  const method = document.getElementById('sol-method').value.trim();
+  if (motive.length < 20) { toast('Motive too brief — add more detail','info'); return; }
+  if (method.length < 20) { toast('Method too brief — add more detail','info'); return; }
+  if (!checkedEvidence.size) { toast('Cite at least one piece of evidence','info'); return; }
+
+  const btn = document.getElementById('submit-btn');
+  btn.textContent = 'Submitting…'; btn.disabled = true;
+  try {
+    const res = await api.submitSolution(slug, {
+      culprit_name: selectedCulprit,
+      motive, method,
+      evidence_cited: [...checkedEvidence]
+    });
+    showScore(res);
+  } catch(e) {
+    toast(e.message,'error');
+    btn.textContent = '⚖ Submit Final Theory'; btn.disabled = false;
+  }
+};
+
+function showScore(res) {
+  document.getElementById('score-verdict').textContent = res.is_correct ? '✓ CASE SOLVED' : '✕ WRONG CULPRIT';
+  document.getElementById('score-verdict').className = 'score-verdict '+(res.is_correct?'ok':'fail');
+  document.getElementById('score-num').textContent = res.score;
+  document.getElementById('sc-culprit').textContent = `${res.breakdown.culprit} / 40`;
+  document.getElementById('sc-culprit').className = 'score-row-val'+(res.breakdown.culprit===0?' zero':'');
+  document.getElementById('sc-motive').textContent = `${res.breakdown.motive} / 20`;
+  document.getElementById('sc-evidence').textContent = `${res.breakdown.evidence} / 25`;
+  document.getElementById('sc-speed').textContent = `${res.breakdown.speed} / 15`;
+  document.getElementById('score-reveal').innerHTML = `<strong style="color:var(--amber)">${res.verdict_message}</strong><br><br>The true culprit was <strong style="color:var(--amber)">${res.true_culprit}</strong>.<br>${res.true_motive}`;
+  document.getElementById('score-xp').textContent = `+${res.xp_earned} XP earned`;
+  openModal('score-modal');
+}
+
+/* ── Modals ─────────────────────────────────── */
+window.openModal = (id) => document.getElementById(id).classList.add('open');
+window.closeModal = (id) => document.getElementById(id).classList.remove('open');
+document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); }));
+
+loadCase();
+</script>
+</body>
+</html>

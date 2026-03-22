@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mystera — Solve The Case</title>
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      background: rgba(13, 11, 8, 0.92);
+      border-bottom: 1px solid var(--amber-border);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: var(--amber);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .nav-logo span {
+      color: var(--paper);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-link {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--paper-muted);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+
+    .nav-link:hover {
+      color: var(--amber);
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 65% 55% at 50% 40%, rgba(200, 145, 58, 0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 45% 60% at 15% 85%, rgba(139, 26, 26, 0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 50% at 85% 20%, rgba(46, 74, 122, 0.05) 0%, transparent 55%);
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      opacity: 0.025;
+      background-image:
+        repeating-linear-gradient(0deg, var(--paper) 0, var(--paper) 1px, transparent 1px, transparent 72px),
+        repeating-linear-gradient(90deg, var(--paper) 0, var(--paper) 1px, transparent 1px, transparent 72px);
+    }
+
+    .hero-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-top: 2.0rem;
+      margin-bottom: 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .hero-eyebrow::before,
+    .hero-eyebrow::after {
+      content: '';
+      display: block;
+      width: 50px;
+      height: 1px;
+      background: var(--amber);
+      opacity: 0.5;
+    }
+
+    .hero-title {
+      font-size: clamp(4rem, 10vw, 7.5rem);
+      font-weight: 900;
+      line-height: 0.9;
+      color: var(--paper);
+      margin-bottom: 0.6rem;
+      position: relative;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--amber);
+    }
+
+    .hero-sub {
+      font-family: 'Crimson Pro', serif;
+      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--paper-muted);
+      margin-bottom: 3rem;
+      margin-top: 2rem;
+      line-height: 1.2;
+      max-width: 500px;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 5rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 4rem;
+      border-top: 1px solid var(--paper-ghost);
+      padding-top: 2.5rem;
+      position: relative;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--amber);
+      display: block;
+    }
+
+    .stat-lbl {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.56rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--paper-muted);
+      margin-top: 0.2rem;
+      display: block;
+    }
+
+    /* Features */
+    .section {
+      padding: 7rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.8rem;
+      display: block;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--paper);
+      margin-bottom: 3rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .feature-card {
+      background: var(--ink-mid);
+      border: 1px solid var(--amber-border);
+      border-radius: var(--radius);
+      padding: 1.8rem;
+      transition: all var(--transition);
+    }
+
+    .feature-card:hover {
+      border-color: rgba(200, 145, 58, 0.5);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .feature-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--paper);
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-desc {
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--paper-muted);
+      line-height: 1.6;
+    }
+
+    /* Pricing */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .pricing-card {
+      background: var(--ink-mid);
+      border: 1px solid var(--amber-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform var(--transition);
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .pricing-card.featured {
+      border-color: var(--amber);
+    }
+
+    .pricing-header {
+      padding: 1.8rem;
+      border-bottom: 1px solid var(--amber-border);
+    }
+
+    .pricing-tier {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.5rem;
+    }
+
+    .pricing-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--paper);
+    }
+
+    .pricing-price span {
+      font-size: 1rem;
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--paper-muted);
+    }
+
+    .pricing-body {
+      padding: 1.5rem;
+    }
+
+    .pricing-feature {
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.92rem;
+      color: var(--paper-dim);
+      padding: 0.4rem 0;
+      border-bottom: 1px solid var(--paper-ghost);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .pricing-feature::before {
+      content: '✓';
+      color: var(--amber);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .pricing-feature.no::before {
+      content: '✕';
+      color: var(--paper-muted);
+    }
+
+    .pricing-feature.no {
+      color: var(--paper-muted);
+    }
+
+    .pricing-cta {
+      padding: 1.2rem 1.5rem;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--paper-ghost);
+      padding: 2rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--paper-muted);
+      letter-spacing: 0.1em;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-logo {
+      color: var(--amber);
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">🕵️ <span>Mystera</span></a>
+    <div class="nav-links">
+      <a href="cases.html" class="nav-link">Cases</a>
+      <a href="leaderboard.html" class="nav-link">Rankings</a>
+      <a href="login.html" class="btn btn-ghost btn-sm" id="nav-login">Sign In</a>
+      <a href="cases.html" class="btn btn-primary btn-sm" id="nav-cta">Open Cases</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;">
+      <div class="hero-eyebrow">Active Investigations · 2026</div>
+      <h1 class="hero-title">Mystera</h1>
+      <p class="hero-sub">The world's first AI-powered mystery platform.<br>Interrogate suspects. Pin evidence. Solve
+        the case.</p>
+      <div class="hero-cta">
+        <a href="cases.html" class="btn btn-primary btn-xl">→ Open Active Cases</a>
+        <a href="login.html" class="btn btn-ghost btn-xl">Create Account</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">2,847</span><span class="stat-lbl">Detectives</span></div>
+        <div class="stat"><span class="stat-num">5</span><span class="stat-lbl">Cases Open</span></div>
+        <div class="stat"><span class="stat-num">94%</span><span class="stat-lbl">AI Accuracy</span></div>
+        <div class="stat"><span class="stat-num">8h</span><span class="stat-lbl">Avg. Per Case</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <div style="border-top: 1px solid var(--paper-ghost);">
+    <section class="section">
+      <span class="section-tag">How It Works</span>
+      <h2 class="section-title">A real detective's toolkit,<br><em style="color:var(--amber)">in your browser.</em></h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="feature-icon">📁</span>
+          <div class="feature-title">Interactive Case Files</div>
+          <div class="feature-desc">Immersive case backgrounds, victim profiles, detailed timelines, and a full suspect
+            dossier — just like a real investigation.</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🔍</span>
+          <div class="feature-title">Evidence System</div>
+          <div class="feature-desc">Photos, forensic reports, phone logs, CCTV clips, and documents — some locked,
+            unlocked only through interrogation.</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📌</span>
+          <div class="feature-title">Evidence Board</div>
+          <div class="feature-desc">Drag and pin evidence. Draw connections with coloured wire. Build your theory
+            visually — and save it between sessions.</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">💬</span>
+          <div class="feature-title">AI Suspect Interrogation</div>
+          <div class="feature-desc">Each suspect is powered by Claude. They lie, deflect, and reveal — based on their
+            alibi, personality, and whether they're guilty.</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">⚖️</span>
+          <div class="feature-title">Theory Submission</div>
+          <div class="feature-desc">Name the culprit, motive, and method. Cite your evidence. Your reasoning is scored
+            by an AI judge for semantic accuracy.</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🏆</span>
+          <div class="feature-title">Global Rankings</div>
+          <div class="feature-desc">Compete on weekly challenges. Earn XP. Climb the global leaderboard. The fastest,
+            sharpest detective wins.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- PRICING -->
+  <div style="border-top: 1px solid var(--paper-ghost);">
+    <section class="section">
+      <span class="section-tag">Plans</span>
+      <h2 class="section-title">Start free.<br><em style="color:var(--amber)">Go deeper.</em></h2>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-header">
+            <div class="pricing-tier">Free</div>
+            <div class="pricing-price">$0 <span>/forever</span></div>
+          </div>
+          <div class="pricing-body">
+            <div class="pricing-feature">1 case per month</div>
+            <div class="pricing-feature">10 AI interrogation questions</div>
+            <div class="pricing-feature">Basic evidence board</div>
+            <div class="pricing-feature">Global leaderboard</div>
+            <div class="pricing-feature no">Weekly challenges</div>
+            <div class="pricing-feature no">Case creation</div>
+          </div>
+          <div class="pricing-cta"><a href="login.html" class="btn btn-ghost btn-md w-full">Get Started</a></div>
+        </div>
+        <div class="pricing-card featured">
+          <div class="pricing-header">
+            <div class="pricing-tier">Pro</div>
+            <div class="pricing-price">$9.45 <span>/month</span></div>
+          </div>
+          <div class="pricing-body">
+            <div class="pricing-feature">Unlimited cases</div>
+            <div class="pricing-feature">Unlimited interrogations</div>
+            <div class="pricing-feature">Full evidence board + export</div>
+            <div class="pricing-feature">Weekly challenge access</div>
+            <div class="pricing-feature">Priority leaderboard</div>
+            <div class="pricing-feature no">Case creation</div>
+          </div>
+          <div class="pricing-cta"><a href="login.html" class="btn btn-primary btn-md w-full">Start Pro Trial</a></div>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-header">
+            <div class="pricing-tier">Creator</div>
+            <div class="pricing-price">$24.45 <span>/month</span></div>
+          </div>
+          <div class="pricing-body">
+            <div class="pricing-feature">Everything in Pro</div>
+            <div class="pricing-feature">Build & publish custom cases</div>
+            <div class="pricing-feature">Marketplace listing</div>
+            <div class="pricing-feature">70% revenue share</div>
+            <div class="pricing-feature">Analytics dashboard</div>
+            <div class="pricing-feature">Early access to features</div>
+          </div>
+          <div class="pricing-cta"><a href="login.html" class="btn btn-outline-amber btn-md w-full">Start Creating</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <span class="footer-logo">🕵️ Mystera</span>
+    <span>Built with noir aesthetics and a burning obsession for the truth.</span>
+    <span>&copy; 2026 Mystera Inc.</span>
+  </footer>
+
+  <div id="toast-container"></div>
+
+  <script type="module">
+    import { auth } from './js/api.js';
+    if (auth.loggedIn) {
+      document.getElementById('nav-login').textContent = auth.user.username;
+      document.getElementById('nav-login').href = 'profile.html';
+    }
+  </script>
+</body>
+
+</html>

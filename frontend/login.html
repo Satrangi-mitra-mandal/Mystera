@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mystera — Sign In</title>
+<link rel="stylesheet" href="css/global.css">
+<style>
+body { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:2rem; }
+.auth-bg {
+  position:fixed; inset:0;
+  background: radial-gradient(ellipse 60% 60% at 30% 50%, rgba(200,145,58,0.05) 0%, transparent 65%),
+              radial-gradient(ellipse 50% 50% at 70% 50%, rgba(139,26,26,0.06) 0%, transparent 60%);
+}
+.auth-box {
+  position:relative; z-index:2;
+  background:var(--ink-mid); border:1px solid var(--amber-border);
+  border-radius:4px; padding:2.5rem;
+  width:100%; max-width:420px;
+  box-shadow:var(--shadow-lg);
+  animation: fadeInUp 0.4s ease;
+}
+.auth-logo {
+  text-align:center; margin-bottom:2rem;
+  font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:900; color:var(--amber);
+}
+.auth-logo span { color:var(--paper); }
+.auth-tabs { display:flex; margin-bottom:2rem; border-bottom:1px solid var(--amber-border); }
+.auth-tab {
+  flex:1; background:none; border:none; border-bottom:2px solid transparent;
+  color:var(--paper-muted); font-family:'IBM Plex Mono',monospace; font-size:0.65rem;
+  letter-spacing:0.14em; text-transform:uppercase;
+  padding:0.7rem; cursor:pointer; transition:all var(--transition); margin-bottom:-1px;
+}
+.auth-tab.active { color:var(--amber); border-bottom-color:var(--amber); }
+.auth-form { display:none; }
+.auth-form.active { display:block; }
+.auth-divider { text-align:center; margin:1.5rem 0; font-family:'IBM Plex Mono',monospace; font-size:0.56rem; color:var(--paper-muted); letter-spacing:0.2em; }
+.avatar-grid { display:flex; gap:0.5rem; flex-wrap:wrap; }
+.avatar-opt {
+  width:44px; height:44px; border-radius:50%;
+  background:var(--ink); border:2px solid var(--paper-ghost);
+  display:flex; align-items:center; justify-content:center; font-size:1.3rem;
+  cursor:pointer; transition:all var(--transition);
+}
+.avatar-opt.selected { border-color:var(--amber); background:var(--amber-glow); }
+.avatar-opt:hover { border-color:var(--amber-border); }
+.error-msg { color:var(--red-bright); font-family:'IBM Plex Mono',monospace; font-size:0.62rem; margin-top:0.5rem; display:none; }
+.error-msg.show { display:block; }
+</style>
+</head>
+<body>
+<div class="auth-bg"></div>
+
+<div class="auth-box" style="text-align: center;">
+    <a href="index.html" class="auth-logo" style="text-decoration: none; color: inherit; display: inline-block;">
+        🕵️ <span>Mystera</span>
+    </a>
+
+
+  <div class="auth-tabs">
+    <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+    <button class="auth-tab" onclick="switchTab('register')">Create Account</button>
+  </div>
+
+  <!-- LOGIN -->
+  <form class="auth-form active" id="form-login" onsubmit="handleLogin(event)">
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input type="email" class="input" id="login-email" placeholder="detective@example.com" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" class="input" id="login-password" placeholder="••••••••" required>
+    </div>
+    <div class="error-msg" id="login-error"></div>
+    <button type="submit" class="btn btn-primary btn-md w-full" id="login-btn">→ Sign In</button>
+  </form>
+
+  <!-- REGISTER -->
+  <form class="auth-form" id="form-register" onsubmit="handleRegister(event)">
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input type="email" class="input" id="reg-email" placeholder="detective@example.com" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Detective Name</label>
+      <input type="text" class="input" id="reg-username" placeholder="e.g. NightshadeK" minlength="3" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" class="input" id="reg-password" placeholder="Min. 8 characters" minlength="8" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Choose Avatar</label>
+      <div class="avatar-grid" id="avatar-grid">
+        <div class="avatar-opt selected" data-v="🕵️">🕵️</div>
+        <div class="avatar-opt" data-v="🦅">🦅</div>
+        <div class="avatar-opt" data-v="🌙">🌙</div>
+        <div class="avatar-opt" data-v="🔍">🔍</div>
+        <div class="avatar-opt" data-v="🐦">🐦</div>
+        <div class="avatar-opt" data-v="⭐">⭐</div>
+        <div class="avatar-opt" data-v="🗝️">🗝️</div>
+        <div class="avatar-opt" data-v="💀">💀</div>
+      </div>
+    </div>
+    <div class="error-msg" id="reg-error"></div>
+    <button type="submit" class="btn btn-primary btn-md w-full" id="reg-btn">→ Create Account</button>
+  </form>
+</div>
+
+<div id="toast-container"></div>
+
+<script type="module">
+import { api, toast } from './js/api.js';
+
+let selectedAvatar = '🕵️';
+
+window.switchTab = (tab) => {
+  document.querySelectorAll('.auth-tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register'));
+  });
+  document.getElementById('form-login').classList.toggle('active', tab === 'login');
+  document.getElementById('form-register').classList.toggle('active', tab === 'register');
+};
+
+// Avatar selection
+document.getElementById('avatar-grid').addEventListener('click', e => {
+  const opt = e.target.closest('.avatar-opt');
+  if (!opt) return;
+  document.querySelectorAll('.avatar-opt').forEach(o => o.classList.remove('selected'));
+  opt.classList.add('selected');
+  selectedAvatar = opt.dataset.v;
+});
+
+window.handleLogin = async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('login-btn');
+  const err = document.getElementById('login-error');
+  btn.textContent = 'Signing in…'; btn.disabled = true;
+  err.classList.remove('show');
+  try {
+    await api.login(
+      document.getElementById('login-email').value,
+      document.getElementById('login-password').value
+    );
+    window.location.href = 'cases.html';
+  } catch (ex) {
+    err.textContent = ex.message; err.classList.add('show');
+    btn.textContent = '→ Sign In'; btn.disabled = false;
+  }
+};
+
+window.handleRegister = async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('reg-btn');
+  const err = document.getElementById('reg-error');
+  btn.textContent = 'Creating…'; btn.disabled = true;
+  err.classList.remove('show');
+  try {
+    await api.register(
+      document.getElementById('reg-email').value,
+      document.getElementById('reg-username').value,
+      document.getElementById('reg-password').value,
+      selectedAvatar
+    );
+    window.location.href = 'cases.html';
+  } catch (ex) {
+    err.textContent = ex.message; err.classList.add('show');
+    btn.textContent = '→ Create Account'; btn.disabled = false;
+  }
+};
+</script>
+</body>
+</html>

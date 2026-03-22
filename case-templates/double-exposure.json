@@ -1,0 +1,113 @@
+{
+  "title": "Double Exposure",
+  "slug": "double-exposure",
+  "difficulty": "detective",
+  "setting": "Aperture Gallery, SoHo, New York City",
+  "is_weekly": false,
+  "background": "Celebrity photographer Felix Crane was found dead at his own gallery opening on the evening of March 7th, 2026 — collapsing mid-toast in front of 60 guests. The cause: a lethal dose of ricin, administered through contact poison applied to the rim of his champagne glass. Someone in that room deliberately poisoned him. The gallery was full of people who loved Felix. It was also full of people he had destroyed.",
+  "victim_name": "Felix Crane",
+  "victim_age": 47,
+  "victim_occupation": "Celebrity Photographer / Gallery Owner",
+  "victim_profile": {
+    "net_worth": "$4.2M",
+    "cause_of_death": "Ricin poisoning — contact absorption via champagne glass rim",
+    "notes": "Felix had a reputation for using private photographs as leverage over subjects",
+    "timeline": [
+      {"time": "MAR 7 · 7:00 PM", "event": "Gallery Opens", "detail": "60 guests arrive for the opening of 'Shadows & Light'. Felix is in high spirits, greeting guests."},
+      {"time": "MAR 7 · 8:15 PM", "event": "Champagne Toast", "detail": "Felix raises a glass for a toast. Collapses 4 minutes later. Glass had been left unattended on the service table for approximately 12 minutes before the toast."},
+      {"time": "MAR 7 · 8:19 PM", "event": "Felix Collapses", "detail": "Felix collapses mid-toast. Emergency services arrive at 8:31pm. Declared dead at 9:04pm."},
+      {"time": "MAR 7 · 9:30 PM", "event": "Crime Scene Secured", "detail": "NYPD secures the gallery. All 60 guests asked to remain. Champagne glass collected as evidence."},
+      {"time": "MAR 8 · 10:00 AM", "event": "Toxicology Confirmed", "detail": "Ricin contact poisoning confirmed. Applied to glass rim as a lipid-soluble gel — absorbed through lip contact."}
+    ]
+  },
+  "true_culprit_name": "Simone Avery",
+  "true_motive": "Felix had taken compromising photographs of Simone — a married senator's wife — during what she believed was a private artistic session. He had been blackmailing her for $30,000 a year for three years. When she threatened to go to the police, he escalated. The night of the gallery opening was her last chance before he released the images.",
+  "true_method": "Simone arrived early under the pretence of helping set up. She applied a ricin-based contact gel to the rim of the champagne glass designated for Felix — identified by a small red dot on the base that the gallery staff used to distinguish hosts' glasses. She wore a thin latex glove under her ring, removed it in the bathroom, and flushed it.",
+  "required_evidence_ids": ["ev-de-01", "ev-de-03", "ev-de-04"],
+  "suspects": [
+    {
+      "name": "Simone Avery",
+      "occupation": "Art Patron / Senator's Wife",
+      "personality": "Graceful under pressure. Uses social status to deflect. Laughs at the wrong moments. Very careful about her hands.",
+      "alibi": "Says she was speaking with the gallery curator during the critical window. The curator's account is vague.",
+      "relationship_to_victim": "Long-time patron of Felix's work. Claims they were 'old friends'.",
+      "is_culprit": true,
+      "avatar": "👸",
+      "motive_hint": "She paid Felix a great deal of money — and it wasn't for photographs.",
+      "secrets": [
+        "Felix had been blackmailing her for 3 years — $90,000 total",
+        "She arrived 45 minutes early to 'help set up' — no other patron did this",
+        "She disposed of a latex glove in the women's bathroom around 7:40pm",
+        "She knew about the red dot on Felix's glass — she had attended enough events to notice it"
+      ]
+    },
+    {
+      "name": "Dorian Marsh",
+      "occupation": "Former Photography Apprentice",
+      "personality": "Bitter, intense, prone to saying exactly what he thinks. Makes no attempt to appear innocent.",
+      "alibi": "Was at the gallery all evening — visible to many guests. Was near the service table at one point.",
+      "relationship_to_victim": "Felix stole and published Dorian's most celebrated work under his own name. Dorian's lawsuit was dismissed.",
+      "is_culprit": false,
+      "avatar": "👨‍🎨",
+      "motive_hint": "Felix destroyed his career and took credit for his life's work.",
+      "secrets": [
+        "He came to the gallery specifically to confront Felix — had a prepared speech",
+        "He picked up Felix's glass by mistake at one point and set it back down — his prints are on it",
+        "He saw a woman in a green dress near the service table for a long time — he thought she was a caterer"
+      ]
+    },
+    {
+      "name": "Nina Vasquez",
+      "occupation": "Gallery Curator",
+      "personality": "Anxious, overworked, speaks in run-on sentences. Desperately wants this not to be her problem.",
+      "alibi": "Was managing the event all night. Says Simone Avery was with her — but she can only confirm for part of the window.",
+      "relationship_to_victim": "Worked for Felix for 6 years. He had recently threatened to fire her without severance.",
+      "is_culprit": false,
+      "avatar": "👩‍🎭",
+      "motive_hint": "She had motive and access — and her alibi for Simone is shakier than she admits.",
+      "secrets": [
+        "Felix owed her $40,000 in unpaid overtime she'd never formally claimed",
+        "She was with Simone from 7:55pm to 8:05pm — not the full window",
+        "She noticed Simone's hands were shaking when they spoke — assumed it was nerves about the event"
+      ]
+    },
+    {
+      "name": "Calvin Osei",
+      "occupation": "Rival Photographer / Magazine Editor",
+      "personality": "Charming, competitive, very comfortable with conflict. Treats the interrogation like a game.",
+      "alibi": "Was photographing the event for a magazine piece. Has timestamps on every photo — his camera never left his hands.",
+      "relationship_to_victim": "Professional rival. Felix had publicly accused Calvin of plagiarism — the reverse of the truth.",
+      "is_culprit": false,
+      "avatar": "📷",
+      "motive_hint": "He has motive but an almost perfect alibi.",
+      "secrets": [
+        "He photographed Simone near the service table at 8:03pm — the photo is on his camera",
+        "He hasn't reviewed all his photos from the night yet",
+        "Felix had actually tried to hire Calvin away from his magazine — Calvin refused"
+      ]
+    },
+    {
+      "name": "Grace Holt",
+      "occupation": "Lead Caterer / Event Staff",
+      "personality": "Professional, efficient, stressed. Speaks only in facts. Dislikes speculation.",
+      "alibi": "Was managing catering staff all evening. Multiple staff can confirm.",
+      "relationship_to_victim": "Felix's caterer for 5 years. He routinely stiffed her on invoices.",
+      "is_culprit": false,
+      "avatar": "👩‍🍳",
+      "motive_hint": "She prepared and placed the glasses — and she's owed $18,000 in unpaid invoices.",
+      "secrets": [
+        "She set up the host glasses including Felix's — identified by a red dot sticker on the base",
+        "She left the service table unattended for 14 minutes between 7:50pm and 8:04pm",
+        "She saw a woman in green near the table but assumed she was a guest examining the display"
+      ]
+    }
+  ],
+  "evidence": [
+    {"id": "ev-de-01", "type": "forensic", "title": "Champagne Glass — Ricin Contact Gel", "description": "Felix's champagne glass (identified by red dot on base) tested positive for a ricin-based lipid-soluble contact gel on the outer rim. The gel is absorbed through mucous membrane contact. It requires specialist chemistry knowledge to prepare.", "content": "TOXICOLOGY — Item G-001 (Host Glass, red dot)\nSubstance: Ricin conjugate in lipid-carrier gel\nApplication: Outer rim, concentrated zone (approx 2cm)\nAbsorption: Mucous membrane — lip contact sufficient\nDose: 3x lethal threshold\nSynthesis: Requires chemistry training — not improvised\nDelivery window: Applied within 45 minutes of ingestion", "icon": "🥂", "is_hidden": false, "sort_order": 1},
+    {"id": "ev-de-02", "type": "forensic", "title": "Dorian Marsh — Fingerprints on Glass", "description": "Dorian Marsh's fingerprints found on the exterior of Felix's champagne glass. However, the prints are on the body of the glass — not the rim where the poison was applied.", "content": "FINGERPRINT REPORT — Item G-001\nPrint Set A: Felix Crane — rim and stem (expected)\nPrint Set B: Dorian Marsh — body of glass, exterior\nPrint location: 6cm below rim — NOT the poisoned zone\nAnalysis: Print Set B inconsistent with poison application\nConclusion: Marsh handled glass — NOT the poison applicator", "icon": "🖐️", "is_hidden": false, "sort_order": 2},
+    {"id": "ev-de-03", "type": "cctv", "title": "Gallery Camera — Service Table (8:03 PM)", "description": "Gallery CCTV captures a woman in a green dress standing alone at the service table at 8:03pm. Her back is to the camera. She appears to handle Felix's host glass for approximately 18 seconds. She is the only person near the table during the unattended window.", "content": "CCTV ANALYSIS — Gallery Interior Cam-2\n20:03:11 — Woman in green dress approaches service table\n20:03:14 — Reaches toward host glass display\n20:03:22 — Right hand contact with designated host glass (red dot base)\n20:03:29 — Steps back, adjusts posture\n20:03:44 — Moves toward main gallery space\nDuration at glass: 18 seconds\nCamera angle: Back-to-camera — face not visible\nClothing match: Green silk dress", "icon": "📹", "is_hidden": false, "sort_order": 3},
+    {"id": "ev-de-04", "type": "forensic", "title": "Bathroom Waste — Latex Glove Fragment", "description": "A fragment of a thin surgical latex glove recovered from the women's bathroom wastepaper bin. Luminol testing shows trace amounts of the ricin gel on the inner surface — indicating the glove was used to apply the poison.", "content": "FORENSIC RECOVERY — Women's Bathroom Bin\nItem: Latex glove fragment (torn, partial)\nGlove type: Ultra-thin surgical latex, natural colour\nInner surface: Trace ricin conjugate — POSITIVE (luminol)\nOuter surface: Clean\nConclusion: Used to apply substance without contact\nNote: Size estimate — women's small/medium", "icon": "🧤", "is_hidden": false, "sort_order": 4},
+    {"id": "ev-de-05", "type": "document", "title": "Felix's Blackmail Files — Encrypted Drive", "description": "A secondary encrypted hard drive recovered from Felix's studio. Contains folders labelled with initials. The folder 'S.A.' contains 47 photographs and a payment ledger showing three annual transfers of $30,000 — all from an LLC traceable to Simone Avery.", "content": "DIGITAL FORENSICS — Secondary Drive (studio)\nEncryption: Broken via known key (found in notebook)\nFolder 'S.A.':\n  - 47 image files (nature: compromising, private)\n  - Payment_log.xlsx:\n    2023: $30,000 — Avery Holdings LLC\n    2024: $30,000 — Avery Holdings LLC  \n    2025: $30,000 — Avery Holdings LLC\n    2026 note: 'S.A. refused. Escalate.'\nTotal received: $90,000", "icon": "💾", "is_hidden": true, "unlock_condition": "interrogate:nina", "sort_order": 5},
+    {"id": "ev-de-06", "type": "photo", "title": "Calvin's Gallery Photos — 8:03 PM", "description": "Calvin Osei's camera roll from the evening. Photo taken at 8:03:22pm — timestamped automatically — shows Simone Avery in a green dress, back to camera, standing at the service table. Her right hand is extended toward the host glass display.", "content": "PHOTO EVIDENCE — Calvin Osei Camera Roll\nFile: IMG_2847.RAW\nTimestamp: 2026-03-07 20:03:22\nSubject: Gallery interior — service table\nVisible: Woman in green dress (back to lens) at service table\nRight hand: Extended toward host glass display\nClothing: Green silk dress, matching CCTV description\nNote: This is the only person photographed at the table during the unattended window", "icon": "📸", "is_hidden": true, "unlock_condition": "interrogate:calvin", "sort_order": 6}
+  ]
+}

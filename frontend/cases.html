@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mystera — Active Cases</title>
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      background: rgba(13, 11, 8, 0.95);
+      border-bottom: 1px solid var(--amber-border);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--amber);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .nav-logo span {
+      color: var(--paper);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-user {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--amber);
+      background: var(--amber-glow);
+      border: 1px solid var(--amber-border);
+      padding: 0.3rem 0.8rem;
+      border-radius: 2px;
+      text-decoration: none;
+    }
+
+    .page-header {
+      padding: 3rem 2.5rem 2rem;
+      border-bottom: 1px solid var(--paper-ghost);
+      margin-bottom: 2rem;
+    }
+
+    .page-header-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .page-title {
+      font-size: 2.2rem;
+      color: var(--paper);
+    }
+
+    .page-title small {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--amber);
+      font-weight: 400;
+      margin-bottom: 0.3rem;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: 1px solid var(--paper-ghost);
+      color: var(--paper-muted);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.38rem 0.85rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all var(--transition);
+    }
+
+    .filter-btn.active,
+    .filter-btn:hover {
+      border-color: var(--amber);
+      color: var(--amber);
+      background: var(--amber-glow);
+    }
+
+    .grid-container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 2.5rem 4rem;
+    }
+
+    .cases-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 1.4rem;
+    }
+
+    .case-card {
+      background: linear-gradient(145deg, var(--ink-mid) 0%, var(--ink) 100%);
+      border: 1px solid var(--amber-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: block;
+      position: relative;
+    }
+
+    .case-card:hover {
+      border-color: rgba(200, 145, 58, 0.55);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .weekly-banner {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.48rem;
+      letter-spacing: 0.18em;
+      background: var(--red);
+      color: var(--paper);
+      padding: 0.18rem 0.5rem;
+      border-radius: 2px;
+    }
+
+    .case-scene {
+      width: 100%;
+      height: 168px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .case-scene svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .case-body {
+      padding: 1.2rem 1.4rem 1.4rem;
+    }
+
+    .case-meta {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 0.8rem;
+      align-items: center;
+    }
+
+    .case-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--paper);
+      margin-bottom: 0.35rem;
+      line-height: 1.2;
+    }
+
+    .case-desc {
+      font-family: 'Crimson Pro', serif;
+      font-size: 0.9rem;
+      font-style: italic;
+      color: var(--paper-muted);
+      line-height: 1.55;
+      margin-bottom: 1.1rem;
+    }
+
+    .case-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid var(--paper-ghost);
+    }
+
+    .case-stats {
+      display: flex;
+      gap: 1.3rem;
+    }
+
+    .stat-mini {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.56rem;
+      color: var(--paper-muted);
+      letter-spacing: 0.06em;
+    }
+
+    .stat-mini strong {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      color: var(--amber);
+      font-weight: 700;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 5rem 2rem;
+      color: var(--paper-muted);
+      font-family: 'Crimson Pro', serif;
+      font-style: italic;
+      font-size: 1.1rem;
+    }
+
+    .loading-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 1.4rem;
+    }
+
+    .loading-card {
+      height: 340px;
+      border-radius: var(--radius);
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">🕵️ <span>Mystera</span></a>
+    <div class="nav-right">
+      <span id="nav-xp" class="badge badge-xp" style="display:none"></span>
+      <a href="leaderboard.html" class="btn btn-ghost btn-sm">Rankings</a>
+      <span id="nav-user" class="nav-user" style="display:none"></span>
+      <a href="login.html" class="btn btn-primary btn-sm" id="nav-login">Sign In</a>
+    </div>
+  </nav>
+
+  <div class="page-header" style="padding-top:calc(var(--nav-h) + 2.5rem)">
+    <div class="page-header-inner">
+      <h1 class="page-title">
+        <small>Active Investigations</small>
+        Open Case Files
+      </h1>
+      <div class="filter-row">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="rookie">Rookie</button>
+        <button class="filter-btn" data-filter="detective">Detective</button>
+        <button class="filter-btn" data-filter="mastermind">Mastermind</button>
+        <button class="filter-btn" data-filter="weekly">Weekly</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-container">
+    <div id="cases-grid" class="cases-grid">
+      <div class="loading-grid" id="loading">
+        <div class="skeleton loading-card"></div>
+        <div class="skeleton loading-card"></div>
+        <div class="skeleton loading-card"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script type="module">
+    import { api, auth, toast, navigateTo } from './js/api.js';
+
+    // Scene SVGs per case theme
+    const SCENES = {
+      'midnight-manor': `<svg viewBox="0 0 320 168" xmlns="http://www.w3.org/2000/svg"><rect width="320" height="168" fill="#1a0f08"/><rect x="50" y="60" width="220" height="90" fill="#2a1a0a" rx="2"/><rect x="140" y="30" width="40" height="30" fill="#2a1a0a"/><rect x="148" y="38" width="24" height="22" fill="#0a0805" rx="1"/><circle cx="80" cy="105" r="14" fill="#1a0d06" stroke="#8b1a1a" stroke-width="1"/><line x1="70" y1="95" x2="90" y2="115" stroke="#8b1a1a" stroke-width="1.5" opacity="0.7"/><line x1="90" y1="95" x2="70" y2="115" stroke="#8b1a1a" stroke-width="1.5" opacity="0.7"/><rect x="200" y="80" width="40" height="30" fill="#1a1208" rx="1"/><rect x="205" y="83" width="12" height="14" fill="#c8913a" opacity="0.08"/><line x1="30" y1="0" x2="30" y2="168" stroke="#c8913a" stroke-width="0.5" opacity="0.25"/><circle cx="30" cy="30" r="3" fill="#c8913a" opacity="0.5"/></svg>`,
+      'harbor-street-blackout': `<svg viewBox="0 0 320 168" xmlns="http://www.w3.org/2000/svg"><rect width="320" height="168" fill="#08090f"/><rect x="0" y="110" width="320" height="58" fill="#0a0c16"/><line x1="0" y1="110" x2="320" y2="110" stroke="#2e4a7a" stroke-width="2" opacity="0.4"/><rect x="40" y="40" width="90" height="80" fill="#0a1018" rx="1"/><rect x="190" y="20" width="90" height="100" fill="#0a1018" rx="1"/><rect x="48" y="48" width="18" height="22" fill="#c8913a" opacity="0.12"/><rect x="72" y="48" width="18" height="22" fill="#c8913a" opacity="0.05"/><rect x="200" y="30" width="18" height="22" fill="#7aabff" opacity="0.07"/><circle cx="160" cy="80" r="20" fill="none" stroke="#8b1a1a" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/><text x="153" y="84" font-family="monospace" font-size="10" fill="#8b1a1a" opacity="0.7">✕</text></svg>`,
+      'redwood-inheritance': `<svg viewBox="0 0 320 168" xmlns="http://www.w3.org/2000/svg"><rect width="320" height="168" fill="#060a05"/><rect x="0" y="100" width="320" height="68" fill="#0d1a08"/><line x1="40" y1="0" x2="40" y2="168" stroke="#2a3a1a" stroke-width="7"/><line x1="90" y1="0" x2="90" y2="168" stroke="#2a3a1a" stroke-width="4"/><line x1="135" y1="0" x2="135" y2="168" stroke="#2a3a1a" stroke-width="9"/><line x1="200" y1="0" x2="200" y2="168" stroke="#2a3a1a" stroke-width="5"/><line x1="260" y1="0" x2="260" y2="168" stroke="#2a3a1a" stroke-width="3"/><line x1="290" y1="0" x2="290" y2="168" stroke="#2a3a1a" stroke-width="6"/><circle cx="165" cy="95" r="14" fill="#f4ede0" opacity="0.65"/><line x1="165" y1="0" x2="165" y2="81" stroke="#1a3a2a" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.6"/></svg>`,
+      'double-exposure': `<svg viewBox="0 0 320 168" xmlns="http://www.w3.org/2000/svg"><rect width="320" height="168" fill="#0a0808"/><rect x="90" y="15" width="140" height="105" fill="#1a0f0a" rx="3" stroke="#c8913a" stroke-width="0.5" stroke-opacity="0.3"/><rect x="100" y="25" width="35" height="45" fill="#0a0805" rx="1"/><rect x="185" y="25" width="35" height="45" fill="#0a0805" rx="1"/><rect x="130" y="78" width="60" height="42" fill="#0a0805" rx="1"/><rect x="148" y="86" width="24" height="34" fill="#c8913a" opacity="0.06" rx="1"/><circle cx="50" cy="55" r="9" fill="#c8913a" opacity="0.12"/><circle cx="50" cy="55" r="4" fill="#c8913a" opacity="0.25"/><line x1="59" y1="55" x2="90" y2="55" stroke="#c8913a" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.3"/><ellipse cx="260" cy="90" rx="30" ry="30" fill="none" stroke="#8b1a1a" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/></svg>`,
+      'zodiac-protocol': `<svg viewBox="0 0 320 168" xmlns="http://www.w3.org/2000/svg"><rect width="320" height="168" fill="#050810"/><rect x="20" y="20" width="280" height="128" fill="#080c18" rx="2"/><rect x="30" y="30" width="80" height="50" fill="#0d1428" rx="1" stroke="#2e4a7a" stroke-width="0.5" stroke-opacity="0.4"/><rect x="33" y="33" width="74" height="7" fill="#7aabff" opacity="0.06"/><rect x="33" y="42" width="60" height="4" fill="#7aabff" opacity="0.04"/><rect x="33" y="48" width="68" height="4" fill="#7aabff" opacity="0.03"/><circle cx="220" cy="65" r="28" fill="none" stroke="#7aabff" stroke-width="0.5" stroke-dasharray="4,3" opacity="0.25"/><circle cx="220" cy="65" r="14" fill="none" stroke="#7aabff" stroke-width="0.5" opacity="0.2"/><line x1="220" y1="37" x2="220" y2="37" /><circle cx="220" cy="65" r="3" fill="#7aabff" opacity="0.4"/><line x1="110" y1="110" x2="270" y2="110" stroke="#7aabff" stroke-width="0.5" opacity="0.15"/><rect x="30" y="100" width="200" height="4" fill="#7aabff" opacity="0.04" rx="1"/></svg>`,
+      'glass-garden': `<svg viewBox="0 0 320 168" xmlns="http://www.w3.org/2000/svg"><rect width="320" height="168" fill="#080d06"/><rect x="20" y="10" width="280" height="148" fill="#0a120a" rx="2" stroke="#2a3a1a" stroke-width="1" stroke-opacity="0.4"/><line x1="50" y1="10" x2="50" y2="158" stroke="#2a3a1a" stroke-width="0.5" opacity="0.3"/><line x1="100" y1="10" x2="100" y2="158" stroke="#2a3a1a" stroke-width="0.5" opacity="0.3"/><line x1="150" y1="10" x2="150" y2="158" stroke="#2a3a1a" stroke-width="0.5" opacity="0.3"/><line x1="200" y1="10" x2="200" y2="158" stroke="#2a3a1a" stroke-width="0.5" opacity="0.3"/><line x1="250" y1="10" x2="250" y2="158" stroke="#2a3a1a" stroke-width="0.5" opacity="0.3"/><line x1="20" y1="80" x2="300" y2="80" stroke="#2a3a1a" stroke-width="0.5" opacity="0.3"/><circle cx="80" cy="110" r="18" fill="#1a2a0a" stroke="#5ab87a" stroke-width="0.5" stroke-opacity="0.4"/><circle cx="160" cy="60" r="22" fill="#1a2a0a" stroke="#5ab87a" stroke-width="0.5" stroke-opacity="0.5"/><circle cx="240" cy="115" r="15" fill="#1a2a0a" stroke="#5ab87a" stroke-width="0.5" stroke-opacity="0.3"/><circle cx="165" cy="62" r="6" fill="none" stroke="#8b1a1a" stroke-width="1" stroke-dasharray="2,2" opacity="0.7"/></svg>`
+    };
+
+    const DIFF_BADGE = { rookie: 'badge-rookie', detective: 'badge-detective', mastermind: 'badge-mastermind' };
+    let allCases = [];
+
+    function renderCard(c) {
+      return `
+  <a href="case.html?slug=${c.slug}" class="case-card" data-diff="${c.difficulty}" data-weekly="${c.is_weekly}">
+    ${c.is_weekly ? '<span class="weekly-banner">⚡ Weekly Challenge</span>' : ''}
+    <div class="case-scene">${SCENES[c.slug] || SCENES['midnight-manor']}</div>
+    <div class="case-body">
+      <div class="case-meta">
+        <span class="badge ${DIFF_BADGE[c.difficulty] || 'badge-detective'}">${c.difficulty}</span>
+        ${c.setting ? `<span style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:var(--paper-muted);letter-spacing:0.06em">${c.setting}</span>` : ''}
+      </div>
+      <div class="case-title">${c.title}</div>
+      <div class="case-desc">${truncate(c.victim_name ? `Victim: ${c.victim_name}. ` : '', 0)}${c.is_weekly ? 'This week\'s global challenge.' : 'A new case awaits.'}</div>
+      <div class="case-footer">
+        <div class="case-stats">
+          <div class="stat-mini"><strong>${c.solvers_count}</strong>Solved</div>
+          <div class="stat-mini"><strong>${c.solve_rate}%</strong>Rate</div>
+          <div class="stat-mini"><strong>${c.suspect_count}</strong>Suspects</div>
+        </div>
+        <span class="btn btn-outline-amber btn-sm">Investigate →</span>
+      </div>
+    </div>
+  </a>`;
+    }
+
+    function truncate(s, n) { return s.length > n ? s.slice(0, n) + '…' : s; }
+
+    async function loadCases() {
+      try {
+        allCases = await api.getCases();
+        renderGrid(allCases);
+      } catch (e) {
+        document.getElementById('cases-grid').innerHTML = `<div class="empty-state">Could not load cases. Is the backend running?<br><small>${e.message}</small></div>`;
+      }
+    }
+
+    function renderGrid(cases) {
+  const grid = document.getElementById('cases-grid');
+  if (!cases.length) {
+    grid.innerHTML = '<div class="empty-state">No cases found.</div>';
+    return;
+  }
+  grid.innerHTML = cases.map(renderCard).join('');
+}
+
+    // Filters
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const f = btn.dataset.filter;
+        if (f === 'all') renderGrid(allCases);
+        else if (f === 'weekly') renderGrid(allCases.filter(c => c.is_weekly));
+        else renderGrid(allCases.filter(c => c.difficulty === f));
+      });
+    });
+
+    // Nav
+    if (auth.loggedIn) {
+      document.getElementById('nav-login').style.display = 'none';
+      document.getElementById('nav-user').style.display = '';
+      document.getElementById('nav-user').textContent = `${auth.user.avatar} ${auth.user.username}`;
+      document.getElementById('nav-xp').style.display = '';
+      document.getElementById('nav-xp').textContent = `⭐ ${auth.user.xp} XP`;
+    }
+
+    loadCases();
+  </script>
+</body>
+
+</html>

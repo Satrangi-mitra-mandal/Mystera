@@ -1,0 +1,194 @@
+{
+  "title": "Harbor Street Blackout",
+  "slug": "harbor-street-blackout",
+  "difficulty": "detective",
+  "setting": "Harbor District, San Francisco, CA",
+  "is_weekly": false,
+  "background": "On the night of the Great Harbor Blackout — a staged citywide power failure lasting 47 minutes — forensic accountant Dana Morse vanished from her 11th-floor office at Pelican Analytics. Her encrypted laptop was found wiped, her coffee still warm, and a single red thread caught in the window latch. The blackout was not accidental. Dana had been building a fraud case against one of her firm's largest clients. Somebody knew she was close.",
+  "victim_name": "Dana Morse",
+  "victim_age": 41,
+  "victim_occupation": "Senior Forensic Accountant, Pelican Analytics",
+  "victim_profile": {
+    "status": "Missing — presumed deceased",
+    "cause_of_death": "Unknown — body not recovered",
+    "notes": "Dana had been secretly compiling evidence of a $40M accounting fraud",
+    "timeline": [
+      {
+        "time": "OCT 3 · 6:00 PM",
+        "event": "Colleagues Leave",
+        "detail": "Dana stays behind citing 'deadline work'. Last confirmed sighting by receptionist."
+      },
+      {
+        "time": "OCT 3 · 8:47 PM",
+        "event": "Power Grid Failure",
+        "detail": "Citywide blackout triggered by a fault at the Harbor substation. Later determined to be manually induced."
+      },
+      {
+        "time": "OCT 3 · 9:34 PM",
+        "event": "Power Restored",
+        "detail": "Lights return. Dana's office found empty. Coffee cup still warm at 9:50pm."
+      },
+      {
+        "time": "OCT 3 · 11:00 PM",
+        "event": "Missing Persons Report",
+        "detail": "Dana's husband files report. Her phone last pinged a tower 4 blocks from the office at 9:02pm."
+      },
+      {
+        "time": "OCT 4 · 7:00 AM",
+        "event": "Office Investigation Begins",
+        "detail": "Laptop found wiped. Red thread on window latch. Elevator logs show Button 11 pressed at 9:01pm — from Basement."
+      }
+    ]
+  },
+  "true_culprit_name": "Richard Voss",
+  "true_motive": "Richard Voss, CFO of Nexus Maritime, knew Dana had reconstructed the fraudulent accounts that would expose him and three board members to federal charges. He orchestrated the blackout to create cover, had her abducted during the darkness, and had her laptop wiped remotely.",
+  "true_method": "Voss hired a private security contractor (a former contact from his military days) to trigger the substation failure remotely. The contractor entered Pelican Analytics via the basement loading dock during the blackout using a stolen access card, disabled the elevator cameras, and extracted Dana through the freight elevator. The red thread is from a military-grade tactical jacket — the contractor's.",
+  "required_evidence_ids": [
+    "ev-hs-01",
+    "ev-hs-03",
+    "ev-hs-04",
+    "ev-hs-05"
+  ],
+  "suspects": [
+    {
+      "name": "Richard Voss",
+      "occupation": "CFO, Nexus Maritime Group",
+      "personality": "Patrician calm. Speaks in complete, deliberate sentences. Treats interrogation like a board meeting. Cracks only when confronted with specific financial data.",
+      "alibi": "Claims he was at a charity dinner at the Fairmont Hotel all evening — has ticket stub and claims 30 witnesses.",
+      "relationship_to_victim": "Nexus Maritime was Dana's highest-profile audit target. He met her once at a compliance meeting.",
+      "is_culprit": true,
+      "avatar": "👔",
+      "motive_hint": "The fraud case would have destroyed him and three others.",
+      "secrets": [
+        "His charity dinner alibi has a 90-minute gap — he slipped out between 8:30pm and 10pm",
+        "He served in military intelligence before finance — knows how to hire off-books operatives",
+        "He remotely authorised the laptop wipe using a back-door admin account his IT team installed",
+        "The red tactical jacket belongs to ex-contractor Kyle Merritt, whom Voss paid in untraceable crypto"
+      ]
+    },
+    {
+      "name": "Sylvia Okafor",
+      "occupation": "Managing Partner, Pelican Analytics",
+      "personality": "Sharp, ambitious, occasionally cruel. Doesn't suffer fools. Has a tell: she tugs her earring when evading.",
+      "alibi": "Was at a networking dinner, documented. Left around 9pm. Her keycard accessed the building at 9:45pm.",
+      "relationship_to_victim": "Dana's boss. Had recently blocked Dana's promotion. Under pressure from Nexus Maritime to 'manage' the audit.",
+      "is_culprit": false,
+      "avatar": "👩🏾‍💼",
+      "motive_hint": "She benefited from Dana disappearing — but she lacked the operational reach.",
+      "secrets": [
+        "Nexus Maritime paid her firm a £400K 'consulting retainer' — essentially a bribe to slow the audit",
+        "She deleted several of Dana's internal reports from the shared drive",
+        "She returned to the office at 9:45pm looking for Dana's work files — she found the office empty"
+      ]
+    },
+    {
+      "name": "Tom Lacey",
+      "occupation": "Senior IT Administrator, Pelican Analytics",
+      "personality": "Defensive. Speaks in technical jargon to create distance. Noticeably uncomfortable about the laptop wipe.",
+      "alibi": "Says he was home all evening — no external witness.",
+      "relationship_to_victim": "Installed and maintained Dana's encrypted workstation. Had full admin access.",
+      "is_culprit": false,
+      "avatar": "🧑‍💻",
+      "motive_hint": "He had technical access nobody else did — but he was being coerced.",
+      "secrets": [
+        "Voss's IT team contacted him 6 weeks ago offering him money to install a remote admin backdoor",
+        "He refused — but the backdoor was installed anyway without his knowledge",
+        "He discovered the backdoor the morning after Dana disappeared and is terrified",
+        "He has a draft email to the FBI he hasn't sent yet"
+      ]
+    },
+    {
+      "name": "Dana's Husband — Curtis Morse",
+      "occupation": "Architect",
+      "personality": "Visibly distressed. Oscillates between grief and anger. Protective of Dana's reputation.",
+      "alibi": "Home all evening with their two children. Multiple neighbours can confirm his car was in the driveway.",
+      "relationship_to_victim": "Husband of 14 years. Says their marriage was 'complicated lately' but refuses to elaborate.",
+      "is_culprit": false,
+      "avatar": "🧔",
+      "motive_hint": "He stands to collect $1.2M insurance — but his alibi is airtight.",
+      "secrets": [
+        "Dana had recently begun sleeping in the guest room and had consulted a divorce attorney",
+        "Curtis knew about the fraud case and had begged Dana to walk away — he feared for her safety",
+        "Dana emailed him at 8:30pm: 'I found the last piece. It's over for Voss. Don't worry.'"
+      ]
+    },
+    {
+      "name": "Lena Park",
+      "occupation": "Junior Analyst, Pelican Analytics",
+      "personality": "Eager, slightly wide-eyed. Over-explains. Desperate to be helpful to the point of suspicion.",
+      "alibi": "Left the office at 6:15pm, has Uber receipt and roommate confirmation.",
+      "relationship_to_victim": "Dana's protégée. Worked directly under her for 2 years.",
+      "is_culprit": false,
+      "avatar": "👩‍💼",
+      "motive_hint": "She knew what Dana was working on — and may have inadvertently tipped someone off.",
+      "secrets": [
+        "She mentioned the audit findings to her boyfriend — who works in Nexus Maritime's legal team",
+        "She has a copy of Dana's working files saved to her personal cloud backup",
+        "The files are the key to the entire fraud case and she doesn't know their value"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev-hs-01",
+      "type": "forensic",
+      "title": "Red Thread — Window Latch",
+      "description": "A single red polyester thread caught in the 11th floor window latch. Lab analysis matches a military-grade tactical fleece manufactured exclusively for private security contractors. Not available commercially.",
+      "content": "FORENSIC FIBRE ANALYSIS — Item T-003\nFibre type: Polyester-aramid blend\nColour: Signal red, commercial dye batch #FF2200\nManufacturer: TacGear Solutions Ltd — contract supply only\nEnd users: Private security, military contractors\nConclusion: Not commercially available. Narrow supplier list.",
+      "icon": "🔴",
+      "is_hidden": false,
+      "sort_order": 1
+    },
+    {
+      "id": "ev-hs-02",
+      "type": "cctv",
+      "title": "Elevator Log — Button 11 from Basement",
+      "description": "Building elevator logs show Button 11 pressed from the Basement level at 9:01pm — during the blackout, when elevators should have been on emergency lockdown. Someone overrode the system.",
+      "content": "ELEVATOR SYSTEM LOG — Harbor Street Tower\n20:47:03 — BLACKOUT: Emergency mode engaged\n20:47:04 — All cars locked to ground floor (per protocol)\n21:01:22 — Car B: MANUAL OVERRIDE — Basement → Floor 11\n21:03:44 — Car B: Floor 11 → Basement\n21:34:11 — POWER RESTORED: System reset\nNote: Override requires physical keypad access in basement shaft room.",
+      "icon": "📹",
+      "is_hidden": false,
+      "sort_order": 2
+    },
+    {
+      "id": "ev-hs-03",
+      "type": "phone_log",
+      "title": "Dana's Final Email — 8:30 PM",
+      "description": "Recovered from Dana's sent folder before the wipe. Email to her husband at 8:30pm: 'I found the last piece. It's over for Voss. Don't worry. I'm safe.' The email was also forwarded — to an unknown encrypted address.",
+      "content": "EMAIL — Sent 20:30:17\nFrom: d.morse@pelicananalytics.com\nTo: cmorse@gmail.com\nBCC: [ENCRYPTED RECIPIENT — ProtonMail hash]\nSubject: (no subject)\n\n'I found the last piece. It's over for Voss. Don't worry. I'm safe. Going to lock everything up and call you from the car. Home by 10.'\n\nNote: BCC recipient unknown. Email also forwarded to encrypted address.",
+      "icon": "📧",
+      "is_hidden": false,
+      "sort_order": 3
+    },
+    {
+      "id": "ev-hs-04",
+      "type": "document",
+      "title": "Power Grid Failure — Engineering Report",
+      "description": "The Harbor substation failure was caused by a remotely triggered relay override — not a fault. The override signal originated from a laptop connected to the grid's maintenance portal. IP address traced to a VPN exit node — same VPN provider used by Nexus Maritime's IT department.",
+      "content": "SFPUC GRID INVESTIGATION REPORT\nIncident: Harbor Substation CB-7 failure\nCause: DELIBERATE — remote relay override\nSignal origin: VPN exit node — AnonShield VPN\nAnonShield subscriber data (subpoenaed): Nexus Maritime Group IT — account #NM-2281\nOverride window: 20:47–21:34 (47 minutes)\nConclusion: Intentional, targeted, technically sophisticated",
+      "icon": "⚡",
+      "is_hidden": false,
+      "sort_order": 4
+    },
+    {
+      "id": "ev-hs-05",
+      "type": "document",
+      "title": "Nexus Maritime — Fraud Reconstruction",
+      "description": "Dana's partial reconstruction of the $40M fraud scheme, recovered from Lena Park's cloud backup. Shows funds routed through 6 shell companies back to a Cayman account — signatory: Richard T. Voss.",
+      "content": "PELICAN ANALYTICS — RESTRICTED WORKING FILE\nCase: Nexus Maritime Audit\nAnalyst: D. Morse\nFINDINGS SUMMARY:\n- $40.2M in fabricated consulting fees (2019–2026)\n- Routed through: Meridian LLC → BluePath Trading → 4 shell entities\n- Final destination: Cayman account — Signatory: Richard T. Voss\nSTATUS: COMPLETE — ready for submission to SEC",
+      "icon": "💰",
+      "is_hidden": false,
+      "sort_order": 5
+    },
+    {
+      "id": "ev-hs-06",
+      "type": "forensic",
+      "title": "Laptop Wipe — Admin Log",
+      "description": "Remote wipe executed at 9:03pm via a backdoor admin account. The account was created 6 weeks ago from an IP address registered to Nexus Maritime's corporate network.",
+      "content": "FORENSIC IT ANALYSIS — Workstation DM-11\nEvent: Remote wipe executed 21:03:17\nMethod: Backdoor admin account 'sysops_bk1'\nAccount created: September 18, 2026\nCreation IP: 185.XX.XX.XX — Nexus Maritime Corp Network\nWipe scope: COMPLETE — 7-pass DoD standard\nConclusion: Premeditated. Access established weeks in advance.",
+      "icon": "💻",
+      "is_hidden": true,
+      "unlock_condition": "interrogate:tom",
+      "sort_order": 6
+    }
+  ]
+}

@@ -1,0 +1,3298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>DetectiveOS — Case: The Last Exhibit</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent
+    }
+
+    :root {
+      --bg: #08090c;
+      --bg1: #0d0f14;
+      --bg2: #13161d;
+      --bg3: #181c25;
+      --border: rgba(255, 255, 255, 0.07);
+      --border2: rgba(255, 255, 255, 0.13);
+      --text: #e8e4da;
+      --text2: rgba(232, 228, 218, 0.55);
+      --text3: rgba(232, 228, 218, 0.3);
+      --gold: hsl(44, 94%, 50%);
+      --gold2: #f5b105;
+      --gold-dim: rgba(201, 168, 76, 0.13);
+      --red: #c0392b;
+      --red2: #e74c3c;
+      --red-dim: rgba(192, 57, 43, 0.13);
+      --teal2: #24a58e;
+      --teal-dim: rgba(36, 165, 142, 0.12);
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Outfit', sans-serif;
+      --r: 8px;
+      --r2: 12px;
+    }
+
+    html,
+    body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      overflow: hidden
+    }
+
+    /* INTRO */
+    #intro {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      transition: opacity .8s, visibility .8s
+    }
+
+    #intro.out {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none
+    }
+
+    .intro-rain {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none
+    }
+
+    .rain-line {
+      position: absolute;
+      top: -60px;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(201, 168, 76, .12), transparent);
+      animation: rain linear infinite
+    }
+
+    @keyframes rain {
+      to {
+        transform: translateY(110vh)
+      }
+    }
+
+    .i-badge {
+      font-family: var(--mono);
+      font-size: .58rem;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid rgba(201, 168, 76, .3);
+      padding: 5px 14px;
+      border-radius: 2px;
+      margin-bottom: 1.75rem;
+      animation: fu .8s both
+    }
+
+    .i-title {
+      font-family: var(--serif);
+      font-size: clamp(3rem, 9vw, 6rem);
+      font-weight: 700;
+      line-height: .95;
+      color: var(--text);
+      margin-bottom: .4rem;
+      animation: fu .8s .12s both
+    }
+
+    .i-title em {
+      color: var(--gold);
+      font-style: italic
+    }
+
+    .i-sub {
+      font-family: var(--serif);
+      font-size: clamp(.95rem, 2.5vw, 1.35rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text2);
+      margin-bottom: 2.5rem;
+      animation: fu .8s .22s both
+    }
+
+    .i-card {
+      background: var(--bg2);
+      border: 1px solid rgba(201, 168, 76, .22);
+      border-radius: var(--r2);
+      padding: 1.6rem 1.8rem;
+      max-width: 460px;
+      width: 100%;
+      margin-bottom: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      animation: fu .8s .32s both
+    }
+
+    .i-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent)
+    }
+
+    .i-case-num {
+      font-family: var(--mono);
+      font-size: .58rem;
+      letter-spacing: .22em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: .7rem
+    }
+
+    .i-case-name {
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: .4rem
+    }
+
+    .i-case-desc {
+      font-size: .87rem;
+      color: var(--text2);
+      line-height: 1.65;
+      margin-bottom: 1rem
+    }
+
+    .i-meta {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: .5rem
+    }
+
+    .i-meta-item {
+      font-family: var(--mono);
+      font-size: .55rem;
+      letter-spacing: .06em;
+      color: var(--text3)
+    }
+
+    .i-meta-item span {
+      color: var(--text2);
+      display: block;
+      margin-top: 2px;
+      font-size: .62rem
+    }
+
+    .i-btn {
+      background: var(--gold);
+      border: none;
+      border-radius: var(--r);
+      padding: .95rem 2.8rem;
+      font-family: var(--mono);
+      font-size: .72rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: #08090c;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .2s;
+      animation: fu .8s .42s both
+    }
+
+    .i-btn:hover {
+      background: var(--gold2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(201, 168, 76, .25)
+    }
+
+    @keyframes fu {
+      from {
+        opacity: 0;
+        transform: translateY(16px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    /* APP SHELL */
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden
+    }
+
+    /* NAV */
+    .nav {
+      height: 50px;
+      background: rgba(8, 9, 12, .96);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 .85rem;
+      gap: .6rem;
+      flex-shrink: 0;
+      backdrop-filter: blur(12px);
+      z-index: 50
+    }
+
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: .04em;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 5px
+    }
+
+    .nav-sep {
+      width: 1px;
+      height: 22px;
+      background: var(--border);
+      flex-shrink: 0
+    }
+
+    .nav-case-label {
+      font-family: var(--mono);
+      font-size: .6rem;
+      letter-spacing: .07em;
+      color: var(--text3);
+      white-space: nowrap;
+      display: none
+    }
+
+    .nav-case-label b {
+      color: var(--text2)
+    }
+
+    @media(min-width:480px) {
+      .nav-case-label {
+        display: block
+      }
+    }
+
+    .nav-sp {
+      flex: 1
+    }
+
+    .nav-timer {
+      font-family: var(--mono);
+      font-size: .75rem;
+      color: var(--red2);
+      letter-spacing: .06em;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap
+    }
+
+    .nav-timer::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--red2);
+      animation: blink 1s infinite;
+      flex-shrink: 0
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .25
+      }
+    }
+
+    .nav-pts {
+      font-family: var(--mono);
+      font-size: .65rem;
+      background: var(--gold-dim);
+      border: 1px solid rgba(201, 168, 76, .22);
+      color: var(--gold2);
+      padding: 4px 9px;
+      border-radius: 4px;
+      white-space: nowrap
+    }
+
+    .nav-hint-btn {
+      background: none;
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      color: var(--text2);
+      font-family: var(--mono);
+      font-size: .58rem;
+      padding: 5px 9px;
+      cursor: pointer;
+      letter-spacing: .07em;
+      transition: all .2s;
+      white-space: nowrap
+    }
+
+    .nav-hint-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold)
+    }
+
+    /* PHASE BAR */
+    .pbar {
+      background: var(--bg1);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex-shrink: 0
+    }
+
+    .pbar::-webkit-scrollbar {
+      display: none
+    }
+
+    .pbtn {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: .65rem 1rem;
+      font-family: var(--mono);
+      font-size: .6rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text3);
+      border: none;
+      background: none;
+      cursor: pointer;
+      transition: all .2s;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      position: relative
+    }
+
+    .pbtn:hover {
+      color: var(--text2);
+      background: rgba(255, 255, 255, .025)
+    }
+
+    .pbtn.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold)
+    }
+
+    .pbtn .dot {
+      position: absolute;
+      top: 7px;
+      right: 5px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--red2)
+    }
+
+    .pbar-progress {
+      margin-left: auto;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+      gap: .5rem;
+      border-left: 1px solid var(--border)
+    }
+
+    .pp-lbl {
+      font-family: var(--mono);
+      font-size: .56rem;
+      color: var(--text3);
+      letter-spacing: .08em;
+      white-space: nowrap
+    }
+
+    .pp-bar {
+      width: 72px;
+      height: 3px;
+      background: rgba(255, 255, 255, .07);
+      border-radius: 2px
+    }
+
+    .pp-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--gold);
+      transition: width .5s ease
+    }
+
+    /* PANELS */
+    .panel-host {
+      flex: 1;
+      overflow: hidden;
+      position: relative
+    }
+
+    .panel {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      display: none;
+      overscroll-behavior: contain
+    }
+
+    .panel.active {
+      display: block
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 3px;
+      height: 3px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, .1);
+      border-radius: 2px
+    }
+
+    /* ── BRIEFING ── */
+    .brief-wrap {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem 4rem
+    }
+
+    .case-hero {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r2);
+      overflow: hidden;
+      margin-bottom: 1rem
+    }
+
+    .hero-banner {
+      height: 120px;
+      background: linear-gradient(135deg, #0c1018, #180b08, #0c1018);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden
+    }
+
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(45deg, transparent, transparent 28px, rgba(201, 168, 76, .025) 28px, rgba(201, 168, 76, .025) 29px)
+    }
+
+    .hero-ghost {
+      font-family: var(--serif);
+      font-size: clamp(2.5rem, 7vw, 4rem);
+      font-weight: 700;
+      font-style: italic;
+      color: rgba(201, 168, 76, .06);
+      letter-spacing: .06em;
+      user-select: none
+    }
+
+    .hero-body {
+      padding: 1.1rem 1.35rem
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      margin-bottom: .75rem
+    }
+
+    .ctag {
+      font-family: var(--mono);
+      font-size: .55rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 3px
+    }
+
+    .ct-red {
+      background: var(--red-dim);
+      color: var(--red2);
+      border: 1px solid rgba(192, 57, 43, .28)
+    }
+
+    .ct-gold {
+      background: var(--gold-dim);
+      color: var(--gold2);
+      border: 1px solid rgba(201, 168, 76, .25)
+    }
+
+    .ct-teal {
+      background: var(--teal-dim);
+      color: var(--teal2);
+      border: 1px solid rgba(36, 165, 142, .25)
+    }
+
+    .ct-grey {
+      background: rgba(255, 255, 255, .04);
+      color: var(--text2);
+      border: 1px solid var(--border)
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: .35rem
+    }
+
+    .hero-desc {
+      font-size: .87rem;
+      color: var(--text2);
+      line-height: 1.68;
+      max-width: 660px
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: .75rem;
+      margin-bottom: 1rem
+    }
+
+    .icard {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: .9rem 1rem;
+      position: relative;
+      overflow: hidden
+    }
+
+    .icard::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 2px;
+      height: 100%;
+      background: var(--gold)
+    }
+
+    .icard-lbl {
+      font-family: var(--mono);
+      font-size: .55rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: .4rem
+    }
+
+    .icard-val {
+      font-family: var(--serif);
+      font-size: .95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: .2rem
+    }
+
+    .icard-sub {
+      font-size: .75rem;
+      color: var(--text2)
+    }
+
+    .sec-head {
+      font-family: var(--mono);
+      font-size: .6rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      margin-bottom: .85rem
+    }
+
+    .sec-head::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(201, 168, 76, .18)
+    }
+
+    .timeline-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r2);
+      padding: .85rem 1.1rem;
+      margin-bottom: 1.25rem
+    }
+
+    .tl-item {
+      display: flex;
+      gap: .85rem;
+      padding: .75rem 0;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .tl-item:last-child {
+      border-bottom: none
+    }
+
+    .tl-time {
+      font-family: var(--mono);
+      font-size: .65rem;
+      color: var(--gold);
+      min-width: 55px;
+      padding-top: 2px;
+      flex-shrink: 0
+    }
+
+    .tl-conn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0
+    }
+
+    .tl-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, .18);
+      flex-shrink: 0;
+      margin-top: 2px
+    }
+
+    .tl-dot.gold {
+      background: var(--gold);
+      border-color: var(--gold)
+    }
+
+    .tl-dot.red {
+      background: var(--red2);
+      border-color: var(--red2)
+    }
+
+    .tl-line {
+      width: 1px;
+      flex: 1;
+      background: rgba(255, 255, 255, .06);
+      margin-top: 3px
+    }
+
+    .tl-body {
+      flex: 1
+    }
+
+    .tl-ev {
+      font-size: .84rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 2px
+    }
+
+    .tl-note {
+      font-family: var(--mono);
+      font-size: .62rem;
+      color: var(--text3)
+    }
+
+    .tl-flag {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-family: var(--mono);
+      font-size: .55rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      background: var(--red-dim);
+      color: var(--red2);
+      border: 1px solid rgba(192, 57, 43, .28);
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin-top: 3px
+    }
+
+    .s-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: .65rem
+    }
+
+    .sc {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: .85rem;
+      cursor: pointer;
+      transition: all .2s;
+      position: relative;
+      overflow: hidden
+    }
+
+    .sc::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: transparent;
+      transition: background .2s
+    }
+
+    .sc:hover {
+      border-color: var(--border2);
+      transform: translateY(-2px)
+    }
+
+    .sc:hover::before {
+      background: rgba(201, 168, 76, .35)
+    }
+
+    .sc.flagged::before {
+      background: var(--red2)
+    }
+
+    .sc.flagged {
+      border-color: rgba(192, 57, 43, .28)
+    }
+
+    .sc-av {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      margin-bottom: .6rem
+    }
+
+    .sc-name {
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px
+    }
+
+    .sc-role {
+      font-family: var(--mono);
+      font-size: .58rem;
+      color: var(--text3);
+      margin-bottom: .55rem
+    }
+
+    .sc-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .3rem
+    }
+
+    /* ── EVIDENCE ── */
+    .ev-wrap {
+      padding: 1rem;
+      max-width: 960px;
+      margin: 0 auto 4rem
+    }
+
+    .ev-filters {
+      display: flex;
+      gap: .35rem;
+      flex-wrap: wrap;
+      margin-bottom: .9rem;
+      padding-bottom: .7rem;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .ev-fb {
+      font-family: var(--mono);
+      font-size: .58rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 5px 11px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: none;
+      color: var(--text3);
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .ev-fb:hover {
+      border-color: var(--border2);
+      color: var(--text2)
+    }
+
+    .ev-fb.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: var(--gold-dim)
+    }
+
+    .ev-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: .75rem
+    }
+
+    .ev-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all .22s
+    }
+
+    .ev-card:hover {
+      border-color: rgba(201, 168, 76, .32);
+      transform: translateY(-2px)
+    }
+
+    .ev-card.collected {
+      border-color: rgba(201, 168, 76, .45)
+    }
+
+    .ev-thumb {
+      height: 100px;
+      background: var(--bg3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      position: relative
+    }
+
+    .ev-type-lbl {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      font-family: var(--mono);
+      font-size: .5rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 2px 5px;
+      border-radius: 3px
+    }
+
+    .ev-collected-lbl {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      font-family: var(--mono);
+      font-size: .52rem;
+      background: rgba(201, 168, 76, .18);
+      color: var(--gold2);
+      border: 1px solid rgba(201, 168, 76, .28);
+      padding: 2px 5px;
+      border-radius: 3px;
+      display: none
+    }
+
+    .ev-card.collected .ev-collected-lbl {
+      display: block
+    }
+
+    .ev-info {
+      padding: .7rem
+    }
+
+    .ev-title {
+      font-size: .78rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 2px;
+      line-height: 1.3
+    }
+
+    .ev-meta {
+      font-family: var(--mono);
+      font-size: .58rem;
+      color: var(--text3)
+    }
+
+    .ev-rel {
+      margin-top: .45rem;
+      height: 2px;
+      background: rgba(255, 255, 255, .06);
+      border-radius: 2px
+    }
+
+    .ev-rel-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--teal2), var(--gold))
+    }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(4, 5, 8, .92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      backdrop-filter: blur(6px)
+    }
+
+    .lightbox.show {
+      display: flex
+    }
+
+    .lb-box {
+      background: var(--bg2);
+      border: 1px solid rgba(201, 168, 76, .22);
+      border-radius: var(--r2);
+      max-width: 540px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative
+    }
+
+    .lb-header {
+      padding: 1.1rem 1.35rem .65rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: .75rem
+    }
+
+    .lb-title {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text)
+    }
+
+    .lb-close {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text2);
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .9rem;
+      flex-shrink: 0;
+      transition: all .2s
+    }
+
+    .lb-close:hover {
+      border-color: var(--red2);
+      color: var(--red2)
+    }
+
+    .lb-body {
+      padding: 1.1rem 1.35rem
+    }
+
+    .lb-icon-big {
+      font-size: 3rem;
+      margin-bottom: .85rem;
+      text-align: center
+    }
+
+    .lb-content {
+      font-size: .82rem;
+      color: var(--text2);
+      line-height: 1.72;
+      white-space: pre-line;
+      font-family: var(--mono)
+    }
+
+    .lb-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .35rem;
+      margin-bottom: .85rem
+    }
+
+    .lb-row {
+      display: flex;
+      justify-content: space-between;
+      padding: .45rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: .8rem
+    }
+
+    .lb-row:last-child {
+      border-bottom: none
+    }
+
+    .lb-row-lbl {
+      color: var(--text3);
+      font-family: var(--mono);
+      font-size: .6rem
+    }
+
+    .lb-row-val {
+      color: var(--text);
+      font-weight: 500
+    }
+
+    .lb-collect-btn {
+      width: 100%;
+      margin-top: 1.1rem;
+      padding: .8rem;
+      background: var(--gold);
+      border: none;
+      border-radius: var(--r);
+      font-family: var(--mono);
+      font-size: .68rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: #08090c;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .lb-collect-btn:hover {
+      background: var(--gold2)
+    }
+
+    .lb-collect-btn.done {
+      background: var(--teal-dim);
+      color: var(--teal2);
+      border: 1px solid rgba(36, 165, 142, .3);
+      cursor: default
+    }
+
+    /* ── BOARD ── */
+    .board-wrap {
+      display: flex;
+      flex-direction: column;
+      height: 100%
+    }
+
+    .btoolbar {
+      padding: .55rem .85rem;
+      background: var(--bg1);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      flex-wrap: wrap;
+      flex-shrink: 0
+    }
+
+    .btool {
+      font-family: var(--mono);
+      font-size: .58rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: none;
+      color: var(--text3);
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .btool:hover {
+      border-color: var(--gold);
+      color: var(--gold)
+    }
+
+    .btool.on {
+      background: var(--gold-dim);
+      border-color: var(--gold);
+      color: var(--gold2)
+    }
+
+    .bhint {
+      font-family: var(--mono);
+      font-size: .6rem;
+      color: var(--text3);
+      padding: .4rem .85rem;
+      background: rgba(201, 168, 76, .03);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      letter-spacing: .04em
+    }
+
+    #boardCanvas {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: var(--bg);
+      background-image: radial-gradient(rgba(255, 255, 255, .022) 1px, transparent 1px);
+      background-size: 26px 26px
+    }
+
+    #boardSvg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: visible
+    }
+
+    .bnode {
+      position: absolute;
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: var(--r);
+      padding: .6rem .8rem;
+      cursor: grab;
+      user-select: none;
+      transition: border-color .2s, box-shadow .2s;
+      min-width: 115px;
+      max-width: 148px
+    }
+
+    .bnode:hover {
+      border-color: rgba(201, 168, 76, .4);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, .5)
+    }
+
+    .bnode:active {
+      cursor: grabbing
+    }
+
+    .bnode.sel {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(201, 168, 76, .18)
+    }
+
+    .bnode.type-victim {
+      border-top: 2px solid #7ec8e3
+    }
+
+    .bnode.type-suspect {
+      border-top: 2px solid var(--red2)
+    }
+
+    .bnode.type-evidence {
+      border-top: 2px solid var(--gold)
+    }
+
+    .bnode.type-note {
+      border-top: 2px solid var(--teal2)
+    }
+
+    .bnode-type {
+      font-family: var(--mono);
+      font-size: .5rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      opacity: .38;
+      margin-bottom: 2px
+    }
+
+    .bnode-lbl {
+      font-size: .75rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.3
+    }
+
+    .bnode-del {
+      position: absolute;
+      top: -7px;
+      right: -7px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--red);
+      color: white;
+      font-size: .6rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      z-index: 1
+    }
+
+    .bnode:hover .bnode-del {
+      display: flex
+    }
+
+    /* ── INTERROGATION ── */
+    .inq-layout {
+      display: grid;
+      grid-template-columns: 185px 1fr;
+      height: 100%;
+      overflow: hidden
+    }
+
+    @media(max-width:580px) {
+      .inq-layout {
+        grid-template-columns: 1fr
+      }
+
+      .inq-sb {
+        display: none !important
+      }
+    }
+
+    .inq-sb {
+      background: var(--bg1);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: .65rem;
+      display: flex;
+      flex-direction: column;
+      gap: .3rem
+    }
+
+    .inq-sb-lbl {
+      font-family: var(--mono);
+      font-size: .55rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--text3);
+      padding: .2rem .4rem;
+      margin-bottom: .2rem
+    }
+
+    .srow {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .55rem .65rem;
+      border-radius: var(--r);
+      cursor: pointer;
+      transition: all .15s;
+      border: 1px solid transparent
+    }
+
+    .srow:hover {
+      background: rgba(255, 255, 255, .03)
+    }
+
+    .srow.active {
+      background: var(--red-dim);
+      border-color: rgba(192, 57, 43, .22)
+    }
+
+    .srow-av {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .85rem;
+      flex-shrink: 0
+    }
+
+    .srow-name {
+      font-size: .77rem;
+      font-weight: 500;
+      color: var(--text)
+    }
+
+    .srow-st {
+      font-family: var(--mono);
+      font-size: .55rem;
+      color: var(--text3)
+    }
+
+    .srow-st.tense {
+      color: var(--red2)
+    }
+
+    .srow-st.calm {
+      color: var(--teal2)
+    }
+
+    .inq-main {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden
+    }
+
+    .inq-hdr {
+      padding: .8rem 1.1rem;
+      background: var(--bg1);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      flex-shrink: 0;
+      flex-wrap: wrap
+    }
+
+    .inq-av {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--red-dim);
+      border: 1px solid rgba(192, 57, 43, .28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0
+    }
+
+    .inq-name {
+      font-family: var(--serif);
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--text)
+    }
+
+    .inq-role {
+      font-family: var(--mono);
+      font-size: .58rem;
+      color: var(--text3);
+      margin-top: 1px
+    }
+
+    .stress-w {
+      margin-left: auto;
+      text-align: right
+    }
+
+    .stress-lbl {
+      font-family: var(--mono);
+      font-size: .55rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 3px
+    }
+
+    .stress-track {
+      width: 80px;
+      height: 3px;
+      background: rgba(255, 255, 255, .07);
+      border-radius: 2px
+    }
+
+    .stress-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 1s ease, background 1s ease
+    }
+
+    .stress-val {
+      font-family: var(--mono);
+      font-size: .58rem;
+      color: var(--text3);
+      margin-top: 2px;
+      text-align: right
+    }
+
+    .chat-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: .9rem;
+      scroll-behavior: smooth
+    }
+
+    .msg-w {
+      display: flex;
+      gap: .6rem;
+      max-width: 86%;
+      animation: mIn .28s ease
+    }
+
+    @keyframes mIn {
+      from {
+        opacity: 0;
+        transform: translateY(7px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .msg-w.me {
+      flex-direction: row-reverse;
+      margin-left: auto
+    }
+
+    .msg-av {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      flex-shrink: 0;
+      margin-top: 14px
+    }
+
+    .msg-w.me .msg-av {
+      background: rgba(201, 168, 76, .12);
+      border-color: rgba(201, 168, 76, .22)
+    }
+
+    .msg-who {
+      font-family: var(--mono);
+      font-size: .56rem;
+      color: var(--text3);
+      margin-bottom: 3px
+    }
+
+    .msg-w.me .msg-who {
+      text-align: right
+    }
+
+    .msg-bbl {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: .65rem .85rem;
+      font-size: .83rem;
+      color: var(--text2);
+      line-height: 1.63
+    }
+
+    .msg-w.me .msg-bbl {
+      background: rgba(201, 168, 76, .06);
+      border-color: rgba(201, 168, 76, .18);
+      color: var(--text)
+    }
+
+    .lie-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-family: var(--mono);
+      font-size: .52rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      background: var(--red-dim);
+      color: var(--red2);
+      border: 1px solid rgba(192, 57, 43, .28);
+      padding: 2px 5px;
+      border-radius: 3px;
+      margin-top: 5px;
+      cursor: help
+    }
+
+    .sys-m {
+      text-align: center;
+      padding: .4rem;
+      font-family: var(--mono);
+      font-size: .6rem;
+      color: var(--text3);
+      font-style: italic;
+      border-bottom: 1px solid var(--border);
+      margin: 0 .75rem
+    }
+
+    .typing-w {
+      display: none;
+      align-items: center;
+      gap: .6rem;
+      padding: 0 1.1rem .4rem
+    }
+
+    .typing-w.show {
+      display: flex
+    }
+
+    .t-av {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      flex-shrink: 0
+    }
+
+    .tdots {
+      display: flex;
+      gap: 3px;
+      align-items: center
+    }
+
+    .tdot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .2);
+      animation: tdot 1.4s infinite
+    }
+
+    .tdot:nth-child(2) {
+      animation-delay: .2s
+    }
+
+    .tdot:nth-child(3) {
+      animation-delay: .4s
+    }
+
+    @keyframes tdot {
+
+      0%,
+      60%,
+      100% {
+        opacity: .22;
+        transform: translateY(0)
+      }
+
+      30% {
+        opacity: 1;
+        transform: translateY(-3px)
+      }
+    }
+
+    .q-area {
+      padding: .75rem 1rem;
+      border-top: 1px solid var(--border);
+      background: var(--bg1);
+      flex-shrink: 0
+    }
+
+    .q-lbl {
+      font-family: var(--mono);
+      font-size: .55rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: .55rem
+    }
+
+    .q-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .35rem
+    }
+
+    .q-chip {
+      font-family: var(--mono);
+      font-size: .62rem;
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: none;
+      color: var(--text3);
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .q-chip:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: var(--gold-dim)
+    }
+
+    .q-chip.used {
+      opacity: .28;
+      cursor: default
+    }
+
+    .q-chip.used:hover {
+      border-color: var(--border);
+      color: var(--text3);
+      background: none
+    }
+
+    /* ── THEORY ── */
+    .theory-wrap {
+      max-width: 660px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem 5rem
+    }
+
+    .th-block {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r2);
+      padding: 1.35rem;
+      margin-bottom: .85rem
+    }
+
+    .th-head {
+      font-family: var(--mono);
+      font-size: .6rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      margin-bottom: 1rem
+    }
+
+    .th-head::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(201, 168, 76, .14)
+    }
+
+    .culprit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+      gap: .5rem
+    }
+
+    .culprit-c {
+      background: var(--bg3);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      padding: .75rem .6rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .culprit-c:hover {
+      border-color: rgba(192, 57, 43, .35);
+      background: var(--red-dim)
+    }
+
+    .culprit-c.sel {
+      border-color: var(--red2);
+      background: var(--red-dim);
+      box-shadow: 0 0 0 2px rgba(192, 57, 43, .12)
+    }
+
+    .culprit-em {
+      font-size: 1.4rem;
+      margin-bottom: .35rem
+    }
+
+    .culprit-name {
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--text)
+    }
+
+    .th-sel {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: .65rem .85rem;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: .83rem;
+      appearance: none;
+      cursor: pointer;
+      margin-bottom: .6rem;
+      transition: border-color .2s
+    }
+
+    .th-sel:focus {
+      outline: none;
+      border-color: rgba(201, 168, 76, .38)
+    }
+
+    .th-sel option {
+      background: #13161d
+    }
+
+    .ev-list {
+      display: flex;
+      flex-direction: column;
+      gap: .35rem
+    }
+
+    .ev-chk {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      padding: .55rem .8rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .ev-chk:hover {
+      border-color: var(--border2)
+    }
+
+    .ev-chk.on {
+      background: rgba(201, 168, 76, .05);
+      border-color: rgba(201, 168, 76, .28)
+    }
+
+    .chk-box {
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid rgba(255, 255, 255, .18);
+      border-radius: 3px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .65rem;
+      transition: all .2s
+    }
+
+    .ev-chk.on .chk-box {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #08090c
+    }
+
+    .chk-txt {
+      font-size: .8rem;
+      color: var(--text2)
+    }
+
+    .ev-chk.on .chk-txt {
+      color: var(--text)
+    }
+
+    .th-ta {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: .8rem;
+      color: var(--text2);
+      font-family: var(--sans);
+      font-size: .83rem;
+      line-height: 1.63;
+      resize: vertical;
+      min-height: 88px;
+      transition: border-color .2s
+    }
+
+    .th-ta:focus {
+      outline: none;
+      border-color: rgba(201, 168, 76, .38);
+      color: var(--text)
+    }
+
+    .sub-btn {
+      width: 100%;
+      padding: .95rem;
+      background: var(--gold);
+      border: none;
+      border-radius: var(--r);
+      font-family: var(--mono);
+      font-size: .7rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #08090c;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .2s;
+      margin-top: .85rem
+    }
+
+    .sub-btn:hover {
+      background: var(--gold2);
+      transform: translateY(-1px)
+    }
+
+    .theory-locked {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1rem;
+      text-align: center;
+      color: var(--text3)
+    }
+
+    .tl-icon {
+      font-size: 2.2rem;
+      margin-bottom: .85rem;
+      opacity: .35
+    }
+
+    .tl-tit {
+      font-family: var(--serif);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text2);
+      margin-bottom: .4rem
+    }
+
+    .tl-desc {
+      font-size: .83rem;
+      color: var(--text3);
+      line-height: 1.6;
+      max-width: 340px
+    }
+
+    /* RESULT */
+    #resultOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(4, 5, 8, .95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      backdrop-filter: blur(10px)
+    }
+
+    #resultOverlay.show {
+      display: flex
+    }
+
+    .result-box {
+      background: var(--bg2);
+      border: 1px solid rgba(201, 168, 76, .28);
+      border-radius: 14px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      padding: 2.25rem 1.75rem;
+      position: relative;
+      overflow: hidden;
+      max-height: 92vh;
+      overflow-y: auto
+    }
+
+    .result-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--red2), var(--gold), transparent)
+    }
+
+    .r-icon {
+      font-size: 3.5rem;
+      margin-bottom: .85rem;
+      animation: popIn .5s .15s both cubic-bezier(.175, .885, .32, 1.275)
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(0)
+      }
+
+      to {
+        transform: scale(1)
+      }
+    }
+
+    .r-verdict {
+      font-family: var(--serif);
+      font-size: clamp(1.5rem, 5vw, 2.4rem);
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: .3rem
+    }
+
+    .r-sub {
+      font-family: var(--mono);
+      font-size: .62rem;
+      letter-spacing: .1em;
+      color: var(--text3);
+      margin-bottom: 1.75rem
+    }
+
+    .r-score-big {
+      font-family: var(--serif);
+      font-size: clamp(2.8rem, 8vw, 4.5rem);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: .2rem
+    }
+
+    .r-score-lbl {
+      font-family: var(--mono);
+      font-size: .62rem;
+      letter-spacing: .15em;
+      color: var(--text3);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem
+    }
+
+    .r-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .55rem;
+      margin-bottom: 1.5rem
+    }
+
+    .r-cell {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: .8rem
+    }
+
+    .rc-v {
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 2px
+    }
+
+    .rc-v.pass {
+      color: var(--teal2)
+    }
+
+    .rc-v.fail {
+      color: var(--red2)
+    }
+
+    .rc-v.gold {
+      color: var(--gold2)
+    }
+
+    .rc-lbl {
+      font-family: var(--mono);
+      font-size: .55rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text3)
+    }
+
+    .r-reveal {
+      background: rgba(201, 168, 76, .05);
+      border: 1px solid rgba(201, 168, 76, .18);
+      border-radius: var(--r);
+      padding: .9rem;
+      margin-bottom: 1.5rem;
+      text-align: left
+    }
+
+    .rr-lbl {
+      font-family: var(--mono);
+      font-size: .58rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: .45rem
+    }
+
+    .rr-txt {
+      font-size: .82rem;
+      color: var(--text2);
+      line-height: 1.65
+    }
+
+    .r-close {
+      padding: .8rem 2.25rem;
+      background: var(--gold);
+      border: none;
+      border-radius: var(--r);
+      font-family: var(--mono);
+      font-size: .68rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: #08090c;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .r-close:hover {
+      background: var(--gold2)
+    }
+
+    /* HINTS */
+    #hintOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      background: rgba(4, 5, 8, .8);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      backdrop-filter: blur(4px)
+    }
+
+    #hintOverlay.show {
+      display: flex
+    }
+
+    .hint-box {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 14px 14px 0 0;
+      padding: 1.35rem;
+      max-width: 520px;
+      width: 100%;
+      animation: slideUp .28s ease
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%)
+      }
+
+      to {
+        transform: translateY(0)
+      }
+    }
+
+    .hint-title {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: .25rem
+    }
+
+    .hint-sub {
+      font-family: var(--mono);
+      font-size: .6rem;
+      color: var(--text3);
+      margin-bottom: .9rem;
+      letter-spacing: .06em
+    }
+
+    .hint-list {
+      display: flex;
+      flex-direction: column;
+      gap: .5rem
+    }
+
+    .hint-item {
+      display: flex;
+      align-items: flex-start;
+      gap: .7rem;
+      padding: .7rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      font-size: .81rem;
+      color: var(--text2);
+      line-height: 1.52;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .hint-item:hover {
+      border-color: var(--gold);
+      background: var(--gold-dim);
+      color: var(--text)
+    }
+
+    .hint-item.used {
+      opacity: .35;
+      cursor: default
+    }
+
+    .hint-item.used:hover {
+      border-color: var(--border);
+      background: var(--bg3);
+      color: var(--text2)
+    }
+
+    .hint-cost {
+      font-family: var(--mono);
+      font-size: .58rem;
+      color: var(--red2);
+      flex-shrink: 0;
+      padding-top: 1px
+    }
+
+    .hint-close-btn {
+      width: 100%;
+      margin-top: .85rem;
+      padding: .65rem;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      color: var(--text3);
+      font-family: var(--mono);
+      font-size: .62rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .hint-close-btn:hover {
+      border-color: var(--border2);
+      color: var(--text2)
+    }
+
+    /* TOAST */
+    #toast {
+      position: fixed;
+      bottom: 1.4rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(55px);
+      background: var(--bg2);
+      border: 1px solid rgba(201, 168, 76, .32);
+      border-radius: var(--r);
+      padding: .6rem 1rem;
+      font-family: var(--mono);
+      font-size: .65rem;
+      color: var(--text);
+      z-index: 300;
+      transition: transform .28s, opacity .28s;
+      opacity: 0;
+      white-space: nowrap;
+      pointer-events: none;
+      letter-spacing: .04em
+    }
+
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1
+    }
+
+    /* MOBILE NAV */
+    .mob-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(8, 9, 12, .97);
+      border-top: 1px solid var(--border);
+      padding: .45rem .2rem calc(.45rem + env(safe-area-inset-bottom));
+      justify-content: space-around
+    }
+
+    @media(max-width:640px) {
+      .mob-nav {
+        display: flex
+      }
+
+      .pbar {
+        display: none
+      }
+
+      #app {
+        padding-bottom: calc(60px + env(safe-area-inset-bottom))
+      }
+    }
+
+    .mbn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: .25rem .4rem;
+      font-family: var(--mono);
+      font-size: .5rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--text3);
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: color .2s;
+      position: relative;
+      min-width: 50px
+    }
+
+    .mbn.active {
+      color: var(--gold)
+    }
+
+    .mbn-ic {
+      font-size: 1.15rem;
+      line-height: 1
+    }
+
+    .mbn-dot {
+      position: absolute;
+      top: 1px;
+      right: 8px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--red2)
+    }
+
+    /* ============================= */
+/* MOBILE RESPONSIVE PATCH ONLY */
+/* ============================= */
+
+@media (max-width: 768px){
+
+  html,body{
+    overflow:auto;
+  }
+
+  /* Intro */
+  .i-card{
+    padding:1.3rem;
+  }
+
+  .i-meta{
+    grid-template-columns:repeat(2,1fr);
+    gap:.6rem;
+  }
+
+  .i-title{
+    font-size:clamp(2.2rem,10vw,3rem);
+  }
+
+  .i-sub{
+    font-size:.9rem;
+  }
+
+  /* Navigation */
+  .nav{
+    height:auto;
+    flex-wrap:wrap;
+    gap:.5rem;
+    padding:.5rem .6rem;
+  }
+
+  .nav-case-label{
+    display:none;
+  }
+
+  .nav-pts{
+    font-size:.6rem;
+  }
+
+  .nav-timer{
+    font-size:.65rem;
+  }
+
+  /* Briefing */
+  .brief-wrap{
+    padding:1rem .8rem 3rem;
+  }
+
+  .hero-banner{
+    height:90px;
+  }
+
+  .hero-title{
+    font-size:1.35rem;
+  }
+
+  .hero-desc{
+    font-size:.8rem;
+  }
+
+  .info-grid{
+    grid-template-columns:1fr;
+  }
+
+  .s-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  /* Timeline */
+  .tl-time{
+    min-width:48px;
+    font-size:.6rem;
+  }
+
+  .tl-ev{
+    font-size:.8rem;
+  }
+
+  /* Evidence grid */
+  .ev-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .ev-thumb{
+    height:85px;
+    font-size:1.8rem;
+  }
+
+  /* Board */
+  #boardCanvas{
+    touch-action:none;
+  }
+
+  .bnode{
+    min-width:100px;
+    max-width:130px;
+  }
+
+  /* Interrogation */
+  .inq-layout{
+    grid-template-columns:1fr;
+  }
+
+  .inq-sb{
+    display:none;
+  }
+
+  .chat-scroll{
+    padding:.9rem;
+  }
+
+  .msg-bbl{
+    font-size:.8rem;
+  }
+
+  .q-chip{
+    font-size:.58rem;
+  }
+
+  /* Theory */
+  .theory-wrap{
+    padding:1rem .8rem 4rem;
+  }
+
+  .culprit-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  /* Result overlay */
+  .result-box{
+    padding:1.8rem 1.2rem;
+  }
+
+  /* Lightbox */
+  .lb-box{
+    max-width:95%;
+  }
+
+}
+
+
+/* Small phones */
+@media (max-width: 420px){
+
+  .s-grid{
+    grid-template-columns:1fr;
+  }
+
+  .ev-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .culprit-grid{
+    grid-template-columns:1fr;
+  }
+
+  .hero-title{
+    font-size:1.25rem;
+  }
+
+  .hero-desc{
+    font-size:.78rem;
+  }
+
+}
+  </style>
+</head>
+
+<body>
+
+  <!-- INTRO -->
+  <div id="intro">
+    <div class="intro-rain" id="introRain"></div>
+    <div class="i-badge">DetectiveOS · Live Case · Active</div>
+    <div class="i-title">The <em>Last</em><br>Exhibit</div>
+    <div class="i-sub">A murder in the museum</div>
+    <div class="i-card">
+      <div class="i-case-num">Case #0047 · Classified · Homicide</div>
+      <div class="i-case-name">The Midnight Curator</div>
+      <div class="i-case-desc">Art authenticator Dr. Elara Voss was found dead in a restricted gallery. She had just
+        discovered a $14M forgery. Three unauthorized entries. A disabled camera. One killer still walking free.</div>
+      <div class="i-meta">
+        <div class="i-meta-item">Difficulty<span>Hard</span></div>
+        <div class="i-meta-item">Suspects<span>5</span></div>
+        <div class="i-meta-item">Evidence<span>12 items</span></div>
+        <div class="i-meta-item">Max Score<span>3,000</span></div>
+      </div>
+    </div>
+    <button class="i-btn" onclick="startGame()">Begin Investigation →</button>
+  </div>
+
+  <!-- APP -->
+  <div id="app" style="display:none">
+    <nav class="nav">
+      <div class="nav-logo">🔍 DetectiveOS</div>
+      <div class="nav-sep"></div>
+      <div class="nav-case-label">Case #0047 — <b>The Last Exhibit</b></div>
+      <div class="nav-sp"></div>
+      <div class="nav-timer" id="navTimer">00:00:00</div>
+      <div class="nav-pts" id="navPts">⚡ 0 pts</div>
+      <button class="nav-hint-btn" onclick="showHints()">💡 Hints</button>
+    </nav>
+
+    <div class="pbar" id="pbar">
+      <button class="pbtn active" data-p="briefing" onclick="sp('briefing',this)">📂 Briefing</button>
+      <button class="pbtn" data-p="evidence" onclick="sp('evidence',this)">🔬 Evidence<span class="dot"></span></button>
+      <button class="pbtn" data-p="board" onclick="sp('board',this)">📌 Board</button>
+      <button class="pbtn" data-p="interrogation" onclick="sp('interrogation',this)">🎙 Interrogation</button>
+      <button class="pbtn" data-p="theory" onclick="sp('theory',this)">⚖️ Theory</button>
+      <div class="pbar-progress">
+        <span class="pp-lbl">Progress</span>
+        <div class="pp-bar">
+          <div class="pp-fill" id="ppFill" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-host">
+
+      <!-- BRIEFING -->
+      <div class="panel active" id="panel-briefing">
+        <div class="brief-wrap">
+          <div class="case-hero">
+            <div class="hero-banner">
+              <div class="hero-ghost">The Last Exhibit</div>
+            </div>
+            <div class="hero-body">
+              <div class="tag-row">
+                <span class="ctag ct-red">Homicide</span>
+                <span class="ctag ct-gold">Art Forgery</span>
+                <span class="ctag ct-teal">Museum</span>
+                <span class="ctag ct-grey">Hard · 3,000 pts max</span>
+              </div>
+              <div class="hero-title">The Midnight Curator</div>
+              <div class="hero-desc">Dr. Elara Voss, the museum's lead art authenticator, was found dead in Gallery Wing
+                C. Just hours earlier she privately documented proof of a $14 million forgery. The CCTV was deliberately
+                disabled. Three unauthorized keycard entries were logged. The killer left almost no trace — almost.
+              </div>
+            </div>
+          </div>
+
+          <div class="info-grid">
+            <div class="icard">
+              <div class="icard-lbl">Victim</div>
+              <div class="icard-val">Dr. Elara Voss, 52</div>
+              <div class="icard-sub">Senior Art Authenticator · 19 years at the museum</div>
+            </div>
+            <div class="icard">
+              <div class="icard-lbl">Cause of Death</div>
+              <div class="icard-val">Blunt Force Trauma</div>
+              <div class="icard-sub">Single blow from behind · No struggle · Est. 11 PM–1 AM</div>
+            </div>
+            <div class="icard">
+              <div class="icard-lbl">Scene</div>
+              <div class="icard-val">Gallery Wing C</div>
+              <div class="icard-sub">Restricted vault area · Caravaggio acquisition storage</div>
+            </div>
+            <div class="icard">
+              <div class="icard-lbl">Discovered</div>
+              <div class="icard-val">2:14 AM Thursday</div>
+              <div class="icard-sub">Security guard Ray Doyle on 1 AM patrol</div>
+            </div>
+          </div>
+
+          <div class="sec-head">Timeline of Events</div>
+          <div class="timeline-box">
+            <div class="tl-item">
+              <div class="tl-time">8:30 PM</div>
+              <div class="tl-conn">
+                <div class="tl-dot"></div>
+                <div class="tl-line"></div>
+              </div>
+              <div class="tl-body">
+                <div class="tl-ev">Museum closes to the public</div>
+                <div class="tl-note">12 staff members remain on site</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-time">9:45 PM</div>
+              <div class="tl-conn">
+                <div class="tl-dot gold"></div>
+                <div class="tl-line"></div>
+              </div>
+              <div class="tl-body">
+                <div class="tl-ev">Dr. Voss accesses Wing C alone</div>
+                <div class="tl-note">Keycard: VOSS-ID · Enters sub-gallery vault</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-time">10:12 PM</div>
+              <div class="tl-conn">
+                <div class="tl-dot gold"></div>
+                <div class="tl-line"></div>
+              </div>
+              <div class="tl-body">
+                <div class="tl-ev">Marcus Thorne seen near Wing C corridor</div>
+                <div class="tl-note">Camera C-04 · Claims he was in his 2nd floor office</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-time">10:58 PM</div>
+              <div class="tl-conn">
+                <div class="tl-dot gold"></div>
+                <div class="tl-line"></div>
+              </div>
+              <div class="tl-body">
+                <div class="tl-ev">Last confirmed sighting of Dr. Voss alive</div>
+                <div class="tl-note">Camera C-07 · Entering sub-gallery with documents</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-time">11:03 PM</div>
+              <div class="tl-conn">
+                <div class="tl-dot red"></div>
+                <div class="tl-line"></div>
+              </div>
+              <div class="tl-body">
+                <div class="tl-ev">Unknown keycard entry — Wing C door</div>
+                <div class="tl-note">Card ID: STAFF-029 · Not registered to any employee</div>
+                <div><span class="tl-flag">⚠ Critical anomaly</span></div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-time">11:47 PM</div>
+              <div class="tl-conn">
+                <div class="tl-dot red"></div>
+                <div class="tl-line"></div>
+              </div>
+              <div class="tl-body">
+                <div class="tl-ev">Wing C camera feed disabled — 11 minutes</div>
+                <div class="tl-note">Manual override from ground-floor control terminal</div>
+                <div><span class="tl-flag">⚠ Deliberate tampering</span></div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-time">2:14 AM</div>
+              <div class="tl-conn">
+                <div class="tl-dot red"></div>
+              </div>
+              <div class="tl-body">
+                <div class="tl-ev">Body discovered by Officer Doyle</div>
+                <div class="tl-note">Scene sealed · Police notified</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sec-head">Persons of Interest</div>
+          <div class="s-grid">
+            <div class="sc flagged" onclick="sp('interrogation');selectSuspect(0)">
+              <div class="sc-av">👨‍💼</div>
+              <div class="sc-name">Marcus Thorne</div>
+              <div class="sc-role">Deputy Director</div>
+              <div class="sc-tags"><span class="ctag ct-red">Motive</span><span class="ctag ct-grey">Near scene</span>
+              </div>
+            </div>
+            <div class="sc" onclick="sp('interrogation');selectSuspect(1)">
+              <div class="sc-av">👩‍🎨</div>
+              <div class="sc-name">Isabelle Crane</div>
+              <div class="sc-role">Restoration Artist</div>
+              <div class="sc-tags"><span class="ctag ct-teal">Has alibi</span></div>
+            </div>
+            <div class="sc" onclick="sp('interrogation');selectSuspect(2)">
+              <div class="sc-av">🧑‍🔬</div>
+              <div class="sc-name">Dr. Haruto Nishi</div>
+              <div class="sc-role">Art Expert</div>
+              <div class="sc-tags"><span class="ctag ct-grey">Unclear</span></div>
+            </div>
+            <div class="sc" onclick="sp('interrogation');selectSuspect(3)">
+              <div class="sc-av">👮</div>
+              <div class="sc-name">Ray Doyle</div>
+              <div class="sc-role">Security Lead</div>
+              <div class="sc-tags"><span class="ctag ct-teal">Found body</span></div>
+            </div>
+            <div class="sc" onclick="sp('interrogation');selectSuspect(4)">
+              <div class="sc-av">👩‍💼</div>
+              <div class="sc-name">Clara Meston</div>
+              <div class="sc-role">Acquisitions Manager</div>
+              <div class="sc-tags"><span class="ctag ct-red">Motive</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EVIDENCE -->
+      <div class="panel" id="panel-evidence">
+        <div class="ev-wrap">
+          <div class="ev-filters">
+            <button class="ev-fb active" onclick="filterEv('all',this)">All (12)</button>
+            <button class="ev-fb" onclick="filterEv('photo',this)">📷 Photo</button>
+            <button class="ev-fb" onclick="filterEv('doc',this)">📄 Document</button>
+            <button class="ev-fb" onclick="filterEv('digital',this)">💻 Digital</button>
+            <button class="ev-fb" onclick="filterEv('forensic',this)">🧪 Forensic</button>
+            <button class="ev-fb" onclick="filterEv('audio',this)">🎙 Audio</button>
+          </div>
+          <div class="ev-grid" id="evGrid"></div>
+        </div>
+      </div>
+
+      <!-- BOARD -->
+      <div class="panel" id="panel-board" style="display:flex;flex-direction:column">
+        <div class="btoolbar">
+          <button class="btool" id="btConnect" onclick="toggleConnect()">🔗 Connect</button>
+          <button class="btool" onclick="addNote()">+ Note</button>
+          <button class="btool" onclick="autoLayout()">⚡ Auto</button>
+          <button class="btool" onclick="clearLines()">✕ Lines</button>
+        </div>
+        <div class="bhint" id="boardHint">Drag nodes freely. Use Connect to draw links between clues.</div>
+        <div id="boardCanvas"><svg id="boardSvg"></svg></div>
+      </div>
+
+      <!-- INTERROGATION -->
+      <div class="panel" id="panel-interrogation" style="display:flex;flex-direction:column;padding:0">
+        <div class="inq-layout">
+          <div class="inq-sb" id="inqSb"></div>
+          <div class="inq-main">
+            <div class="inq-hdr">
+              <div class="inq-av" id="inqAv">👨‍💼</div>
+              <div>
+                <div class="inq-name" id="inqName">Marcus Thorne</div>
+                <div class="inq-role" id="inqRole">Deputy Director · Room A</div>
+              </div>
+              <div class="stress-w">
+                <div class="stress-lbl">Stress</div>
+                <div class="stress-track">
+                  <div class="stress-fill" id="stressFill" style="width:72%;background:var(--red2)"></div>
+                </div>
+                <div class="stress-val" id="stressVal">72%</div>
+              </div>
+            </div>
+            <div class="chat-scroll" id="chatScroll"></div>
+            <div class="typing-w" id="typingW">
+              <div class="t-av" id="typingAv">👨‍💼</div>
+              <div class="tdots">
+                <div class="tdot"></div>
+                <div class="tdot"></div>
+                <div class="tdot"></div>
+              </div>
+            </div>
+            <div class="q-area">
+              <div class="q-lbl">Ask a question</div>
+              <div class="q-chips" id="qChips"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- THEORY -->
+      <div class="panel" id="panel-theory">
+        <div class="theory-wrap" id="theoryContent"></div>
+      </div>
+
+    </div><!-- /panel-host -->
+
+    <nav class="mob-nav">
+      <button class="mbn active" data-p="briefing" onclick="sp('briefing',this)"><span
+          class="mbn-ic">📂</span>Brief</button>
+      <button class="mbn" data-p="evidence" onclick="sp('evidence',this)"><span class="mbn-ic">🔬</span>Evidence<span
+          class="mbn-dot"></span></button>
+      <button class="mbn" data-p="board" onclick="sp('board',this)"><span class="mbn-ic">📌</span>Board</button>
+      <button class="mbn" data-p="interrogation" onclick="sp('interrogation',this)"><span
+          class="mbn-ic">🎙</span>Suspects</button>
+      <button class="mbn" data-p="theory" onclick="sp('theory',this)"><span class="mbn-ic">⚖️</span>Theory</button>
+    </nav>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox">
+    <div class="lb-box" id="lbBox"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="resultOverlay">
+    <div class="result-box" id="resultBox"></div>
+  </div>
+
+  <!-- HINTS -->
+  <div id="hintOverlay" onclick="if(event.target===this)closeHints()">
+    <div class="hint-box">
+      <div class="hint-title">💡 Detective Hints</div>
+      <div class="hint-sub">Each hint costs 150 points · Use wisely</div>
+      <div class="hint-list" id="hintList"></div>
+      <button class="hint-close-btn" onclick="closeHints()">Close</button>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    // ═══════════════ DATA ═══════════════
+    const SUSPECTS = [
+      {
+        id: 0, name: 'Marcus Thorne', role: 'Deputy Director', em: '👨‍💼', stress: 72,
+        intro: "Thorne enters unhurried, adjusting his cuffs. He's done this before — police questioning, board meetings. He settles into the chair like he owns the room.",
+        opening: "I've already spoken with the detective on call. I was reviewing acquisition proposals in my office until midnight. Ask IT to pull my document activity timestamps.",
+        qs: [
+          { q: "Where were you at 11:03 PM exactly?", key: "alibi" },
+          { q: "Do you recognise keycard STAFF-029?", key: "card" },
+          { q: "Dr. Voss sent you a forgery report. Explain.", key: "forgery" },
+          { q: "We found £760k in transfers from Galerie Soleil.", key: "money" },
+        ],
+        resp: {
+          alibi: { text: "My office. Second floor, east wing. I had the acquisition files spread across my desk — document activity will confirm it.", lie: false, note: "", sd: 5 },
+          card: { text: "Never seen it. Card cloning isn't exotic — the system has known vulnerabilities. I'd look at who has network access before pointing fingers.", lie: true, note: "Biometric log ties this card to Thorne's fingerprint on the Wing C door sensor", sd: 20 },
+          forgery: { text: "Elara was methodical. She raised concerns about inconsistencies. I told her to compile a proper report first. This is a prestigious institution.", lie: false, note: "", sd: 8 },
+          money: { text: "I strongly suggest you direct financial questions to my solicitor. I won't discuss personal matters without legal counsel.", lie: false, note: "", sd: 28 },
+        }
+      },
+      {
+        id: 1, name: 'Isabelle Crane', role: 'Restoration Artist', em: '👩‍🎨', stress: 28,
+        intro: "Crane carries a small sketchbook. She looks visibly shaken — red-rimmed eyes. She doesn't wait to be asked before speaking.",
+        opening: "I was in the restoration lab all night. Lining repair on a Flemish landscape — a 72-hour process. I can't leave mid-treatment. I heard about Elara at 2 AM when security came through.",
+        qs: [
+          { q: "Describe exactly what you were working on.", key: "work" },
+          { q: "How close were you and Dr. Voss?", key: "relation" },
+          { q: "Did she tell you who threatened her?", key: "threat" },
+          { q: "Did you see Thorne near Wing C that night?", key: "thorne" },
+        ],
+        resp: {
+          work: { text: "Flemish landscape, circa 1648. Structural lining — the canvas was delaminating. I logged the treatment at 9:30 PM. The materials sign-out will confirm everything.", lie: false, note: "", sd: 0 },
+          relation: { text: "We were close. She trusted me with the Caravaggio surface examination. I was the one who first told her the cracking pattern was wrong for the period.", lie: false, note: "", sd: 0 },
+          threat: { text: "She didn't name anyone. But she said 'the people who approved this acquisition have more to lose than I do.' She was scared. I should have taken it more seriously.", lie: false, note: "", sd: 3 },
+          thorne: { text: "Yes — around ten, when I stepped out for coffee. Marcus walking the Wing C corridor is unusual. His office is second floor east. There's no reason to be there.", lie: false, note: "", sd: 0 },
+        }
+      },
+      {
+        id: 2, name: 'Dr. Haruto Nishi', role: 'Forensic Art Expert', em: '🧑‍🔬', stress: 55,
+        intro: "Dr. Nishi brings a leather folder, places it precisely on the table. He speaks carefully, choosing words like a surgeon choosing instruments.",
+        opening: "I was engaged by the acquisition committee three days ago to authenticate the Caravaggio. Dr. Voss and I arrived at different conclusions. These things happen between experts.",
+        qs: [
+          { q: "What was your official conclusion on the Caravaggio?", key: "conclusion" },
+          { q: "Who originally commissioned your authentication?", key: "hired" },
+          { q: "Did Voss threaten to publish her findings?", key: "publish" },
+          { q: "Where were you between 10 PM and 2 AM?", key: "where" },
+        ],
+        resp: {
+          conclusion: { text: "I determined the work is authentic. Seventeenth century, consistent with Caravaggio's late Roman period. Dr. Voss relied on pigment spectroscopy alone — a useful but insufficient method.", lie: true, note: "His own lab notes, recovered from deleted files, state: 'probable 20th century forgery — Prussian blue trace detected'", sd: 15 },
+          hired: { text: "The museum's acquisition committee engaged me directly. Standard practice for works above five million. I've authenticated for Sotheby's, the V&A, and three national galleries.", lie: false, note: "", sd: 4 },
+          publish: { text: "She mentioned the Burlington Magazine. I asked her to wait until consensus was reached. Premature publication damages everyone. She declined to wait.", lie: false, note: "", sd: 10 },
+          where: { text: "The Meridian Grand Hotel, two blocks north. I have my key receipt. Room service at 11:40 — the kitchen will have the timestamp.", lie: false, note: "", sd: 2 },
+        }
+      },
+      {
+        id: 3, name: 'Ray Doyle', role: 'Security Lead', em: '👮', stress: 18,
+        intro: "Officer Doyle is still in uniform. He looks exhausted rather than nervous. He places his incident report on the table before you can ask.",
+        opening: "Three years on this shift without incident. I found her on my 1 AM Wing C round. I've given my full statement. Whatever you need, I'll cooperate completely.",
+        qs: [
+          { q: "Walk me through your 11 PM patrol.", key: "patrol" },
+          { q: "You were at the desk when cameras went down?", key: "cameras" },
+          { q: "Did anyone ask you to change your route?", key: "skip" },
+          { q: "Tell me what you know about STAFF-029.", key: "ghost" },
+        ],
+        resp: {
+          patrol: { text: "East wing, lobby, admin corridor, back to control room. Wing C is only on the 1 AM route — been that way two years. Every stop is electronically logged with the wand.", lie: false, note: "", sd: 0 },
+          cameras: { text: "I was at the desk. The monitor showed a system reboot icon — no alarm. I flagged it in my log because it was unusual. I never touched the terminal.", lie: false, note: "", sd: 5 },
+          skip: { text: "Not explicitly. But Thorne mentioned last week that security protocols were 'under review' for budget reasons. I assumed staffing. Maybe he meant something else.", lie: false, note: "", sd: 8 },
+          ghost: { text: "Ghost card — written, not cloned. Someone with backend admin access to the ACS generated it. That's not a guard doing this. That's an administrator.", lie: false, note: "", sd: 2 },
+        }
+      },
+      {
+        id: 4, name: 'Clara Meston', role: 'Acquisitions Manager', em: '👩‍💼', stress: 48,
+        intro: "Meston is polished and irritated. She checks her phone twice before the interview begins. She's decided to be cooperative — but not candid.",
+        opening: "I sourced the Caravaggio through Renard Fine Arts in Geneva — forty years in business. Every document is in order. I find this entire line of questioning insulting.",
+        qs: [
+          { q: "Who introduced you to Renard Fine Arts?", key: "dealer" },
+          { q: "You received Voss's forgery analysis. Didn't you?", key: "doubts" },
+          { q: "Describe your relationship with Thorne.", key: "thorne" },
+          { q: "Explain the £180k from Renard's shell company.", key: "commission" },
+        ],
+        resp: {
+          dealer: { text: "Renard have operated since 1981. Marcus introduced me to their director at an Art Basel function four years ago. They've handled three prior acquisitions without issue.", lie: false, note: "", sd: 3 },
+          doubts: { text: "Elara mentioned 'concerns'. I told her the provenance documentation was complete. I wasn't cancelling a landmark acquisition over a hunch.", lie: true, note: "Email records show Voss sent Meston a 6-page forgery analysis two days prior — Meston never replied", sd: 18 },
+          thorne: { text: "He's my direct supervisor. He approves acquisition budgets; I source and negotiate. Standard reporting structure.", lie: false, note: "", sd: 4 },
+          commission: { text: "Acquisitions staff don't receive personal commissions — that would be a conflict of interest. Whoever told you otherwise is mistaken.", lie: true, note: "Wire transfer: £180,000 from Renard shell company to Meston's personal account, dated 3 days before the murder", sd: 32 },
+        }
+      }
+    ];
+
+    const EVIDENCE = [
+      {
+        id: 'E01', type: 'photo', icon: '📹', title: 'CCTV Freeze Frame — Corridor B', meta: 'Camera C-04 · 10:12 PM', rel: 82, tags: ['ct-red', 'ct-gold'], tl: ['Contradiction', 'Key'],
+        detail: `TIME: 22:12:07\nLOCATION: Wing B/C Junction\n\nSubject: Marcus Thorne, Deputy Director.\n\nThorne is walking eastward toward Wing C. Gait is purposeful. He does not acknowledge the camera.\n\nNOTE: Wing C is not on any reported route for Thorne that evening. He later stated he was in his second-floor east-wing office at this time.\n\nCONTRADICTION FLAGGED.`
+      },
+      {
+        id: 'E02', type: 'doc', icon: '🗝️', title: 'Keycard Access Log — Wing C', meta: 'Security System · Nov 14', rel: 98, tags: ['ct-red'], tl: ['Critical'],
+        detail: `WING C ACCESS LOG — NOVEMBER 14\n\n21:45  VOSS-ID         [Dr. E. Voss]   AUTH\n22:58  VOSS-ID         [Dr. E. Voss]   AUTH\n23:03  STAFF-029       [UNKNOWN]       AUTH ← !\n01:14  DOYLE-SEC       [R. Doyle]      AUTH\n\nSTAFF-029: Not in HR database. Not reported lost.\n\nFINGERPRINT on Wing C door handle:\nPartial match — M. Thorne biometric (73% — below prosecution threshold, flagged).`
+      },
+      {
+        id: 'E03', type: 'forensic', icon: '📋', title: 'Autopsy Report — Dr. Elara Voss', meta: 'Medical Examiner · Official', rel: 90, tags: ['ct-red', 'ct-teal'], tl: ['Homicide', 'Forensic'],
+        detail: `CASE: VOSS-2024-0047\n\nCAUSE OF DEATH: Blunt force trauma, posterior cranium. Single blow — heavy cylindrical object.\n\nTIME OF DEATH: Est. 23:00–01:00\n\nKEY FINDINGS:\n• No defensive wounds — victim did not see attack coming\n• Victim was seated/crouching at time of impact\n• Dark substance (paint/varnish) on victim's right palm\n• Left hand held a document — partially burned postmortem\n• No toxicology positives\n\nCONCLUSION: Deliberate homicide.`
+      },
+      {
+        id: 'E04', type: 'digital', icon: '📧', title: 'Recovered Deleted Emails', meta: 'IT Forensics · Voss inbox', rel: 95, tags: ['ct-red', 'ct-gold'], tl: ['Critical', 'Motive'],
+        detail: `RECOVERED: DR. VOSS → C. MESTON\nNov 12, 2:47 PM\n\n"Clara — I have significant concerns about the Caravaggio. My spectroscopic analysis found Prussian blue in the impasto layer — consistent with post-1704 manufacture, impossible for a Caravaggio original.\n\nI am obligated to report this. Please respond by EOD."\n\n[NO REPLY FROM MESTON]\n──────────────────────\nVOSS → M. THORNE\nNov 13, 9:14 AM\n\n"Marcus — I have submitted my formal findings. The Caravaggio is a forgery. I am proceeding with the report."\n\nTHORNE REPLY: "Elara. Come to my office. Now."`
+      },
+      {
+        id: 'E05', type: 'photo', icon: '🖼️', title: 'Paint Sample — Wing C Floor', meta: 'Forensic Lab #447', rel: 62, tags: ['ct-gold', 'ct-teal'], tl: ['Forgery', 'Forensic'],
+        detail: `SAMPLE: Wing C sub-gallery floor, 3m from body\n\nRESULT: Cadmium-based oil paint, 20th century formulation.\nColour: Cremnitz white with lamp black.\n\nThis formulation is INCONSISTENT with 17th-century techniques.\n\nConsistent with modern forger's palette. Appears to have been transferred from the victim's right palm — supporting the theory that Voss was examining the Caravaggio immediately before her death.\n\nSample matches paint taken directly from the Caravaggio painting.`
+      },
+      {
+        id: 'E06', type: 'audio', icon: '📞', title: "Voss's Phone Call — 10:34 PM", meta: 'Mobile record · 4 min 12 sec', rel: 80, tags: ['ct-red'], tl: ['Direct Threat'],
+        detail: `TRANSCRIPT\nRecipient: Unregistered number\nDuration: 4:12\n\nVOSS: "I know what it is. I've seen the Prussian blue with my own eyes. You need to understand — I'm not going to stay quiet."\n\nUNKNOWN: [inaudible]\n\nVOSS: "No. I've already sent the documentation. If anything happens to me, three people will receive copies tomorrow morning."\n\n[CALL ENDS]\n\nNOTE: Cell tower places the recipient in the museum district at time of call.`
+      },
+      {
+        id: 'E07', type: 'doc', icon: '🔎', title: "Voss's Handwritten Forgery Notes", meta: "Victim's bag · Partial burn", rel: 92, tags: ['ct-red', 'ct-gold'], tl: ['Victim Notes', 'Forgery'],
+        detail: `PARTIAL RECOVERY — HANDWRITTEN\nAuthor: Dr. Elara Voss (confirmed)\n\n[Pages 1-2: burned. Unrecoverable.]\n\n[Page 3 — partial]\n"...the craquelure is artificial. Genuine 17th-century age-cracking propagates from drying. These cracks are too regular — applied with a heat tool.\n\nThe stretcher bar wood is also wrong. Carbon dating would show post-1900 origin.\n\nI believe [burned] authorised the acquisition knowing it was not genuine. The commission payments—"\n\n[Remainder burned]\n\nNOTE: Confirms Voss identified the forgery method AND suspected an internal accomplice.`
+      },
+      {
+        id: 'E08', type: 'photo', icon: '💳', title: 'Ghost Keycard — Service Bin', meta: 'Evidence tag #12 · Alley', rel: 88, tags: ['ct-red'], tl: ['Critical'],
+        detail: `ITEM: RFID access card\nFOUND: Waste bin, service alley (east side, 40m from Wing C exit)\n\nCard ID: STAFF-029 — matches three Wing C entries.\n\nFINGERPRINT: Card wiped clean. No usable prints.\n\nDIGITAL FORENSICS:\nCard chip was WRITTEN (not cloned). The encoding software requires admin-level access to the Access Control Management System.\n\nONLY THREE STAFF have ACS admin access:\n• Head of Security (retired Dec 2023)\n• IT Manager (on leave Nov 1–20)\n• Deputy Director — M. THORNE`
+      },
+      {
+        id: 'E09', type: 'forensic', icon: '🏺', title: 'Caravaggio Physical Examination', meta: 'Forensic conservator · Confidential', rel: 85, tags: ['ct-gold'], tl: ['Forgery Proof'],
+        detail: `PHYSICAL EXAMINATION — "St. Jerome"\n\nMACROSCOPIC:\n• Canvas weave: Machine-woven — early 20th century\n• Ground layer: Calcium sulphate — modern formulation\n• Varnish: Synthetic resin, post-1940\n\nSPECTROSCOPIC:\n• Prussian blue (iron ferrocyanide) — CANNOT exist in pre-1704 painting\n• Titanium white trace — invented 1921\n\nCONCLUSION: Not a 17th century Caravaggio.\nESTIMATED CREATION: 1960–1980\nFRAUD VALUE: £14,000,000`
+      },
+      {
+        id: 'E10', type: 'digital', icon: '🖥️', title: 'CCTV Override Log', meta: 'IT Dept · System timestamps', rel: 88, tags: ['ct-red'], tl: ['Contradiction', 'Critical'],
+        detail: `CCTV SYSTEM LOG — NOV 14\n\n23:47:02  MANUAL_OVERRIDE  [WING_C_CLUSTER]  INITIATED\n23:47:03  [C-07, C-08, C-09]  RECORDING SUSPENDED\n23:58:14  [C-07, C-08, C-09]  RECORDING RESUMED\n\nDURATION: 11 min 12 sec\n\nOVERRIDE ISSUED FROM: SECURITY TERMINAL 1 (ground floor)\nACTIVE LOGIN SESSION: THORNE_ADMIN\n\nThorne claims he was in his 2nd-floor office.\nHis admin session was active on the ground-floor terminal.\n\nCONTRADICTION. This window = estimated time of death.`
+      },
+      {
+        id: 'E11', type: 'doc', icon: '💰', title: 'Wire Transfer Records — Thorne', meta: 'Bank subpoena · Offshore', rel: 96, tags: ['ct-red', 'ct-gold'], tl: ['Motive Confirmed', 'Financial'],
+        detail: `FINANCIAL RECORDS — M. THORNE\n\nACCOUNT: Meridian Private Bank, Channel Islands\n\nNov 8:   INBOUND  £320,000  from Galerie Soleil (Geneva)\nOct 3:   INBOUND  £280,000  from Galerie Soleil (Geneva)\nSep 1:   INBOUND  £160,000  from Galerie Soleil (Geneva)\n\nTotal (6 months): £760,000\n\nGalerie Soleil SA: Same registered address as Renard Fine Arts.\n\nThorne's declared salary: £95,000/year.\n\nMOTIVE: Forgery exposed = criminal fraud charges, career destruction, imprisonment.`
+      },
+      {
+        id: 'E12', type: 'audio', icon: '📻', title: 'Security Radio Log — 11:47 PM', meta: 'Internal radio archive', rel: 40, tags: ['ct-teal'], tl: ['Clears Doyle'],
+        detail: `SECURITY RADIO — 23:47–23:58\n\n23:49  DOYLE: "Control, this is Doyle. East wing quiet."\n23:50  CONTROL: [no response — system offline]\n23:55  DOYLE: "Control? Radio check."\n23:56  [static]\n23:57  DOYLE: "Radio dropping. I'll check at the hour."\n\nNOTE: Radio control co-located with CCTV terminal.\nDoyle received no response during the blackout window — consistent with him NOT being in the control room.\nThorne's session was active on that same terminal.`
+      },
+    ];
+
+    const HINTS = [
+      { text: "Cross-reference who has CCTV admin access with their claimed location at 11:47 PM.", used: false },
+      { text: "The ghost keycard was written, not cloned. Only three people have ACS admin access.", used: false },
+      { text: "Follow the money. Thorne's salary is £95k/year. His transfers total £760k.", used: false },
+      { text: "Dr. Nishi's deleted lab notes contradict his verbal testimony entirely.", used: false },
+    ];
+
+    // ═══════════════ STATE ═══════════════
+    const G = {
+      timerSecs: 0, score: 0,
+      collected: new Set(), usedQ: {},
+      convos: {}, stressLvl: {},
+      selectedCulprit: null, selMotive: '', selMethod: '',
+      checkedEv: new Set(), reasoning: '',
+      curSuspect: 0, hintPenalty: 0,
+      boardNodes: [], boardConns: [],
+    };
+    let timerIv = null, bDrag = null, bDragOff = { x: 0, y: 0 }, connectMode = false, connectFrom = null;
+
+    // ═══════════════ INTRO ═══════════════
+    (function buildRain() {
+      const r = document.getElementById('introRain');
+      for (let i = 0; i < 28; i++) {
+        const l = document.createElement('div'); l.className = 'rain-line';
+        const x = Math.random() * 100, dur = 2 + Math.random() * 4, h = 40 + Math.random() * 120;
+        l.style.cssText = `left:${x}%;height:${h}px;animation-duration:${dur}s;animation-delay:${-Math.random() * 7}s`;
+        r.appendChild(l);
+      }
+    })();
+
+    function startGame() {
+      document.getElementById('intro').classList.add('out');
+      document.getElementById('app').style.display = 'flex';
+      SUSPECTS.forEach(s => { G.stressLvl[s.id] = s.stress; G.usedQ[s.id] = new Set(); G.convos[s.id] = [{ t: 'sys', txt: s.intro }, { t: 'sus', txt: s.opening }]; });
+      initBoard(); renderInqSb(); loadSuspect(0); renderEvGrid('all'); renderTheory(); startTimer();
+    }
+
+    // ═══════════════ TIMER ═══════════════
+    function startTimer() { timerIv = setInterval(() => { G.timerSecs++; const h = String(Math.floor(G.timerSecs / 3600)).padStart(2, '0'), m = String(Math.floor((G.timerSecs % 3600) / 60)).padStart(2, '0'), s = String(G.timerSecs % 60).padStart(2, '0'); document.getElementById('navTimer').textContent = `${h}:${m}:${s}`; }, 1000); }
+    function addScore(n) { G.score += n; document.getElementById('navPts').textContent = `⚡ ${G.score.toLocaleString()} pts`; updateProg(); }
+    function updateProg() { const t = G.collected.size * 4 + Object.values(G.usedQ).reduce((a, s) => a + s.size, 0) * 3; document.getElementById('ppFill').style.width = Math.min(100, Math.round(t / 60 * 100)) + '%'; }
+
+    // ═══════════════ PANELS ═══════════════
+    function sp(name, el) {
+      document.querySelectorAll('.panel').forEach(p => { p.classList.remove('active'); p.style.display = ''; });
+      const panel = document.getElementById(`panel-${name}`);
+      panel.classList.add('active');
+      if (name === 'interrogation') panel.style.display = 'flex';
+      if (name === 'board') { panel.style.display = 'flex'; setTimeout(renderBoard, 40); }
+      if (name === 'theory') renderTheory();
+      document.querySelectorAll('.pbtn,.mbn').forEach(b => b.classList.remove('active'));
+      if (el) el.classList.add('active');
+      document.querySelector(`.pbtn[data-p="${name}"]`)?.classList.add('active');
+      document.querySelector(`.mbn[data-p="${name}"]`)?.classList.add('active');
+      // remove notification dots
+      document.querySelectorAll(`.pbtn[data-p="${name}"] .dot, .mbn[data-p="${name}"] .mbn-dot`).forEach(d => d.remove());
+    }
+
+    // ═══════════════ EVIDENCE ═══════════════
+    const EV_COLORS = { photo: 'background:rgba(126,200,227,.1);color:#7ec8e3;border:1px solid rgba(126,200,227,.22)', doc: 'background:rgba(160,197,160,.1);color:#a8c5a0;border:1px solid rgba(160,197,160,.22)', digital: 'background:rgba(179,157,219,.1);color:#b39ddb;border:1px solid rgba(179,157,219,.22)', forensic: 'background:rgba(192,57,43,.1);color:#e07060;border:1px solid rgba(192,57,43,.22)', audio: 'background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.22)' };
+    function renderEvGrid(filter) {
+      const items = filter === 'all' ? EVIDENCE : EVIDENCE.filter(e => e.type === filter);
+      document.getElementById('evGrid').innerHTML = items.map(e => `
+    <div class="ev-card ${G.collected.has(e.id) ? 'collected' : ''}" onclick="openEv('${e.id}')">
+      <div class="ev-thumb">
+        <span class="ev-type-lbl" style="${EV_COLORS[e.type] || ''}">${e.type}</span>
+        <span class="ev-collected-lbl">✓</span>
+        <span style="font-size:2.1rem">${e.icon}</span>
+      </div>
+      <div class="ev-info">
+        <div class="ev-title">${e.title}</div>
+        <div class="ev-meta">${e.meta}</div>
+        <div class="ev-rel"><div class="ev-rel-fill" style="width:${e.rel}%"></div></div>
+      </div>
+    </div>`).join('');
+    }
+    function filterEv(t, btn) { document.querySelectorAll('.ev-fb').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderEvGrid(t); }
+    function openEv(id) {
+      const e = EVIDENCE.find(x => x.id === id); if (!e) return;
+      const done = G.collected.has(id);
+      const tagH = e.tags.map((t, i) => `<span class="ctag ${t}">${e.tl[i]}</span>`).join('');
+      document.getElementById('lbBox').innerHTML = `
+    <div class="lb-header"><div><div class="lb-title">${e.title}</div></div><button class="lb-close" onclick="closeLB()">✕</button></div>
+    <div class="lb-body">
+      <div class="lb-icon-big">${e.icon}</div>
+      <div class="lb-tags">${tagH}</div>
+      <div class="lb-row"><span class="lb-row-lbl">Type</span><span class="lb-row-val">${e.type}</span></div>
+      <div class="lb-row"><span class="lb-row-lbl">Source</span><span class="lb-row-val">${e.meta}</span></div>
+      <div class="lb-row"><span class="lb-row-lbl">Relevance</span><span class="lb-row-val">${e.rel}%</span></div>
+      <div style="margin-top:.9rem"><div style="font-family:var(--mono);font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:.55rem">Evidence Contents</div><div class="lb-content">${e.detail}</div></div>
+      <button class="lb-collect-btn ${done ? 'done' : ''}" onclick="collectEv('${id}')">${done ? '✓ Collected' : 'Collect Evidence  +60 pts'}</button>
+    </div>`;
+      document.getElementById('lightbox').classList.add('show');
+    }
+    function collectEv(id) {
+      if (G.collected.has(id)) { toast('Already in case file.'); return; }
+      G.collected.add(id); addScore(60);
+      renderEvGrid(document.querySelector('.ev-fb.active').textContent.trim().split(' ')[0].toLowerCase().replace('all', 'all'));
+      const btn = document.querySelector('.lb-collect-btn');
+      if (btn) { btn.textContent = '✓ Collected'; btn.classList.add('done'); }
+      toast('📎 Evidence collected +60 pts');
+      addEvNode(id); updateProg();
+    }
+    function closeLB() { document.getElementById('lightbox').classList.remove('show'); }
+    document.getElementById('lightbox').addEventListener('click', e => { if (e.target === document.getElementById('lightbox')) closeLB(); });
+
+    // ═══════════════ BOARD ═══════════════
+    function initBoard() {
+      G.boardNodes = [
+        { id: 'victim', type: 'victim', lbl: 'Dr. Elara Voss\n(Victim)', x: 280, y: 190 },
+        { id: 'thorne', type: 'suspect', lbl: 'Marcus Thorne\nDeputy Director', x: 55, y: 75 },
+        { id: 'meston', type: 'suspect', lbl: 'Clara Meston\nAcquisitions', x: 490, y: 75 },
+        { id: 'nishi', type: 'suspect', lbl: 'Dr. Nishi\nArt Expert', x: 490, y: 300 },
+      ];
+      G.boardConns = [{ f: 'thorne', t: 'victim' }, { f: 'meston', t: 'thorne' }];
+    }
+    function addEvNode(eid) {
+      const e = EVIDENCE.find(x => x.id === eid);
+      if (!e || G.boardNodes.find(n => n.id === eid)) return;
+      const c = document.getElementById('boardCanvas');
+      G.boardNodes.push({ id: eid, type: 'evidence', lbl: e.title.slice(0, 32) + (e.title.length > 32 ? '…' : ''), x: 60 + Math.random() * (Math.max(200, (c.clientWidth || 700) - 200)), y: 60 + Math.random() * (Math.max(100, (c.clientHeight || 430) - 130)) });
+      if (document.getElementById('panel-board').classList.contains('active')) renderBoard();
+    }
+    function renderBoard() {
+      const c = document.getElementById('boardCanvas');
+      c.querySelectorAll('.bnode').forEach(n => n.remove());
+      const svg = document.getElementById('boardSvg');
+      const W = c.clientWidth || 700, H = c.clientHeight || 430;
+      svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      svg.innerHTML = G.boardConns.map(cn => {
+        const a = G.boardNodes.find(n => n.id === cn.f), b = G.boardNodes.find(n => n.id === cn.t);
+        if (!a || !b) return '';
+        const ax = a.x + 72, ay = a.y + 28, bx = b.x + 72, by = b.y + 28, mx = (ax + bx) / 2, my = (ay + by) / 2;
+        return `<path d="M${ax},${ay} Q${mx + 18},${my - 18} ${bx},${by}" stroke="rgba(192,57,43,.42)" stroke-width="1.5" fill="none" stroke-dasharray="6,4"/>`;
+      }).join('');
+      G.boardNodes.forEach(n => {
+        const d = document.createElement('div');
+        d.className = `bnode type-${n.type}`; d.dataset.id = n.id;
+        d.style.left = n.x + 'px'; d.style.top = n.y + 'px';
+        d.innerHTML = `<div class="bnode-type">${n.type}</div><div class="bnode-lbl">${n.lbl}</div><button class="bnode-del" onclick="delNode('${n.id}')">✕</button>`;
+        d.addEventListener('mousedown', onND); d.addEventListener('touchstart', onNT, { passive: false });
+        d.addEventListener('click', () => onNC(n.id));
+        c.appendChild(d);
+      });
+    }
+    function onND(e) { if (e.target.classList.contains('bnode-del')) return; const id = e.currentTarget.dataset.id; if (connectMode) { onNC(id); return; } bDrag = id; const r = e.currentTarget.getBoundingClientRect(); bDragOff.x = e.clientX - r.left; bDragOff.y = e.clientY - r.top; e.preventDefault(); }
+    function onNT(e) { const id = e.currentTarget.dataset.id, t = e.touches[0]; bDrag = id; const r = e.currentTarget.getBoundingClientRect(); bDragOff.x = t.clientX - r.left; bDragOff.y = t.clientY - r.top; e.preventDefault(); }
+    document.addEventListener('mousemove', e => { if (!bDrag) return; const c = document.getElementById('boardCanvas'), r = c.getBoundingClientRect(), n = G.boardNodes.find(x => x.id === bDrag); if (n) { n.x = Math.max(0, Math.min(r.width - 150, e.clientX - r.left - bDragOff.x)); n.y = Math.max(0, Math.min(r.height - 65, e.clientY - r.top - bDragOff.y)); renderBoard(); } });
+    document.addEventListener('touchmove', e => { if (!bDrag) return; const c = document.getElementById('boardCanvas'), r = c.getBoundingClientRect(), t = e.touches[0], n = G.boardNodes.find(x => x.id === bDrag); if (n) { n.x = Math.max(0, Math.min(r.width - 150, t.clientX - r.left - bDragOff.x)); n.y = Math.max(0, Math.min(r.height - 65, t.clientY - r.top - bDragOff.y)); renderBoard(); } }, { passive: true });
+    document.addEventListener('mouseup', () => bDrag = null); document.addEventListener('touchend', () => bDrag = null);
+    function onNC(id) {
+      if (!connectMode) return;
+      if (!connectFrom) { connectFrom = id; document.querySelectorAll('.bnode').forEach(n => { if (n.dataset.id === id) n.classList.add('sel'); }); document.getElementById('boardHint').textContent = 'Now click another node to connect it.'; }
+      else if (connectFrom === id) { connectFrom = null; connectMode = false; document.getElementById('btConnect').classList.remove('on'); document.querySelectorAll('.bnode').forEach(n => n.classList.remove('sel')); document.getElementById('boardHint').textContent = 'Connect mode cancelled.'; }
+      else { G.boardConns.push({ f: connectFrom, t: id }); connectFrom = null; connectMode = false; document.getElementById('btConnect').classList.remove('on'); document.querySelectorAll('.bnode').forEach(n => n.classList.remove('sel')); document.getElementById('boardHint').textContent = 'Connection added!'; addScore(20); renderBoard(); }
+    }
+    function toggleConnect() { connectMode = !connectMode; document.getElementById('btConnect').classList.toggle('on', connectMode); connectFrom = null; document.querySelectorAll('.bnode').forEach(n => n.classList.remove('sel')); document.getElementById('boardHint').textContent = connectMode ? 'Click a node to start. Click same node to cancel.' : 'Drag nodes freely. Use Connect to draw links.'; }
+    function clearLines() { G.boardConns = []; renderBoard(); }
+    function addNote() { const t = prompt('Note text:'); if (!t) return; const c = document.getElementById('boardCanvas'); G.boardNodes.push({ id: 'n' + Date.now(), type: 'note', lbl: t.slice(0, 45), x: 50 + Math.random() * (Math.max(200, (c.clientWidth || 700) - 200)), y: 50 + Math.random() * (Math.max(100, (c.clientHeight || 400) - 110)) }); renderBoard(); }
+    function delNode(id) { G.boardNodes = G.boardNodes.filter(n => n.id !== id); G.boardConns = G.boardConns.filter(c => c.f !== id && c.t !== id); renderBoard(); }
+    function autoLayout() { const c = document.getElementById('boardCanvas'), W = c.clientWidth || 700, H = c.clientHeight || 400, len = G.boardNodes.length; G.boardNodes.forEach((n, i) => { const a = (i / len) * Math.PI * 2 - Math.PI / 2; n.x = W / 2 + Math.cos(a) * (W * 0.36) - 72; n.y = H / 2 + Math.sin(a) * (H * 0.36) - 28; }); renderBoard(); }
+
+    // ═══════════════ INTERROGATION ═══════════════
+    function renderInqSb() {
+      document.getElementById('inqSb').innerHTML = `<div class="inq-sb-lbl">Suspects</div>` + SUSPECTS.map((s, i) => `
+    <div class="srow ${i === G.curSuspect ? 'active' : ''}" onclick="selectSuspect(${i})">
+      <div class="srow-av">${s.em}</div>
+      <div><div class="srow-name">${s.name}</div><div class="srow-st ${G.stressLvl[i] > 52 ? 'tense' : 'calm'}">${G.stressLvl[i] > 52 ? 'Tense' : 'Calm'} · ${G.stressLvl[i]}%</div></div>
+    </div>`).join('');
+    }
+    function selectSuspect(i) {
+      G.curSuspect = i; const s = SUSPECTS[i];
+      document.getElementById('inqAv').textContent = s.em;
+      document.getElementById('typingAv').textContent = s.em;
+      document.getElementById('inqName').textContent = s.name;
+      document.getElementById('inqRole').textContent = `${s.role} · Interrogation Room A`;
+      updateStress(i); renderChat(i); renderQChips(i); renderInqSb();
+    }
+    function updateStress(i) {
+      const v = G.stressLvl[i];
+      const fill = document.getElementById('stressFill');
+      fill.style.width = v + '%'; fill.style.background = v > 65 ? 'var(--red2)' : v > 40 ? '#d4a017' : 'var(--teal2)';
+      document.getElementById('stressVal').textContent = v + '%';
+    }
+    function renderChat(i) {
+      const s = document.getElementById('chatScroll');
+      s.innerHTML = G.convos[i].map(m => {
+        if (m.t === 'sys') return `<div class="sys-m">${m.txt}</div>`;
+        const me = m.t === 'det';
+        return `<div class="msg-w ${me ? 'me' : ''}">
+      <div class="msg-av">${me ? '🔍' : SUSPECTS[i].em}</div>
+      <div><div class="msg-who">${me ? 'Detective' : 'Suspect — ' + SUSPECTS[i].name}</div>
+      <div class="msg-bbl">${m.txt}${m.lie ? `<br><span class="lie-tag" title="${m.note}">⚠ Contradiction — hover for note</span>` : ''}</div></div>
+    </div>`;
+      }).join('');
+      s.scrollTop = s.scrollHeight;
+    }
+    function renderQChips(i) {
+      document.getElementById('qChips').innerHTML = SUSPECTS[i].qs.map(q => `
+    <button class="q-chip ${G.usedQ[i].has(q.key) ? 'used' : ''}" onclick="${G.usedQ[i].has(q.key) ? '' : 'askQ(' + i + `,'${q.key}')`}">${q.q}</button>`).join('');
+    }
+    function askQ(i, key) {
+      if (G.usedQ[i].has(key)) return; G.usedQ[i].add(key);
+      const qTxt = SUSPECTS[i].qs.find(q => q.key === key).q, resp = SUSPECTS[i].resp[key];
+      G.convos[i].push({ t: 'det', txt: qTxt }); renderChat(i); renderQChips(i);
+      const tw = document.getElementById('typingW'); tw.classList.add('show');
+      setTimeout(() => {
+        tw.classList.remove('show');
+        G.convos[i].push({ t: 'sus', txt: resp.text, lie: resp.lie, note: resp.note });
+        G.stressLvl[i] = Math.min(100, G.stressLvl[i] + resp.sd);
+        updateStress(i); renderInqSb(); renderChat(i);
+        addScore(resp.lie ? 120 : 80);
+        toast(resp.lie ? '🔴 Contradiction detected! +120 pts' : '💬 Response recorded +80 pts');
+      }, 1100 + Math.random() * 700);
+    }
+
+    // ═══════════════ THEORY ═══════════════
+    function renderTheory() {
+      const el = document.getElementById('theoryContent');
+      const ok = G.collected.size >= 3 && Object.values(G.usedQ).some(s => s.size > 0);
+      if (!ok) { el.innerHTML = `<div class="theory-locked"><div class="tl-icon">🔒</div><div class="tl-tit">Theory Locked</div><div class="tl-desc">Collect at least 3 evidence items and interrogate at least one suspect before submitting your theory.</div></div>`; return; }
+      el.innerHTML = `
+    <div style="margin-bottom:1.1rem"><div style="font-family:var(--serif);font-size:1.4rem;font-weight:700;color:var(--text);margin-bottom:.25rem">Submit Your Theory</div><div style="font-size:.83rem;color:var(--text2)">You only get one submission. Make it count.</div></div>
+    <div class="th-block">
+      <div class="th-head">The Culprit</div>
+      <div class="culprit-grid">${SUSPECTS.map((s, i) => `<div class="culprit-c ${G.selectedCulprit === i ? 'sel' : ''}" onclick="selCulprit(${i})"><div class="culprit-em">${s.em}</div><div class="culprit-name">${s.name}</div></div>`).join('')}</div>
+    </div>
+    <div class="th-block">
+      <div class="th-head">Motive</div>
+      <select class="th-sel" id="motSel" onchange="G.selMotive=this.value">
+        <option value="">— Select the motive —</option>
+        <option value="forgery" ${G.selMotive === 'forgery' ? 'selected' : ''}>Cover up the forgery and protect £760k in bribes</option>
+        <option value="rivalry" ${G.selMotive === 'rivalry' ? 'selected' : ''}>Professional rivalry — silence a career threat</option>
+        <option value="theft" ${G.selMotive === 'theft' ? 'selected' : ''}>Steal the painting for personal gain</option>
+        <option value="vendetta" ${G.selMotive === 'vendetta' ? 'selected' : ''}>Personal grudge against the victim</option>
+        <option value="other" ${G.selMotive === 'other' ? 'selected' : ''}>Protecting an accomplice from exposure</option>
+      </select>
+      <div class="th-head">Method</div>
+      <select class="th-sel" id="metSel" onchange="G.selMethod=this.value">
+        <option value="">— Select the method —</option>
+        <option value="blunt" ${G.selMethod === 'blunt' ? 'selected' : ''}>Blunt force — struck from behind while victim examined the painting</option>
+        <option value="staged" ${G.selMethod === 'staged' ? 'selected' : ''}>Staged accident in the gallery</option>
+        <option value="poison" ${G.selMethod === 'poison' ? 'selected' : ''}>Poison administered before the assault</option>
+        <option value="accomplice" ${G.selMethod === 'accomplice' ? 'selected' : ''}>Directed an accomplice to carry out the attack</option>
+      </select>
+    </div>
+    <div class="th-block">
+      <div class="th-head">Supporting Evidence</div>
+      <div class="ev-list">${[...G.collected].map(id => { const e = EVIDENCE.find(x => x.id === id); return e ? `<div class="ev-chk ${G.checkedEv.has(id) ? 'on' : ''}" onclick="togEv('${id}',this)"><div class="chk-box">${G.checkedEv.has(id) ? '✓' : ''}</div><div class="chk-txt">${e.icon} ${e.title}</div></div>` : ''; }).join('')}${G.collected.size === 0 ? '<div style="color:var(--text3);font-size:.8rem;padding:.65rem;text-align:center">No evidence collected yet</div>' : ''}</div>
+    </div>
+    <div class="th-block">
+      <div class="th-head">Your Reasoning</div>
+      <textarea class="th-ta" id="reasonTA" placeholder="Explain your deduction. How does the evidence point to your suspect? What was the sequence of events?" onchange="G.reasoning=this.value">${G.reasoning}</textarea>
+    </div>
+    <button class="sub-btn" onclick="submitTheory()">⚖️ Submit Theory &amp; Close the Case</button>`;
+    }
+    function selCulprit(i) { G.selectedCulprit = i; renderTheory(); }
+    function togEv(id, el) { if (G.checkedEv.has(id)) { G.checkedEv.delete(id); el.classList.remove('on'); el.querySelector('.chk-box').textContent = ''; } else { G.checkedEv.add(id); el.classList.add('on'); el.querySelector('.chk-box').textContent = '✓'; } }
+
+    // ═══════════════ SUBMIT ═══════════════
+    function submitTheory() {
+      if (G.selectedCulprit === null) { toast('Select a suspect as your culprit.'); return; }
+      const mot = document.getElementById('motSel')?.value || G.selMotive;
+      const met = document.getElementById('metSel')?.value || G.selMethod;
+      const rsn = document.getElementById('reasonTA')?.value || G.reasoning;
+      if (!mot || !met) { toast('Please select a motive and method.'); return; }
+      clearInterval(timerIv);
+      const c = G.selectedCulprit === 0, mm = mot === 'forgery', mth = met === 'blunt';
+      const evS = G.collected.size * 60, inqS = Object.values(G.usedQ).reduce((a, s) => a + s.size, 0) * 80;
+      const evB = G.checkedEv.size * 30, culB = c ? 800 : 0, motB = mm ? 200 : 0, metB = mth ? 200 : 0;
+      const tB = Math.max(0, 500 - Math.floor(G.timerSecs / 120) * 10), rB = rsn.trim().length > 80 ? 200 : rsn.trim().length > 20 ? 80 : 0;
+      const total = evS + inqS + evB + culB + motB + metB + tB + rB - G.hintPenalty;
+      const min = Math.floor(G.timerSecs / 60);
+      document.getElementById('resultBox').innerHTML = `
+    <div class="r-icon">${c ? '🎉' : '💀'}</div>
+    <div class="r-verdict">${c ? 'Case Closed' : 'Wrong Call'}</div>
+    <div class="r-sub">${c ? 'You identified the killer. Justice served.' : 'Marcus Thorne was the killer. Case cold.'}</div>
+    <div class="r-score-big">${total.toLocaleString()}</div>
+    <div class="r-score-lbl">Total Score</div>
+    <div class="r-grid">
+      <div class="r-cell"><div class="rc-v ${c ? 'pass' : 'fail'}">${c ? '✓' : '✗'}</div><div class="rc-lbl">Culprit</div></div>
+      <div class="r-cell"><div class="rc-v ${mm ? 'pass' : 'fail'}">${mm ? '✓' : '✗'}</div><div class="rc-lbl">Motive</div></div>
+      <div class="r-cell"><div class="rc-v gold">${G.collected.size}</div><div class="rc-lbl">Evidence</div></div>
+      <div class="r-cell"><div class="rc-v gold">${min}m</div><div class="rc-lbl">Time</div></div>
+    </div>
+    <div class="r-reveal"><div class="rr-lbl">The True Solution</div><div class="rr-txt"><strong style="color:var(--text)">Culprit:</strong> Marcus Thorne<br><strong style="color:var(--text)">Motive:</strong> Cover up the forgery and protect £760k in bribes from Galerie Soleil<br><strong style="color:var(--text)">Method:</strong> Blunt force from behind while Voss examined the Caravaggio<br><br>Thorne created the ghost keycard using his ACS admin access, disabled the CCTV from the ground-floor terminal, then struck Voss as she knelt examining the painting. He disposed of the keycard in the service alley. The wire transfers and biometric trace were the threads that unravelled everything.</div></div>
+    <button class="r-close" onclick="document.getElementById('resultOverlay').classList.remove('show')">Return to Dashboard</button>`;
+      document.getElementById('resultOverlay').classList.add('show');
+    }
+
+    // ═══════════════ HINTS ═══════════════
+    function showHints() {
+      document.getElementById('hintList').innerHTML = HINTS.map((h, i) => `<div class="hint-item ${h.used ? 'used' : ''}" onclick="${h.used ? '' : 'useHint(' + i + ')'}"><div class="hint-cost">${h.used ? 'used' : '-150'}</div><div>${h.text}</div></div>`).join('');
+      document.getElementById('hintOverlay').classList.add('show');
+    }
+    function useHint(i) { HINTS[i].used = true; G.hintPenalty += 150; toast('💡 Hint revealed. -150 pts'); showHints(); }
+    function closeHints() { document.getElementById('hintOverlay').classList.remove('show'); }
+
+    // ═══════════════ TOAST ═══════════════
+    let toastT = null;
+    function toast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), 2700); }
+ 
+    /* MOBILE SWIPE NAVIGATION */
+(function(){
+
+if(window.innerWidth > 768) return;
+
+let startX = 0;
+let endX = 0;
+
+const panels = ["briefing","evidence","board","interrogation","theory"];
+
+function currentPanel(){
+  const active = document.querySelector(".panel.active");
+  if(!active) return 0;
+  const id = active.id.replace("panel-","");
+  return panels.indexOf(id);
+}
+
+function goPanel(index){
+  if(index < 0 || index >= panels.length) return;
+  const btn = document.querySelector(`[data-p="${panels[index]}"]`);
+  if(btn) btn.click();
+}
+
+document.addEventListener("touchstart",e=>{
+  startX = e.touches[0].clientX;
+});
+
+document.addEventListener("touchend",e=>{
+  endX = e.changedTouches[0].clientX;
+
+  const diff = startX - endX;
+
+  if(Math.abs(diff) < 60) return;
+
+  let idx = currentPanel();
+
+  if(diff > 0){
+    goPanel(idx + 1);   // swipe left
+  }else{
+    goPanel(idx - 1);   // swipe right
+  }
+
+});
+
+})();
+
+/* MOBILE BOARD PINCH ZOOM */
+(function(){
+
+if(window.innerWidth > 768) return;
+
+const board = document.getElementById("boardCanvas");
+if(!board) return;
+
+let scale = 1;
+let startDist = 0;
+
+function distance(touches){
+  return Math.hypot(
+    touches[0].clientX - touches[1].clientX,
+    touches[0].clientY - touches[1].clientY
+  );
+}
+
+board.addEventListener("touchstart",e=>{
+  if(e.touches.length === 2){
+    startDist = distance(e.touches);
+  }
+});
+
+board.addEventListener("touchmove",e=>{
+  if(e.touches.length === 2){
+    const newDist = distance(e.touches);
+
+    const zoom = newDist / startDist;
+
+    scale = Math.min(2.5,Math.max(.7, scale * zoom));
+
+    board.style.transform = `scale(${scale})`;
+    board.style.transformOrigin = "center";
+
+    startDist = newDist;
+  }
+},{passive:false});
+
+})();
+
+/* MOBILE CHAT FIX */
+(function(){
+
+if(window.innerWidth > 768) return;
+
+const chat = document.getElementById("chatScroll");
+
+if(!chat) return;
+
+function scrollBottom(){
+  setTimeout(()=>{
+    chat.scrollTop = chat.scrollHeight;
+  },100);
+}
+
+const observer = new MutationObserver(scrollBottom);
+
+observer.observe(chat,{
+  childList:true,
+  subtree:true
+});
+
+})();
+  </script>
+</body>
+
+</html>

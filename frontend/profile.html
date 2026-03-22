@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mystera — My Profile</title>
+<link rel="stylesheet" href="css/global.css">
+<style>
+nav { position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;background:rgba(13,11,8,0.95);border-bottom:1px solid var(--amber-border);backdrop-filter:blur(10px); }
+.nav-logo { font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;color:var(--amber);text-decoration:none; }
+.nav-logo span { color:var(--paper); }
+.profile-layout { max-width:900px;margin:0 auto;padding:calc(var(--nav-h) + 2.5rem) 2rem 4rem;display:grid;grid-template-columns:280px 1fr;gap:2rem; }
+@media(max-width:720px){.profile-layout{grid-template-columns:1fr}}
+
+.profile-card { background:var(--ink-mid);border:1px solid var(--amber-border);border-radius:var(--radius);padding:2rem;text-align:center; }
+.profile-avatar { font-size:4rem;display:block;margin-bottom:0.8rem; }
+.profile-name { font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:var(--paper); }
+.profile-email { font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--paper-muted);margin:0.3rem 0 1rem; }
+.profile-tier { display:inline-flex;align-items:center;gap:0.4rem; }
+.xp-bar-wrap { margin:1.5rem 0; }
+.stats-grid { display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin:1.5rem 0; }
+.stat-box { background:var(--ink);border:1px solid var(--paper-ghost);border-radius:var(--radius);padding:0.9rem; }
+.stat-box strong { display:block;font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--amber); }
+.stat-box span { font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:var(--paper-muted);letter-spacing:0.1em;text-transform:uppercase; }
+
+.achievements-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:0.6rem; }
+.achievement { background:var(--ink);border:1px solid var(--paper-ghost);border-radius:var(--radius);padding:0.75rem;text-align:center; }
+.achievement.earned { border-color:var(--amber-border);background:var(--amber-glow); }
+.achievement-icon { font-size:1.5rem;display:block;margin-bottom:0.3rem; }
+.achievement-name { font-family:'IBM Plex Mono',monospace;font-size:0.46rem;color:var(--paper-muted);letter-spacing:0.06em; }
+.achievement.earned .achievement-name { color:var(--amber); }
+
+.history-item { display:flex;align-items:center;gap:1rem;padding:0.85rem;border-bottom:1px solid var(--paper-ghost); }
+.history-item:last-child { border-bottom:none; }
+.h-status { font-size:1.2rem;width:32px;text-align:center; }
+.h-title { font-family:'Playfair Display',serif;font-size:0.95rem;color:var(--paper); }
+.h-meta { font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:var(--paper-muted);margin-top:0.15rem; }
+.h-score { margin-left:auto;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--amber); }
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">🕵️ <span>Mystera</span></a>
+  <div style="display:flex;gap:0.8rem;align-items:center">
+    <a href="cases.html" class="btn btn-ghost btn-sm">Cases</a>
+    <button class="btn btn-danger btn-sm" onclick="doLogout()">Logout</button>
+  </div>
+</nav>
+
+<div class="profile-layout">
+  <!-- Sidebar -->
+  <div>
+    <div class="profile-card" id="profile-card">
+      <span class="profile-avatar" id="p-avatar">🕵️</span>
+      <div class="profile-name" id="p-name">Loading…</div>
+      <div class="profile-email" id="p-email"></div>
+      <div style="display:flex;justify-content:center" id="p-tier"></div>
+      <div class="xp-bar-wrap">
+        <div class="progress-meta"><span style="font-family:'IBM Plex Mono',monospace;font-size:0.56rem;color:var(--paper-muted);letter-spacing:0.1em">XP</span><span id="p-xp" style="font-family:'IBM Plex Mono',monospace;font-size:0.56rem;color:var(--amber)">0</span></div>
+        <div class="progress-track"><div class="progress-fill" id="xp-bar" style="width:0%"></div></div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box"><strong id="p-solved">0</strong><span>Cases Solved</span></div>
+        <div class="stat-box"><strong id="p-rank">—</strong><span>Global Rank</span></div>
+      </div>
+      <button class="btn btn-ghost btn-md w-full" onclick="doLogout()">Logout</button>
+    </div>
+
+    <div class="card" style="margin-top:1rem">
+      <div class="card-header">Achievements</div>
+      <div class="card-body">
+        <div class="achievements-grid" id="achievements">
+          <!-- populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div style="display:flex;flex-direction:column;gap:1.2rem">
+    <div class="card">
+      <div class="card-header">Case History</div>
+      <div id="case-history" style="padding:0.5rem 0">
+        <div style="text-align:center;padding:3rem;font-family:'Crimson Pro',serif;font-style:italic;color:var(--paper-muted)">Loading case history…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script type="module">
+import { api, auth, toast } from './js/api.js';
+
+if (!auth.loggedIn) { window.location.href = 'login.html'; }
+
+const ACHIEVEMENTS = [
+  { id:'first_blood', icon:'🩸', name:'First Case',    check: u => u.cases_solved >= 1 },
+  { id:'sharp_eye',   icon:'🔍', name:'Sharp Eye',     check: u => u.cases_solved >= 3 },
+  { id:'mastermind',  icon:'🧠', name:'Mastermind',    check: u => u.cases_solved >= 5 },
+  { id:'century',     icon:'💯', name:'100 XP',        check: u => u.xp >= 100 },
+  { id:'legendary',   icon:'🏆', name:'1000 XP',       check: u => u.xp >= 1000 },
+  { id:'detective',   icon:'🕵️', name:'True Detective', check: u => u.cases_solved >= 10 },
+];
+
+async function load() {
+  const user = auth.user;
+  document.getElementById('p-avatar').textContent = user.avatar;
+  document.getElementById('p-name').textContent = user.username;
+  document.getElementById('p-email').textContent = user.email;
+  document.getElementById('p-tier').innerHTML = `<span class="badge badge-${user.tier==='pro'?'detective':user.tier==='creator'?'mastermind':'rookie'}">${user.tier.toUpperCase()}</span>`;
+  document.getElementById('p-xp').textContent = user.xp + ' XP';
+  document.getElementById('xp-bar').style.width = Math.min(100,(user.xp % 1000) / 10) + '%';
+  document.getElementById('p-solved').textContent = user.cases_solved;
+
+  // Achievements
+  document.getElementById('achievements').innerHTML = ACHIEVEMENTS.map(a => {
+    const earned = a.check(user);
+    return `<div class="achievement ${earned?'earned':''}">
+      <span class="achievement-icon">${a.icon}</span>
+      <div class="achievement-name">${a.name}</div>
+    </div>`;
+  }).join('');
+
+  // Global rank
+  try {
+    const lb = await api.getGlobalLeaderboard();
+    const me = lb.entries?.find(e => e.is_you);
+    document.getElementById('p-rank').textContent = me ? '#' + me.rank : '—';
+  } catch(_) {}
+
+  // Case history placeholder
+  document.getElementById('case-history').innerHTML = `
+    <div class="history-item">
+      <div class="h-status">📁</div>
+      <div>
+        <div class="h-title">No cases solved yet</div>
+        <div class="h-meta">Start investigating to build your record</div>
+      </div>
+    </div>`;
+}
+
+window.doLogout = () => api.logout();
+load();
+</script>
+</body>
+</html>

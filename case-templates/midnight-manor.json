@@ -1,0 +1,117 @@
+{
+  "title": "The Midnight Manor Incident",
+  "slug": "midnight-manor",
+  "difficulty": "mastermind",
+  "setting": "Harrington Manor, Cotswolds, UK",
+  "is_weekly": true,
+  "background": "Victor Harrington, CEO of Harrington Capital, was found dead in his private study at 3:14am on November 12th, 2026. The door was locked from the inside using a deadbolt. A glass of Scotch sat unfinished on his desk. The medical examiner's report cites blunt force trauma combined with a sedative compound found in his bloodstream. Six guests were staying at Harrington Manor that weekend — all claim to have been asleep.",
+  "victim_name": "Victor J. Harrington",
+  "victim_age": 58,
+  "victim_occupation": "CEO, Harrington Capital",
+  "victim_profile": {
+    "net_worth": "$840M",
+    "known_enemies": "Multiple business rivals, former employees",
+    "cause_of_death": "Blunt force trauma + ketamine toxicity",
+    "notes": "Victor was about to change his will and complete a controversial merger",
+    "timeline": [
+      {"time": "NOV 11 · 7:00 PM", "event": "Guests Arrive", "detail": "Eleanor, Dominic, Sandra, Marcus, and Priya arrive for the annual retreat."},
+      {"time": "NOV 11 · 9:30 PM", "event": "Argument at Dinner", "detail": "Heated argument between Victor and Dominic over the firm's upcoming merger. Victor takes a phone call and returns visibly agitated."},
+      {"time": "NOV 11 · 11:45 PM", "event": "Victor Retires to Study", "detail": "Victor tells guests he has important work. Housekeeper confirms bringing him a Scotch at 11:52pm."},
+      {"time": "NOV 12 · 2:00 AM", "event": "Study Lights Go Dark", "detail": "CCTV from east wing shows study light extinguishing at 2:02am. No one seen entering after midnight."},
+      {"time": "NOV 12 · 3:14 AM", "event": "Body Discovered", "detail": "Security guard Patrick Holt hears a crash, finds door locked. Breaks it down to find Victor slumped over his desk."}
+    ]
+  },
+  "true_culprit_name": "Eleanor Harrington",
+  "true_motive": "Eleanor discovered Victor was about to change his will, removing her as sole heir in favour of a charitable trust. She had also borrowed heavily against her inheritance and faced financial ruin.",
+  "true_method": "Eleanor dissolved her prescribed Clonazepam into Victor's Scotch to sedate him. During the CCTV gap — caused by a USB loop device she'd planted earlier — she slipped into the study via a duplicate key, struck Victor with the letter opener, then relocked the deadbolt from outside using a thin-blade tool.",
+  "required_evidence_ids": ["ev-mm-01", "ev-mm-02", "ev-mm-05", "ev-mm-06"],
+  "suspects": [
+    {
+      "name": "Eleanor Harrington",
+      "occupation": "Interior Designer / Victor's Sister",
+      "personality": "Quietly controlled. Precise with language. Becomes overly formal when nervous. Has a habit of touching her left wrist when lying.",
+      "alibi": "Claims she was asleep in the east guest room all night. Says she heard nothing.",
+      "relationship_to_victim": "Younger sister. Sole heir to Victor's estate. Relations had been strained since Victor remarried.",
+      "is_culprit": true,
+      "avatar": "👩",
+      "motive_hint": "Stand to inherit everything — unless Victor changed his mind.",
+      "secrets": [
+        "She has a duplicate key to Victor's study made 3 years ago",
+        "She borrowed £2.3M against her inheritance and is deeply in debt",
+        "She planted a USB loop on the CCTV recorder two days before the weekend",
+        "Victor told her that morning he was meeting with his solicitor on Monday"
+      ]
+    },
+    {
+      "name": "Dominic Foles",
+      "occupation": "COO, Harrington Capital",
+      "personality": "Nervous energy. Quick to deflect. Uses humour to disarm. Goes very still when caught in a lie.",
+      "alibi": "Says he went to bed after the argument. Claims he heard Eleanor walking the corridor around 1am.",
+      "relationship_to_victim": "Business partner of 15 years. The merger would benefit Dominic enormously — but Victor was getting cold feet.",
+      "is_culprit": false,
+      "avatar": "👨‍💼",
+      "motive_hint": "The merger he needs falls apart if Victor dies before signing.",
+      "secrets": [
+        "He did go to Victor's study at 11pm to continue the argument — Victor was alive",
+        "His fingerprints are on the letter opener because he picked it up during their argument",
+        "He is embezzling from the firm and Victor had recently become suspicious"
+      ]
+    },
+    {
+      "name": "Sandra Rhee",
+      "occupation": "Personal Attorney",
+      "personality": "Composed. Legalistic. Chooses every word with surgical care. Rarely volunteers information.",
+      "alibi": "Was in her room all night. Spoke briefly with Marcus Webb in the hallway around 12:30am.",
+      "relationship_to_victim": "Victor's attorney for 11 years. Had recently drafted an amendment to his will.",
+      "is_culprit": false,
+      "avatar": "👩‍⚖️",
+      "motive_hint": "She knows more about the will than anyone — and she's protecting a secret.",
+      "secrets": [
+        "She drafted the new will that would disinherit Eleanor",
+        "She noticed Eleanor entering the study corridor on her way to the bathroom",
+        "Victor had asked her to witness the new will on Monday morning"
+      ]
+    },
+    {
+      "name": "Marcus Webb",
+      "occupation": "Investigative Journalist",
+      "personality": "Eager, probing, slightly performative. Talks faster when excited. Knows things he shouldn't.",
+      "alibi": "Says he was in the library most of the night, working on an article. Spoke to Sandra around 12:30am.",
+      "relationship_to_victim": "Investigating fraud allegations at Harrington Capital. Victor invited him to the manor under the pretence of 'going on the record'.",
+      "is_culprit": false,
+      "avatar": "🧑",
+      "motive_hint": "A dead source is a ruined story — he needed Victor alive.",
+      "secrets": [
+        "Eleanor called him 3 weeks ago offering him documents on Victor",
+        "He had a hidden recorder running throughout the dinner",
+        "He saw a figure in the east corridor around 1:15am but assumed it was staff"
+      ]
+    },
+    {
+      "name": "Priya Nair",
+      "occupation": "Pharmacologist, BioSynth Labs",
+      "personality": "Precise. Scientific. Uncomfortable with imprecision. Gets visibly distressed by false accusations.",
+      "alibi": "Was on a video call with her lab team until 1:30am (verifiable). Went directly to sleep.",
+      "relationship_to_victim": "Met Victor through mutual investors. He was considering funding her research.",
+      "is_culprit": false,
+      "avatar": "👩‍🔬",
+      "motive_hint": "She's the expert on the compound found in Victor's blood — which makes her a suspect.",
+      "secrets": [
+        "She immediately recognised the sedative compound in the autopsy report as Clonazepam mixed with alcohol",
+        "Eleanor had asked her detailed questions about drug interactions two months ago",
+        "She has already told this to the police but was asked to stay quiet"
+      ]
+    }
+  ],
+  "evidence": [
+    {"id": "ev-mm-01", "type": "forensic", "title": "Scotch Glass — Lab Report", "description": "Traces of Clonazepam detected in the residue. Consistent with a dose sufficient to cause heavy sedation within 30 minutes.", "content": "TOXICOLOGY REPORT — Case #0047\nSubstance: Clonazepam (benzodiazepine)\nConcentration: 8mg equivalent in residue\nEffect: Rapid sedation, loss of coordination\nCross-reaction: Dangerous with alcohol\nSource: Prescription-grade. Not available OTC.", "icon": "🥃", "is_hidden": false, "sort_order": 1},
+    {"id": "ev-mm-02", "type": "cctv", "title": "East Wing Camera — 1:17am Gap", "description": "Corridor CCTV shows a 7-minute recording loop between 1:17am and 1:24am. The same 3 seconds repeat on a loop — consistent with a USB playback device planted on the recorder.", "content": "CCTV ANALYSIS REPORT\nCamera: East Wing Corridor, Cam-3\nAnomaly: Frames 1:17:04–1:24:11 are a repeating loop\nMethod: USB timestamp override device detected in recorder port\nPlanted: Estimated 24–48hrs before incident\nTechnical skill required: LOW — consumer device", "icon": "📹", "is_hidden": false, "sort_order": 2},
+    {"id": "ev-mm-03", "type": "phone_log", "title": "Victor's iPhone — Last 24 Hours", "description": "Three calls to an unknown number between 10pm–11pm, each under 90 seconds. Text to Sandra Rhee at 10:14pm: 'We need to talk before Monday. The documents.'", "content": "CALL LOG EXTRACT\n22:04 — Unknown (+44 7XXX XXXXXX) — 82 sec\n22:31 — Unknown (+44 7XXX XXXXXX) — 45 sec\n22:58 — Unknown (+44 7XXX XXXXXX) — 71 sec\n\nSMS to Sandra Rhee 22:14:\n'We need to talk before Monday. The documents.'", "icon": "📱", "is_hidden": false, "sort_order": 3},
+    {"id": "ev-mm-04", "type": "document", "title": "Burned Document Fragment", "description": "Ash recovered from the study fireplace. Partially reconstructed: a legal transfer document. The beneficiary name is burned away but the solicitor's stamp (Rhee & Associates) is visible.", "content": "PARTIALLY RECONSTRUCTED DOCUMENT\n[HARRINGTON ESTATE — AMENDMENT TO WILL]\n...hereby revoke all previous provisions regarding...\n...transfer of ALL voting shares and liquid assets to...\n[NAME ILLEGIBLE — burned]\n...effective upon signing and witnessing by...\nStamp: RHEE & ASSOCIATES — LONDON", "icon": "📄", "is_hidden": false, "sort_order": 4},
+    {"id": "ev-mm-05", "type": "forensic", "title": "Prescription Bottle — East Bookshelf", "description": "A small amber bottle found behind the east bookshelf. Prescribed to Eleanor Harrington. Drug: Clonazepam 2mg. 11 tablets remain from a prescription of 30 — 7 tablets unaccounted for beyond normal dosage schedule.", "content": "EVIDENCE TAG: EA-007\nItem: Prescription bottle — Clonazepam 2mg\nPrescribed to: Eleanor R. Harrington\nIssued: 28 October 2026 (30 tablets)\nRemaining: 11 tablets\nLocation found: Behind east bookshelf, Victor's study\nNote: Normal usage over 2 weeks = ~12 tablets. 7 unaccounted.", "icon": "💊", "is_hidden": false, "sort_order": 5},
+    {"id": "ev-mm-06", "type": "forensic", "title": "Letter Opener — Fingerprint Report", "description": "Two sets of prints on the letter opener found under Victor's chair. Set A: Victor's. Set B: Dominic Foles. Dominic's prints are fresh (under 12 hours old) and he claims he never entered the study.", "content": "FINGERPRINT ANALYSIS — Item LO-01\nPrint Set A: Victor J. Harrington — CONFIRMED\nPrint Set B: Dominic A. Foles — CONFIRMED\nAge of Set B prints: 6–12 hours (fresh)\nForce indication: Gripped firmly, consistent with use as weapon\nBlood trace: Micro-droplet on handle, Type O — matches victim", "icon": "🔪", "is_hidden": false, "sort_order": 6},
+    {"id": "ev-mm-07", "type": "photo", "title": "Study Floor — Crime Scene Photos", "description": "High-resolution photos reveal scuff marks near the east bookshelf consistent with a hidden door mechanism. A thin rectangular impression in the dust suggests an object was recently removed.", "content": "CRIME SCENE PHOTOGRAPHY — Study Floor\nNote A: Scuff marks (30cm × 2cm) near east bookshelf base\nNote B: Rectangular dust impression (28cm × 4cm) — object removed recently\nNote C: Victor's chair slightly displaced from usual position\nNote D: No signs of forced entry on main door", "icon": "📸", "is_hidden": true, "unlock_condition": "interrogate:housekeeper", "sort_order": 7},
+    {"id": "ev-mm-08", "type": "document", "title": "Harrington Capital — Merger Documents", "description": "Draft merger agreement showing Dominic Foles stood to receive a £14M payout upon completion. Victor had handwritten 'PAUSE — review fraud exposure' in the margin.", "content": "HARRINGTON CAPITAL — MERGER TERM SHEET v4.2\nParty A: Harrington Capital\nParty B: Nexus Private Equity\nDominic Foles executive incentive: £14,200,000 upon close\nVictor handwritten note: 'PAUSE — review fraud exposure'\nDate of note: Nov 11, 2026 (day of death)", "icon": "💰", "is_hidden": true, "unlock_condition": "interrogate:dominic", "sort_order": 8},
+    {"id": "ev-mm-09", "type": "phone_log", "title": "Duplicate Key Receipt — Locksmiths Record", "description": "A locksmith receipt from 2023 shows a duplicate key was cut for the study deadbolt. The customer name has been scratched off the paper receipt but the phone number matches Eleanor Harrington's mobile.", "content": "LOCKSMITH RECORD — Cotswold Key Cutters\nDate: 14 March 2023\nItem: Deadbolt duplicate — Harrington Manor study\nCustomer phone: +44 7XXX XXXXXX [MATCHES ELEANOR]\nCustomer name: [SCRATCHED OUT]\nNote: Paid cash", "icon": "🔑", "is_hidden": true, "unlock_condition": "interrogate:eleanor", "sort_order": 9}
+  ]
+}
