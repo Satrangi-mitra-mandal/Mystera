@@ -49,7 +49,7 @@ services:
 
   # ── PostgreSQL Database ────────────────────────────────────────────────────
 databases:
-  - name: detectiveos-db
-    databaseName: detectiveos
+  - name: mystera-db
+    databaseName: mystera
     user: detective
     plan: free                # free tier: 1GB storage, 97 connection limit
