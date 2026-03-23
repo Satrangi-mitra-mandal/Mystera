@@ -8,7 +8,7 @@
 // IMPORTANT: Replace the production URL below with your actual Render/Railway URL.
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
   ? 'http://localhost:8000'
-  : 'https://YOUR-BACKEND-URL.onrender.com'; // ← REPLACE THIS with your backend URL
+  : 'https://mystera-api.onrender.com'; // ← REPLACE THIS with your backend URL
 
 let _token = localStorage.getItem('dos_token');
 let _user  = JSON.parse(localStorage.getItem('dos_user') || 'null');
