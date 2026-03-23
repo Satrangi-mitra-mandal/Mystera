@@ -22,6 +22,8 @@ services:
     # Environment variables — set values in the Render dashboard
     # Never put real secrets in this file
     envVars:
+     - key: PYTHON_VERSION
+       value: 3.11.9
       - key: DATABASE_URL
         fromDatabase:
           name: mystera-db
@@ -43,7 +45,7 @@ services:
         value: production
 
       - key: CORS_ORIGINS
-        value: https://your-app.vercel.app   # ← REPLACE with your Vercel URL
+        value: https://mystera.vercel.app   # ← REPLACE with your Vercel URL
 
 
 
