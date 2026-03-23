@@ -18,7 +18,7 @@ services:
       - key: PYTHON_VERSION
         value: 3.11.9
 
-      - key: DATABASE_URL
+      - key: postgresql://detective:cwT0ZtuBmA8oKVjiVejHBKVym5lrMYGb@dpg-d6vvnt7gi27c73f8mm10-a/mystera_yjny
         fromDatabase:
           name: mystera-db
           property: connectionString
