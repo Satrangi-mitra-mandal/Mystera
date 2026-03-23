@@ -7,33 +7,30 @@
 #   3. Connect your repo — Render reads this file automatically
 
 services:
-  # ── FastAPI Backend ────────────────────────────────────────────────────────
   - type: web
     name: mystera-api
     env: python
-    region: oregon            # or: frankfurt, singapore, ohio
-    plan: free                # free tier: spins down after 15 min inactivity
+    region: oregon
+    plan: free
 
-    # Render runs these from the repo root
     rootDir: backend
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
 
-    # Environment variables — set values in the Render dashboard
-    # Never put real secrets in this file
     envVars:
-     - key: PYTHON_VERSION
-       value: 3.11.9
+      - key: PYTHON_VERSION
+        value: 3.11.9
+
       - key: DATABASE_URL
         fromDatabase:
           name: mystera-db
           property: connectionString
 
       - key: ANTHROPIC_API_KEY
-        sync: false           # you paste this manually in the Render dashboard
+        sync: false
 
       - key: JWT_SECRET
-        generateValue: true   # Render auto-generates a secure random value
+        generateValue: true
 
       - key: JWT_ALGORITHM
         value: HS256
@@ -45,13 +42,10 @@ services:
         value: production
 
       - key: CORS_ORIGINS
-        value: https://mystera.vercel.app   # ← REPLACE with your Vercel URL
+        value: https://mystera.vercel.app
 
-
-
-  # ── PostgreSQL Database ────────────────────────────────────────────────────
 databases:
   - name: mystera-db
     databaseName: mystera
     user: detective
-    plan: free                # free tier: 1GB storage, 97 connection limit
+    plan: free
